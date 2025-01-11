@@ -1,0 +1,14 @@
+datasets:
+  - name: "databio.zip"
+    url: https://drive.google.com/uc?id=1lctmude31mSAh9fWjI60K1bDrbeDPGfm
+  - name: "databio8p.zip"
+    url: https://drive.google.com/uc?id=1Sj7nTB5gCUq9nbeQOg4zzS4tKO37M5Nd
+
+test-cases:
+  - name: "1-2"
+    df_path_1: "{{ BENCH_DATA_ROOT }}/fBrain-DS14718/*.parquet"
+    df_path_2: "{{ BENCH_DATA_ROOT }}/exons/*.parquet"
+
+tests:
+  overlap:
+    -
