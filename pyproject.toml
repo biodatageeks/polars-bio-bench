@@ -1,0 +1,34 @@
+[project]
+name = "polars-bio-bench"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Marek Wieiwórka",email = "marek.wiewiorka@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.12,<3.14.0"
+dependencies = [
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.dev-dependencies]
+emoji = "^2.14.0"
+pre-commit = "^4.0.1"
+tqdm = "^4.67.1"
+gdown = "^5.2.0"
+pyyaml = "^6.0.2"
+jinja2 = "^3.1.5"
+poetry-plugin-shell = "^1.0.0"
+polars-bio = "^0.5.2"
+setuptools = "^75.8.0"
+rich = "^13.9.4"
+bioframe = "^0.7.2"
+pyranges = {git = "https://github.com/pyranges/pyranges.git", rev = "4f0a153336e7153cdfea15b141ce4ea35a24e233" }
+GenomicRanges = "^0.5.0"
+pyranges1 = { git = "https://github.com/mwiewior/pyranges1.git", rev = "949d7c15c1c2e217f4404415f79b386f326b6f8d"}
+pybedtools = "^0.10.0"
+pygenomics =  { git = "https://gitlab.com/gtamazian/pygenomics.git", rev = "0.1.1"}
