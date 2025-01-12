@@ -21,11 +21,11 @@ poetry env use 3.12
 poetry update
 pip install poetry-plugin-shell
 poetry shell
-python src/run-benchmarks.py
 ```
 
 ## Run
 ```bash
 # export dir where the benchmark data set will be downloaded
-export BENCH_DATA_ROOT=/tmp/databio
+export BENCH_DATA_ROOT=/tmp/polars-bio-bench/
+python src/run-benchmarks.py
 ```

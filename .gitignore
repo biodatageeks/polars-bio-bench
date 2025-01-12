@@ -26,6 +26,7 @@ share/python-wheels/
 *.egg
 MANIFEST
 .idea
+benchmark_results.md
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
