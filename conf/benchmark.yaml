@@ -36,15 +36,16 @@ tools:
   - bioframe
   - pyranges0
   - pyranges1
-  - pybedtools
-  - genomicranges
-  - pygenomics
+## Commented out because they are slow.
+#  - pybedtools
+#  - genomicranges
+#  - pygenomics
 
 benchmarks:
   - name: overlap-single
     operation: overlap
     dataset: databio
-    num_repeats: 1
+    num_repeats: 3
     num_executions: 1
     test-cases:
       - "1-2"
