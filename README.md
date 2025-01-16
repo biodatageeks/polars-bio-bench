@@ -24,6 +24,8 @@ poetry shell
 ```
 
 ## Run
+Please note that you need at least 64GB of RAM to run the benchmarks.
+
 ```bash
 # export dir where the benchmark data set will be downloaded
 export BENCH_DATA_ROOT=/tmp/polars-bio-bench/

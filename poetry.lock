@@ -44,14 +44,14 @@ testing = ["pandas", "polars", "pytest", "pytest-cov", "setuptools"]
 
 [[package]]
 name = "biocutils"
-version = "0.2.1"
+version = "0.2.2"
 description = "Utilities to use across the biocpy packages."
 optional = false
 python-versions = ">=3.9"
 groups = ["dev"]
 files = [
-    {file = "biocutils-0.2.1-py3-none-any.whl", hash = "sha256:3f09ed57a79e73c698f317e64c96386aee7d699046d6477987e2578af1836b6d"},
-    {file = "biocutils-0.2.1.tar.gz", hash = "sha256:cec3c1c0166eea5a652da75ba9403e9fd270c297394f2745775c2b9c66085318"},
+    {file = "biocutils-0.2.2-py3-none-any.whl", hash = "sha256:cf6aa403df089f28a371d2efee06afa544911c0464c9a3c43de260ab421f29fe"},
+    {file = "biocutils-0.2.2.tar.gz", hash = "sha256:25b2c85969b62f7a86364ed9a6a5caf76c75ca7650c8f85aadc74f146e2aab7a"},
 ]
 
 [package.dependencies]
@@ -615,14 +615,14 @@ pgp = ["gpg"]
 
 [[package]]
 name = "emoji"
-version = "2.14.0"
+version = "2.14.1"
 description = "Emoji for Python"
 optional = false
 python-versions = ">=3.7"
 groups = ["dev"]
 files = [
-    {file = "emoji-2.14.0-py3-none-any.whl", hash = "sha256:fcc936bf374b1aec67dda5303ae99710ba88cc9cdce2d1a71c5f2204e6d78799"},
-    {file = "emoji-2.14.0.tar.gz", hash = "sha256:f68ac28915a2221667cddb3e6c589303c3c6954c6c5af6fefaec7f9bdf72fdca"},
+    {file = "emoji-2.14.1-py3-none-any.whl", hash = "sha256:35a8a486c1460addb1499e3bf7929d3889b2e2841a57401903699fef595e942b"},
+    {file = "emoji-2.14.1.tar.gz", hash = "sha256:f8c50043d79a2c1410ebfae833ae1868d5941a67a6cd4d18377e2eb0bd79346b"},
 ]
 
 [package.extras]
@@ -1223,14 +1223,14 @@ files = [
 
 [[package]]
 name = "more-itertools"
-version = "10.5.0"
+version = "10.6.0"
 description = "More routines for operating on iterables, beyond itertools"
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.9"
 groups = ["dev"]
 files = [
-    {file = "more-itertools-10.5.0.tar.gz", hash = "sha256:5482bfef7849c25dc3c6dd53a6173ae4795da2a41a80faea6700d9f5846c5da6"},
-    {file = "more_itertools-10.5.0-py3-none-any.whl", hash = "sha256:037b0d3203ce90cca8ab1defbbdac29d5f993fc20131f3664dc8d6acfa872aef"},
+    {file = "more-itertools-10.6.0.tar.gz", hash = "sha256:2cd7fad1009c31cc9fb6a035108509e6547547a7a738374f10bd49a09eb3ee3b"},
+    {file = "more_itertools-10.6.0-py3-none-any.whl", hash = "sha256:6eb054cb4b6db1473f6e15fcc676a08e4732548acd47c708f0e179c2c7c01e89"},
 ]
 
 [[package]]
@@ -1782,17 +1782,17 @@ xlsxwriter = ["xlsxwriter"]
 
 [[package]]
 name = "polars-bio"
-version = "0.5.2"
+version = "0.5.4"
 description = "Blazing fast genomic operations on large Python dataframes"
 optional = false
 python-versions = ">=3.9"
 groups = ["dev"]
 files = [
-    {file = "polars_bio-0.5.2-cp38-abi3-macosx_10_12_x86_64.whl", hash = "sha256:f18f7512f1679f615b8f825b996247984778aaa638690c6b7a24c88aefbe4403"},
-    {file = "polars_bio-0.5.2-cp38-abi3-macosx_11_0_arm64.whl", hash = "sha256:34834f287c471037cf7e767b92d81f14165649118f6acaacf24a6e4cdb8bdba4"},
-    {file = "polars_bio-0.5.2-cp38-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:2694c3607a349cd4a17321c2e1939fc12fced792398c19b64724b61d6443f956"},
-    {file = "polars_bio-0.5.2-cp38-abi3-win_amd64.whl", hash = "sha256:7166b8bb5c7b25f3729f32fd65c5851a35a3b03508620c3da8b0f13074cef718"},
-    {file = "polars_bio-0.5.2.tar.gz", hash = "sha256:4784978a19b3eadf65d7978c289c800018ae0dd4f22c2288699b78015d0bc56f"},
+    {file = "polars_bio-0.5.4-cp38-abi3-macosx_10_12_x86_64.whl", hash = "sha256:548c02866d2d444b495f2d5b0d4061199cd031107e41d6d1944038ebcbb93316"},
+    {file = "polars_bio-0.5.4-cp38-abi3-macosx_11_0_arm64.whl", hash = "sha256:7d311484774c596cf1cc723f29197bb9c83ff8f2cbcf9355c4bfd958ae4053a0"},
+    {file = "polars_bio-0.5.4-cp38-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:c8a3be4cdc0f13413c8be764f91c137d4fbf2db74c63266d544d7a6a5a44af43"},
+    {file = "polars_bio-0.5.4-cp38-abi3-win_amd64.whl", hash = "sha256:adff586e05ad9feebec688110bbd0c0131a4e7d134910ded7a6805fa215ae81e"},
+    {file = "polars_bio-0.5.4.tar.gz", hash = "sha256:def7fa518b779e586a87fcffc0d689b779149af12646f8e4161359e7c68f6300"},
 ]
 
 [package.dependencies]
@@ -2529,14 +2529,14 @@ telegram = ["requests"]
 
 [[package]]
 name = "trove-classifiers"
-version = "2025.1.10.15"
+version = "2025.1.15.22"
 description = "Canonical source for classifiers on PyPI (pypi.org)."
 optional = false
 python-versions = "*"
 groups = ["dev"]
 files = [
-    {file = "trove_classifiers-2025.1.10.15-py3-none-any.whl", hash = "sha256:9824eb16f7df1b1cc1c217c52ce56c76869d6263da2067f8eadc45122a731cfc"},
-    {file = "trove_classifiers-2025.1.10.15.tar.gz", hash = "sha256:be2c7d25e46cd39d5c7151acd389584df3919f61890f5f163c8ee2090ff71e7f"},
+    {file = "trove_classifiers-2025.1.15.22-py3-none-any.whl", hash = "sha256:5f19c789d4f17f501d36c94dbbf969fb3e8c2784d008e6f5164dd2c3d6a2b07c"},
+    {file = "trove_classifiers-2025.1.15.22.tar.gz", hash = "sha256:90af74358d3a01b3532bc7b3c88d8c6a094c2fd50a563d13d9576179326d7ed9"},
 ]
 
 [[package]]
@@ -2584,14 +2584,14 @@ zstd = ["zstandard (>=0.18.0)"]
 
 [[package]]
 name = "virtualenv"
-version = "20.28.1"
+version = "20.29.0"
 description = "Virtual Python Environment builder"
 optional = false
 python-versions = ">=3.8"
 groups = ["dev"]
 files = [
-    {file = "virtualenv-20.28.1-py3-none-any.whl", hash = "sha256:412773c85d4dab0409b83ec36f7a6499e72eaf08c80e81e9576bca61831c71cb"},
-    {file = "virtualenv-20.28.1.tar.gz", hash = "sha256:5d34ab240fdb5d21549b76f9e8ff3af28252f5499fb6d6f031adac4e5a8c5329"},
+    {file = "virtualenv-20.29.0-py3-none-any.whl", hash = "sha256:c12311863497992dc4b8644f8ea82d3b35bb7ef8ee82e6630d76d0197c39baf9"},
+    {file = "virtualenv-20.29.0.tar.gz", hash = "sha256:6345e1ff19d4b1296954cee076baaf58ff2a12a84a338c62b02eda39f20aa982"},
 ]
 
 [package.dependencies]
@@ -2693,4 +2693,4 @@ test = ["pytest"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12,<3.14.0"
-content-hash = "d98b61db1c841d421f6f784591b27bcb9158919a840b470fd895d11975e42f08"
+content-hash = "cb828a7b6b3298cc5032395f8785b3a4b9e62fa1f337590b142f070073ebab8f"
