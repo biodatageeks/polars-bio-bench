@@ -6,6 +6,7 @@ import click
 import emoji
 import numpy as np
 import pandas as pd
+import polars as pl
 import polars_bio as pb
 import pybedtools
 import rich
@@ -48,11 +49,17 @@ def run_benchmark(
     for b in tqdm(benchmarks, desc="Running benchmarks"):
         dataset = b["dataset"]
         operation = b["operation"]
-        tools = b["tools"]
         num_executions = b["num_executions"]
         num_repeats = b["num_repeats"]
         parallel = b["parallel"]
         threads = b["threads"] if parallel else [1]
+        input_dataframes = b["input_dataframes"]
+        tools = b["tools"]
+        if input_dataframes:
+            dataframes_io = b["dataframes_io"]
+            for d in dataframes_io:
+                tools.append(f"polars_bio_{d}")
+        print(tools)
         console.log(
             f"## Benchmark {b["name"]} for {operation} with dataset {dataset} \n"
         )
@@ -98,13 +105,13 @@ def run_benchmark(
                         table = [
                             func
                             for func in functions_overlap
-                            if func.__name__ == f"{operation}_{tool}"
+                            if f"{operation}_{tool}".startswith(func.__name__)
                         ]
                     elif operation == "nearest":
                         table = [
                             func
                             for func in functions_nearest
-                            if func.__name__ == f"{operation}_{tool}"
+                            if f"{operation}_{tool}".startswith(func.__name__)
                         ]
                     else:
                         logger.error(
@@ -124,11 +131,30 @@ def run_benchmark(
                     func = table[0]
                     if tool == "polars_bio":
                         times = timeit.repeat(
-                            lambda: func(df_path_1, df_path_2),
+                            lambda: func(
+                                df_path_1, df_path_2, output_type="polars.LazyFrame"
+                            ),
                             repeat=num_repeats,
                             number=num_executions,
                         )
-
+                    elif input_dataframes and tool.startswith("polars_bio_"):
+                        input_type = tool.split("_")[2].split(":")[0]
+                        output_type = tool.split("_")[2].split(":")[1]
+                        df_1 = (
+                            pl.read_parquet(df_path_1)
+                            if input_type.startswith("polars")
+                            else pd.read_parquet(df_path_1.replace("*.parquet", ""))
+                        )
+                        df_2 = (
+                            pl.read_parquet(df_path_2)
+                            if input_type.startswith("polars")
+                            else pd.read_parquet(df_path_2.replace("*.parquet", ""))
+                        )
+                        times = timeit.repeat(
+                            lambda: func(df_1, df_2, output_type=output_type),
+                            repeat=num_repeats,
+                            number=num_executions,
+                        )
                     elif tool == "bioframe" and th == 1:
                         df_1 = pd.read_parquet(
                             df_path_1.replace("*.parquet", ""), engine="pyarrow"
@@ -293,6 +319,7 @@ def run_benchmark(
     help="Benchmark config file (default: conf/benchmark_small.yaml)",
 )
 def run(bench_config: str):
+    logger.info(f"Using config file: {bench_config}")
     datetime = time.strftime("%Y-%m-%d %H:%M:%S")
     logger.info(emoji.emojize("Starting polars_bio_benchmark :rocket:"))
     REPORT_FILE = f"benchmark_results_{datetime}.md"

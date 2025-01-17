@@ -10,8 +10,27 @@ def nearest_bioframe(df_1, df_2):
     len(bf.closest(df_1, df_2, cols1=columns, cols2=columns))
 
 
-def nearest_polars_bio(df_path_1, df_path_2):
-    pb.nearest(df_path_1, df_path_2, cols1=columns, cols2=columns).collect().count()
+def nearest_polars_bio(df_path_1, df_path_2, output_type):
+    if output_type == "polars.LazyFrame":
+        len(
+            pb.nearest(
+                df_path_1,
+                df_path_2,
+                cols1=columns,
+                cols2=columns,
+                output_type=output_type,
+            ).collect()
+        )
+    else:
+        len(
+            pb.nearest(
+                df_path_1,
+                df_path_2,
+                cols1=columns,
+                cols2=columns,
+                output_type=output_type,
+            )
+        )
 
 
 def nearest_pyranges0(df_1_pr0, df_2_pr0):
@@ -34,8 +53,19 @@ def overlap_bioframe(df_1, df_2):
     len(bf.overlap(df_1, df_2, cols1=columns, cols2=columns, how="inner"))
 
 
-def overlap_polars_bio(df_path_1, df_path_2):
-    len(pb.overlap(df_path_1, df_path_2, cols1=columns, cols2=columns).collect())
+def overlap_polars_bio(df_path_1, df_path_2, output_type):
+    if output_type == "polars.LazyFrame":
+        len(pb.overlap(df_path_1, df_path_2, cols1=columns, cols2=columns).collect())
+    else:
+        len(
+            pb.overlap(
+                df_path_1,
+                df_path_2,
+                cols1=columns,
+                cols2=columns,
+                output_type=output_type,
+            )
+        )
 
 
 def overlap_pyranges0(df_1_pr0, df_2_pr0):
