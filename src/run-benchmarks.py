@@ -1,12 +1,7 @@
-import logging
 import os
-import shutil
 import timeit
-import zipfile
-from pathlib import Path
 
 import emoji
-import gdown
 import numpy as np
 import pandas as pd
 import pybedtools
@@ -19,6 +14,7 @@ from rich.console import Console
 from rich.table import Table
 from tqdm import tqdm
 
+from logger import logger
 from operations import (
     nearest_bioframe,
     nearest_genomicranges,
@@ -34,13 +30,7 @@ from operations import (
     overlap_pyranges0,
     overlap_pyranges1,
 )
-from utils import df2pr0, df2pr1
-
-logging.basicConfig()
-logging.getLogger().setLevel(logging.WARN)
-logger = logging.getLogger("polars_bio_bench")
-logger.setLevel(logging.INFO)
-
+from utils import df2pr0, df2pr1, prepare_datatests
 
 logger.info(emoji.emojize("Starting polars_bio_benchmark :rocket:"))
 REPORT_FILE = "benchmark_results.md"
@@ -86,29 +76,7 @@ functions_nearest = [
 ]
 
 
-Path.mkdir(Path(BECH_DATA_ROOT), parents=True, exist_ok=True)
-for d in tqdm(datasets, desc="Downloading benchmark datasets"):
-    url = d["url"]
-    dataset = d["name"]
-    file = f"{dataset}.zip"
-    extract_dir = f"{BECH_DATA_ROOT}/"
-    if os.path.exists(f"{extract_dir}/{dataset}"):
-        logger.info(
-            emoji.emojize(
-                f"Dataset {file.split(".")[0]} already exists :file_folder: To re-download, remove the directory."
-            )
-        )
-        continue
-    gdown.download(url, f"{BECH_DATA_ROOT}/{file}", quiet=True, verify=True)
-    logger.info(emoji.emojize(f"Downloaded {file} :check_box_with_check: "))
-    ds_zip_file = f"{BECH_DATA_ROOT}/{file}"
-    Path.mkdir(Path(extract_dir), parents=True, exist_ok=True)
-    shutil.rmtree(f"{extract_dir}/*", ignore_errors=True)
-    with zipfile.ZipFile(ds_zip_file, "r") as zip_ref:
-        zip_ref.extractall(extract_dir)
-    logger.info(emoji.emojize(f"Extracted {file} :open_file_folder: "))
-    os.remove(ds_zip_file)
-logger.info(emoji.emojize("Downloaded all benchmark datasets :check_mark_button:"))
+prepare_datatests(datasets, BECH_DATA_ROOT)
 console = Console(record=True)
 for b in tqdm(benchmarks, desc="Running benchmarks"):
     dataset = b["dataset"]
