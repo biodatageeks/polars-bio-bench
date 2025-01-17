@@ -16,6 +16,7 @@ from pygenomics.interval import GenomicBase
 from rich.box import MARKDOWN
 from rich.console import Console
 from rich.table import Table
+from rich_tools import table_to_df
 from tqdm import tqdm
 
 from logger import logger
@@ -43,8 +44,9 @@ def run_benchmark(
     functions_overlap,
     functions_nearest,
     bech_data_root,
-    report_file,
+    output_dir,
     baseline,
+    export_format,
 ):
     console = Console(record=True)
     for b in tqdm(benchmarks, desc="Running benchmarks"):
@@ -314,7 +316,13 @@ def run_benchmark(
                 )
             rich.print(table)
             console.log(table)
-            console.save_text(report_file, clear=False, styles=False)
+            df = table_to_df(table)
+            table_path = f"{output_dir}/{b["name"]}_{t}.{export_format}"
+            if export_format == "csv":
+                df.to_csv(table_path, index=False)
+            console.save_text(
+                f"{output_dir}/benchmark_results.md", clear=False, styles=False
+            )
         logger.info(
             emoji.emojize(f"Finished benchmark {b["name"]} :check_mark_button:")
         )
@@ -329,9 +337,13 @@ def run_benchmark(
 )
 def run(bench_config: str):
     logger.info(f"Using config file: {bench_config}")
-    datetime = time.strftime("%Y-%m-%d %H:%M:%S")
+    tag_datetime = time.strftime("%Y-%m-%d %H:%M:%S")
     logger.info(emoji.emojize("Starting polars_bio_benchmark :rocket:"))
-    REPORT_FILE = f"benchmark_results_{datetime}.md"
+    # create dir recursively
+    output_dir = f"results/{tag_datetime}"
+    os.makedirs(output_dir, exist_ok=True)
+
+    REPORT_FILE = f"{output_dir}/benchmark_results.md"
     if os.path.exists(REPORT_FILE):
         logger.info(
             emoji.emojize(
@@ -357,6 +369,7 @@ def run(bench_config: str):
     test_cases = config["test-cases"]
     benchmarks = benchmarks["benchmarks"]
     baseline = config["benchmark"]["baseline"].lower()
+    export_format = config["benchmark"]["export"]["format"].lower()
     functions_overlap = [
         overlap_polars_bio,
         overlap_bioframe,
@@ -383,8 +396,9 @@ def run(bench_config: str):
         functions_overlap,
         functions_nearest,
         BECH_DATA_ROOT,
-        REPORT_FILE,
+        output_dir,
         baseline,
+        export_format,
     )
     logger.info(emoji.emojize("Finished polars_bio_benchmark :check_mark_button:"))
 

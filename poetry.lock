@@ -2356,6 +2356,22 @@ pygments = ">=2.13.0,<3.0.0"
 jupyter = ["ipywidgets (>=7.5.1,<9)"]
 
 [[package]]
+name = "rich-tools"
+version = "0.5.1"
+description = "A python package with helpful tools when working with the rich python library."
+optional = false
+python-versions = "<4.0,>=3.9"
+groups = ["dev"]
+files = [
+    {file = "rich_tools-0.5.1-py3-none-any.whl", hash = "sha256:f13dbaab74681c07d965902b2432af85568219ed5bce42d670d113836bb87272"},
+    {file = "rich_tools-0.5.1.tar.gz", hash = "sha256:ca30da26b8fe0a5af2e5c0b5fba1c3a0bdf40b52de62fdf99d0662db62e063b5"},
+]
+
+[package.dependencies]
+pandas = ">=2.2.2,<3.0.0"
+rich = ">=13.8.0,<14.0.0"
+
+[[package]]
 name = "secretstorage"
 version = "3.3.3"
 description = "Python bindings to FreeDesktop.org Secret Service API"
@@ -2708,4 +2724,4 @@ test = ["pytest"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12,<3.14.0"
-content-hash = "9ac571f6433f2e8321615a418cdb48abbb44b642c8a2a6c6b9f680a31e738d9b"
+content-hash = "52f3d91630f03c4e21909d56f55e5776cd6ee2d9cc5d448cdd8d3870470ef701"
