@@ -44,6 +44,7 @@ def run_benchmark(
     functions_nearest,
     bech_data_root,
     report_file,
+    baseline,
 ):
     console = Console(record=True)
     for b in tqdm(benchmarks, desc="Running benchmarks"):
@@ -279,9 +280,17 @@ def run_benchmark(
                             "mean": np.mean(per_run_times),
                         }
                     )
-            fastest_mean = min(result["mean"] for result in results)
+            if baseline == "fastest":
+                baseline_mean = min(result["mean"] for result in results)
+            elif baseline == "slowest":
+                baseline_mean = max(result["mean"] for result in results)
+            else:
+                baseline_mean = [
+                    result["mean"] for result in results if result["name"] == baseline
+                ][0]
+
             for result in results:
-                result["speedup"] = fastest_mean / result["mean"]
+                result["speedup"] = baseline_mean / result["mean"]
 
                 # Create Rich table
             table = Table(
@@ -347,6 +356,7 @@ def run(bench_config: str):
     datasets = config["datasets"]
     test_cases = config["test-cases"]
     benchmarks = benchmarks["benchmarks"]
+    baseline = config["benchmark"]["baseline"].lower()
     functions_overlap = [
         overlap_polars_bio,
         overlap_bioframe,
@@ -374,6 +384,7 @@ def run(bench_config: str):
         functions_nearest,
         BECH_DATA_ROOT,
         REPORT_FILE,
+        baseline,
     )
     logger.info(emoji.emojize("Finished polars_bio_benchmark :check_mark_button:"))
 
