@@ -29,3 +29,6 @@ test-cases:
   - name: "7-8"
     df_path_1: "ex-anno/*.parquet"
     df_path_2: "ex-rna/*.parquet"
+
+benchmark:
+  baseline: bioframe # fastest, slowest or a tool name
