@@ -1,0 +1,39 @@
+benchmarks:
+  - name: overlap-single
+    operation: overlap
+    dataset: databio
+    tools:
+      - polars_bio
+      - pyranges0
+    parallel: false
+    input_dataframes: true
+    dataframes_io:
+      - "polars.DataFrame:polars.DataFrame"
+      - "pandas.DataFrame:pandas.DataFrame"
+    num_repeats: 3
+    num_executions: 1
+    test-cases:
+      - "1-2"
+      - "2-7"
+      - "1-0"
+      - "7-0"
+      - "7-3"
+  - name: nearest-single
+    operation: nearest
+    dataset: databio
+    tools:
+      - polars_bio
+      - pyranges0
+    parallel: false
+    input_dataframes: true
+    dataframes_io:
+      - "polars.DataFrame:polars.DataFrame"
+      - "pandas.DataFrame:pandas.DataFrame"
+    num_repeats: 3
+    num_executions: 1
+    test-cases:
+      - "1-2"
+      - "2-7"
+      - "1-0"
+      - "7-0"
+      - "7-3"

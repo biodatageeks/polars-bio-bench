@@ -19,15 +19,23 @@ pyenv install 3.12.8
 pyenv local 3.12.8
 poetry env use 3.12
 poetry update
-pip install poetry-plugin-shell
-poetry shell
 ```
 
 ## Run
-Please note that you need at least 64GB of RAM to run the benchmarks.
-
+All the benchmarking scenarios are defined in the `conf/benchmark_*.yaml` files. By default, the `conf/benchmark_small.yaml` file is used.
+If you would like to run the benchmarks with a different configuration file, you can specify it using the `--bench-config` option.
 ```bash
-# export dir where the benchmark data set will be downloaded
 export BENCH_DATA_ROOT=/tmp/polars-bio-bench/
-python src/run-benchmarks.py
+
+poetry run python src/run-benchmarks.py --help
+INFO:polars_bio:Creating BioSessionContext
+Usage: run-benchmarks.py [OPTIONS]
+
+Options:
+  --bench-config TEXT  Benchmark config file (default:
+                       conf/benchmark_small.yaml)
+  --help               Show this message and exit.
+
 ```
+### Hardware requirements
+Please note that you need at least 64GB of RAM to run the full benchmarks. For the default 16-32GB should be enough.
