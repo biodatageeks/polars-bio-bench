@@ -21,6 +21,9 @@ poetry env use 3.12
 poetry update
 ```
 
+### Hardware requirements
+Please note that you need at least 64GB of RAM to run the full benchmarks. For the default 16-32GB should be enough.
+
 ## Run
 All the benchmarking scenarios are defined in the `conf/benchmark_*.yaml` files. By default, the `conf/benchmark_small.yaml` file is used.
 If you would like to run the benchmarks with a different configuration file, you can specify it using the `--bench-config` option.
@@ -37,5 +40,9 @@ Options:
   --help               Show this message and exit.
 
 ```
-### Hardware requirements
-Please note that you need at least 64GB of RAM to run the full benchmarks. For the default 16-32GB should be enough.
+
+### Sample benchmark scenarios
+ * `conf/benchmark_small.yaml` - small dataset, small number of operations for nearest and overlap, native DataFusion input
+ * `conf/benchmark_dataframes.yaml` - as above but with DataFrames (Polars/Pandas) as input
+ * `conf/benchmark_large.yaml` - large dataset, large number of operations for nearest and overlap, native DataFusion input
+
