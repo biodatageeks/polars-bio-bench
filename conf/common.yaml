@@ -32,3 +32,5 @@ test-cases:
 
 benchmark:
   baseline: bioframe # fastest, slowest or a tool name
+  export:
+    format: csv
