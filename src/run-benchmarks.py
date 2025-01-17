@@ -4,6 +4,7 @@ import timeit
 import emoji
 import numpy as np
 import pandas as pd
+import polars_bio as pb
 import pybedtools
 import rich
 import yaml
@@ -37,7 +38,7 @@ REPORT_FILE = "benchmark_results.md"
 if os.path.exists(REPORT_FILE):
     logger.info(
         emoji.emojize(
-            f"Performance report file {REPORT_FILE} already exist...quiting :wastebasket:"
+            f"Performance report file {REPORT_FILE} already exist...quiting. Rename/remove it to re-run the benchmark :wastebasket:"
         )
     )
     exit(1)
@@ -83,180 +84,202 @@ for b in tqdm(benchmarks, desc="Running benchmarks"):
     operation = b["operation"]
     num_executions = b["num_executions"]
     num_repeats = b["num_repeats"]
+    parallel = b["parallel"]
+    threads = b["threads"] if parallel else [1]
     console.log(f"## Benchmark {b["name"]} for {operation} with dataset {dataset} \n")
     logger.info(emoji.emojize(f"Running benchmark {b["name"]} :racing_car: "))
     for t in tqdm(b["test-cases"]):
         results = []
-        logger.info(emoji.emojize(f"Loading test case {t}... :chequered_flag:  "))
-        test = [test for test in test_cases if test["name"] == t][0]
-        df_path_1 = f"{BECH_DATA_ROOT}/{dataset}/{test['df_path_1']}"
-        df_path_2 = f"{BECH_DATA_ROOT}/{dataset}/{test['df_path_2']}"
-        for tool in tqdm(tools):
+        for th in threads:
+            pb.ctx.set_option("datafusion.execution.target_partitions", str(th))
+            if th != 1:
+                pb.ctx.set_option("datafusion.optimizer.repartition_joins", "true")
+                pb.ctx.set_option("datafusion.optimizer.repartition_file_scans", "true")
+                pb.ctx.set_option("datafusion.execution.coalesce_batches", "false")
+            else:
+                pb.ctx.set_option("datafusion.optimizer.repartition_joins", "false")
+                pb.ctx.set_option(
+                    "datafusion.optimizer.repartition_file_scans", "false"
+                )
+                pb.ctx.set_option("datafusion.execution.coalesce_batches", "false")
+
             logger.info(
                 emoji.emojize(
-                    f"Running benchmark {b["name"]}, test-case {t} for {tool} :hammer_and_wrench:"
+                    f"Running benchmark {b["name"]} with {th} threads :gear: "
                 )
             )
-            times = None
-            func = None
-            table = None
-            if operation == "overlap":
-                table = [
-                    func
-                    for func in functions_overlap
-                    if func.__name__ == f"{operation}_{tool}"
-                ]
-            elif operation == "nearest":
-                table = [
-                    func
-                    for func in functions_nearest
-                    if func.__name__ == f"{operation}_{tool}"
-                ]
-            else:
-                logger.error(
-                    emoji.emojize(f"Operation {operation} not found :no_entry:")
-                )
-                exit(1)
-            if len(table) == 0:
-                logger.warning(
+            logger.info(emoji.emojize(f"Loading test case {t}... :chequered_flag:  "))
+            test = [test for test in test_cases if test["name"] == t][0]
+            df_path_1 = f"{BECH_DATA_ROOT}/{dataset}/{test['df_path_1']}"
+            df_path_2 = f"{BECH_DATA_ROOT}/{dataset}/{test['df_path_2']}"
+            for tool in tqdm(tools):
+                logger.info(
                     emoji.emojize(
-                        f"Operation {operation} not found for tool {tool} :no_entry:"
+                        f"Running benchmark {b["name"]}, test-case {t} for {tool} :hammer_and_wrench:"
                     )
                 )
-                console.log(
-                    f":bulb: Tool {tool} does not support operation {operation}"
-                )
-                continue
-            func = table[0]
-            if tool == "polars_bio":
-                times = timeit.repeat(
-                    lambda: func(df_path_1, df_path_2),
-                    repeat=num_repeats,
-                    number=num_executions,
-                )
+                times = None
+                func = None
+                table = None
+                if operation == "overlap":
+                    table = [
+                        func
+                        for func in functions_overlap
+                        if func.__name__ == f"{operation}_{tool}"
+                    ]
+                elif operation == "nearest":
+                    table = [
+                        func
+                        for func in functions_nearest
+                        if func.__name__ == f"{operation}_{tool}"
+                    ]
+                else:
+                    logger.error(
+                        emoji.emojize(f"Operation {operation} not found :no_entry:")
+                    )
+                    exit(1)
+                if len(table) == 0:
+                    logger.warning(
+                        emoji.emojize(
+                            f"Operation {operation} not found for tool {tool} :no_entry:"
+                        )
+                    )
+                    console.log(
+                        f":bulb: Tool {tool} does not support operation {operation}"
+                    )
+                    continue
+                func = table[0]
+                if tool == "polars_bio":
+                    times = timeit.repeat(
+                        lambda: func(df_path_1, df_path_2),
+                        repeat=num_repeats,
+                        number=num_executions,
+                    )
 
-            elif tool == "bioframe":
-                df_1 = pd.read_parquet(
-                    df_path_1.replace("*.parquet", ""), engine="pyarrow"
-                )
-                df_2 = pd.read_parquet(
-                    df_path_2.replace("*.parquet", ""), engine="pyarrow"
-                )
-                times = timeit.repeat(
-                    lambda: func(df_1, df_2),
-                    repeat=num_repeats,
-                    number=num_executions,
-                )
-            elif tool == "pyranges0":
-                df_1 = pd.read_parquet(
-                    df_path_1.replace("*.parquet", ""), engine="pyarrow"
-                )
-                df_2 = pd.read_parquet(
-                    df_path_2.replace("*.parquet", ""), engine="pyarrow"
-                )
-                df_1_pr0 = df2pr0(df_1)
-                df_2_pr0 = df2pr0(df_2)
-                times = timeit.repeat(
-                    lambda: func(df_1_pr0, df_2_pr0),
-                    repeat=num_repeats,
-                    number=num_executions,
-                )
-            elif tool == "pyranges1":
-                df_1 = pd.read_parquet(
-                    df_path_1.replace("*.parquet", ""), engine="pyarrow"
-                )
-                df_2 = pd.read_parquet(
-                    df_path_2.replace("*.parquet", ""), engine="pyarrow"
-                )
-                df_1_pr1 = df2pr1(df_1)
-                df_2_pr1 = df2pr1(df_2)
-                times = timeit.repeat(
-                    lambda: func(df_1_pr1, df_2_pr1),
-                    repeat=num_repeats,
-                    number=num_executions,
-                )
-            elif tool == "pybedtools":
-                df_1 = pd.read_parquet(
-                    df_path_1.replace("*.parquet", ""), engine="pyarrow"
-                )
-                df_2 = pd.read_parquet(
-                    df_path_2.replace("*.parquet", ""), engine="pyarrow"
-                )
-                df_1_bed = pybedtools.BedTool.from_dataframe(df_1)
-                df_2_bed = pybedtools.BedTool.from_dataframe(df_2)
-                times = timeit.repeat(
-                    lambda: func(df_1_bed, df_2_bed),
-                    repeat=num_repeats,
-                    number=num_executions,
-                )
-            elif tool == "pygenomics":
-                df_1 = pd.read_parquet(
-                    df_path_1.replace("*.parquet", ""), engine="pyarrow"
-                )
-                df_2 = pd.read_parquet(
-                    df_path_2.replace("*.parquet", ""), engine="pyarrow"
-                )
-                df_1_pg = GenomicBase(
-                    [(r.contig, r.pos_start, r.pos_end) for r in df_1.itertuples()]
-                )
-                df_2_array = df_2.values.tolist()
-                times = timeit.repeat(
-                    lambda: func(df_1_pg, df_2_array),
-                    repeat=num_repeats,
-                    number=num_executions,
-                )
-            elif tool == "genomicranges":
-                df_1 = pd.read_parquet(
-                    df_path_1.replace("*.parquet", ""), engine="pyarrow"
-                )
-                df_2 = pd.read_parquet(
-                    df_path_2.replace("*.parquet", ""), engine="pyarrow"
-                )
-                df_1_gr = GenomicRanges.from_pandas(
-                    df_1.rename(
-                        columns={
-                            "contig": "seqnames",
-                            "pos_start": "starts",
-                            "pos_end": "ends",
-                        }
+                elif tool == "bioframe" and th == 1:
+                    df_1 = pd.read_parquet(
+                        df_path_1.replace("*.parquet", ""), engine="pyarrow"
                     )
-                )
-                df_2_gr = GenomicRanges.from_pandas(
-                    df_2.rename(
-                        columns={
-                            "contig": "seqnames",
-                            "pos_start": "starts",
-                            "pos_end": "ends",
-                        }
+                    df_2 = pd.read_parquet(
+                        df_path_2.replace("*.parquet", ""), engine="pyarrow"
                     )
+                    times = timeit.repeat(
+                        lambda: func(df_1, df_2),
+                        repeat=num_repeats,
+                        number=num_executions,
+                    )
+                elif tool == "pyranges0" and th == 1:
+                    df_1 = pd.read_parquet(
+                        df_path_1.replace("*.parquet", ""), engine="pyarrow"
+                    )
+                    df_2 = pd.read_parquet(
+                        df_path_2.replace("*.parquet", ""), engine="pyarrow"
+                    )
+                    df_1_pr0 = df2pr0(df_1)
+                    df_2_pr0 = df2pr0(df_2)
+                    times = timeit.repeat(
+                        lambda: func(df_1_pr0, df_2_pr0),
+                        repeat=num_repeats,
+                        number=num_executions,
+                    )
+                elif tool == "pyranges1" and th == 1:
+                    df_1 = pd.read_parquet(
+                        df_path_1.replace("*.parquet", ""), engine="pyarrow"
+                    )
+                    df_2 = pd.read_parquet(
+                        df_path_2.replace("*.parquet", ""), engine="pyarrow"
+                    )
+                    df_1_pr1 = df2pr1(df_1)
+                    df_2_pr1 = df2pr1(df_2)
+                    times = timeit.repeat(
+                        lambda: func(df_1_pr1, df_2_pr1),
+                        repeat=num_repeats,
+                        number=num_executions,
+                    )
+                elif tool == "pybedtools" and th == 1:
+                    df_1 = pd.read_parquet(
+                        df_path_1.replace("*.parquet", ""), engine="pyarrow"
+                    )
+                    df_2 = pd.read_parquet(
+                        df_path_2.replace("*.parquet", ""), engine="pyarrow"
+                    )
+                    df_1_bed = pybedtools.BedTool.from_dataframe(df_1)
+                    df_2_bed = pybedtools.BedTool.from_dataframe(df_2)
+                    times = timeit.repeat(
+                        lambda: func(df_1_bed, df_2_bed),
+                        repeat=num_repeats,
+                        number=num_executions,
+                    )
+                elif tool == "pygenomics" and th == 1:
+                    df_1 = pd.read_parquet(
+                        df_path_1.replace("*.parquet", ""), engine="pyarrow"
+                    )
+                    df_2 = pd.read_parquet(
+                        df_path_2.replace("*.parquet", ""), engine="pyarrow"
+                    )
+                    df_1_pg = GenomicBase(
+                        [(r.contig, r.pos_start, r.pos_end) for r in df_1.itertuples()]
+                    )
+                    df_2_array = df_2.values.tolist()
+                    times = timeit.repeat(
+                        lambda: func(df_1_pg, df_2_array),
+                        repeat=num_repeats,
+                        number=num_executions,
+                    )
+                elif tool == "genomicranges" and th == 1:
+                    df_1 = pd.read_parquet(
+                        df_path_1.replace("*.parquet", ""), engine="pyarrow"
+                    )
+                    df_2 = pd.read_parquet(
+                        df_path_2.replace("*.parquet", ""), engine="pyarrow"
+                    )
+                    df_1_gr = GenomicRanges.from_pandas(
+                        df_1.rename(
+                            columns={
+                                "contig": "seqnames",
+                                "pos_start": "starts",
+                                "pos_end": "ends",
+                            }
+                        )
+                    )
+                    df_2_gr = GenomicRanges.from_pandas(
+                        df_2.rename(
+                            columns={
+                                "contig": "seqnames",
+                                "pos_start": "starts",
+                                "pos_end": "ends",
+                            }
+                        )
+                    )
+                    times = timeit.repeat(
+                        lambda: func(df_1_gr, df_2_gr),
+                        repeat=num_repeats,
+                        number=num_executions,
+                    )
+                elif th == 1:
+                    logger.error(emoji.emojize(f"Tool {tool} not found :no_entry:"))
+                    exit(1)
+                else:
+                    continue
+                logger.info(
+                    emoji.emojize(f"Finished benchmark for {tool} :check_mark_button:")
                 )
-                times = timeit.repeat(
-                    lambda: func(df_1_gr, df_2_gr),
-                    repeat=num_repeats,
-                    number=num_executions,
+                per_run_times = [
+                    time / num_executions for time in times
+                ]  # Convert to per-run times
+                results.append(
+                    {
+                        "name": tool if th == 1 else f"{tool}-{th}",
+                        "min": min(per_run_times),
+                        "max": max(per_run_times),
+                        "mean": np.mean(per_run_times),
+                    }
                 )
-            else:
-                logger.error(emoji.emojize(f"Tool {tool} not found :no_entry:"))
-                exit(1)
-            logger.info(
-                emoji.emojize(f"Finished benchmark for {tool} :check_mark_button:")
-            )
-            per_run_times = [
-                time / num_executions for time in times
-            ]  # Convert to per-run times
-            results.append(
-                {
-                    "name": tool,
-                    "min": min(per_run_times),
-                    "max": max(per_run_times),
-                    "mean": np.mean(per_run_times),
-                }
-            )
         fastest_mean = min(result["mean"] for result in results)
         for result in results:
             result["speedup"] = fastest_mean / result["mean"]
 
-        # Create Rich table
+            # Create Rich table
         table = Table(
             title=f"Benchmark Results, operation: {operation} dataset: {dataset}, test: {t}",
             box=MARKDOWN,
