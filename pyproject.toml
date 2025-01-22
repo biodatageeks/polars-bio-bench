@@ -29,6 +29,7 @@ rich = "^13.9.4"
 rich-tools = "^0.5.1"
 bioframe = "^0.7.2"
 click = "^8.1.8"
+ray = "^2.40.0"
 pyranges = {git = "https://github.com/pyranges/pyranges.git", rev = "4f0a153336e7153cdfea15b141ce4ea35a24e233" }
 GenomicRanges = "^0.5.0"
 pyranges1 = { git = "https://github.com/mwiewior/pyranges1.git", rev = "949d7c15c1c2e217f4404415f79b386f326b6f8d"}
