@@ -33,8 +33,8 @@ def nearest_polars_bio(df_path_1, df_path_2, output_type):
         )
 
 
-def nearest_pyranges0(df_1_pr0, df_2_pr0):
-    len(df_1_pr0.nearest(df_2_pr0))
+def nearest_pyranges0(df_1_pr0, df_2_pr0, n=1):
+    len(df_1_pr0.nearest(df_2_pr0, nb_cpu=n))
 
 
 def nearest_pyranges1(df_1_pr1, df_2_pr1):
@@ -68,8 +68,8 @@ def overlap_polars_bio(df_path_1, df_path_2, output_type):
         )
 
 
-def overlap_pyranges0(df_1_pr0, df_2_pr0):
-    len(df_1_pr0.join(df_2_pr0))
+def overlap_pyranges0(df_1_pr0, df_2_pr0, n=1):
+    len(df_1_pr0.join(df_2_pr0, nb_cpu=n))
 
 
 def overlap_pyranges1(df_1_pr1, df_2_pr1):

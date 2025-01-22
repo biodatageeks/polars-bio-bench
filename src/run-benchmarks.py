@@ -170,7 +170,7 @@ def run_benchmark(
                             repeat=num_repeats,
                             number=num_executions,
                         )
-                    elif tool == "pyranges0" and th == 1:
+                    elif tool == "pyranges0":
                         df_1 = pd.read_parquet(
                             df_path_1.replace("*.parquet", ""), engine="pyarrow"
                         )
@@ -180,7 +180,7 @@ def run_benchmark(
                         df_1_pr0 = df2pr0(df_1)
                         df_2_pr0 = df2pr0(df_2)
                         times = timeit.repeat(
-                            lambda: func(df_1_pr0, df_2_pr0),
+                            lambda: func(df_1_pr0, df_2_pr0, th),
                             repeat=num_repeats,
                             number=num_executions,
                         )
