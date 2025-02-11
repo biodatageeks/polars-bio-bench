@@ -6,7 +6,7 @@ authors = [
     {name = "Marek Wieiwórka",email = "marek.wiewiorka@gmail.com"}
 ]
 readme = "README.md"
-requires-python = ">=3.12,<3.14.0"
+requires-python = ">=3.12,<3.13.0"
 dependencies = [
 ]
 
@@ -23,7 +23,7 @@ gdown = "^5.2.0"
 pyyaml = "^6.0.2"
 jinja2 = "^3.1.5"
 poetry-plugin-shell = "^1.0.0"
-polars-bio = "^0.5.4"
+polars-bio = { git ="https://github.com/biodatageeks/polars-bio.git", rev="4d22edc699ed6095cc1878741b04ac8c3c6b9a0b"}
 setuptools = "^75.8.0"
 rich = "^13.9.4"
 rich-tools = "^0.5.1"
