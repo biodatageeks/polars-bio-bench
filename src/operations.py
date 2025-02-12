@@ -150,3 +150,22 @@ def count_overlaps_pybedtools(df_1_bed, df_2_bed):
 
 def count_overlaps_genomicranges(df_1, df_2):
     len(df_1.count_overlaps(df_2, ignore_strand=True, query_type="any"))
+
+
+def merge_polars_bio(df_path_1, df_path_2, output_type):
+    if output_type == "polars.LazyFrame":
+        len(pb.merge(df_path_1, cols=columns, output_type=output_type).collect())
+    else:
+        len(pb.merge(df_path_1, cols=columns, output_type=output_type))
+
+
+def merge_bioframe(df_1, df_2):
+    len(bf.merge(df_1, cols=columns, min_dist=None))
+
+
+def merge_pyranges0(df_1_pr0, df_2_pr0, n=1):
+    len(df_1_pr0.merge())
+
+
+def merge_pyranges1(df_1_pr1, df_2_pr1):
+    len(df_1_pr1.merge_overlaps())

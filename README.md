@@ -46,4 +46,6 @@ Options:
  * `conf/benchmark_dataframes.yaml` - as above but with DataFrames (Polars/Pandas) as input
  * `conf/benchmark_large.yaml` - large dataset, large number of operations for nearest and overlap, native DataFusion input
  * `conf/benchmark_parallel.yaml` - comparison parallel operations for pyranges0 and polars_bio with bioframe as a baseline
+ * `conf/benchmark_count_overlaps.yaml` - comparison of count overlaps operation for pyranges{0,1} and polars_bio with bioframe as a baseline
+ * `conf/benchmark_merge.yaml` - comparison of merge operation for pyranges{0,1} and polars_bio with bioframe as a baseline
 

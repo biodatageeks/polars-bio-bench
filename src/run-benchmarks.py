@@ -28,6 +28,10 @@ from operations import (
     count_overlaps_pybedtools,
     count_overlaps_pyranges0,
     count_overlaps_pyranges1,
+    merge_bioframe,
+    merge_polars_bio,
+    merge_pyranges0,
+    merge_pyranges1,
     nearest_bioframe,
     nearest_genomicranges,
     nearest_polars_bio,
@@ -51,6 +55,7 @@ def run_benchmark(
     functions_overlap,
     functions_nearest,
     functions_count_overlaps,
+    functions_merge,
     bech_data_root,
     output_dir,
     baseline,
@@ -100,8 +105,16 @@ def run_benchmark(
                     emoji.emojize(f"Loading test case {t}... :chequered_flag:  ")
                 )
                 test = [test for test in test_cases if test["name"] == t][0]
-                df_path_1 = f"{bech_data_root}/{dataset}/{test['df_path_1']}"
-                df_path_2 = f"{bech_data_root}/{dataset}/{test['df_path_2']}"
+                df_path_1 = (
+                    f"{bech_data_root}/{dataset}/{test['df_path_1']}"
+                    if "df_path_1" in test
+                    else None
+                )
+                df_path_2 = (
+                    f"{bech_data_root}/{dataset}/{test['df_path_2']}"
+                    if "df_path_2" in test
+                    else None
+                )
                 for tool in tqdm(tools):
                     logger.info(
                         emoji.emojize(
@@ -129,7 +142,12 @@ def run_benchmark(
                             for func in functions_count_overlaps
                             if func.__name__.startswith(f"{operation}_{tool}")
                         ]
-
+                    elif operation == "merge":
+                        table = [
+                            func
+                            for func in functions_merge
+                            if func.__name__.startswith(f"{operation}_{tool}")
+                        ]
                     else:
                         logger.error(
                             emoji.emojize(f"Operation {operation} not found :no_entry:")
@@ -176,8 +194,12 @@ def run_benchmark(
                             df_1 = pd.read_parquet(
                                 df_path_1.replace("*.parquet", ""), engine="pyarrow"
                             )
-                            df_2 = pd.read_parquet(
-                                df_path_2.replace("*.parquet", ""), engine="pyarrow"
+                            df_2 = (
+                                pd.read_parquet(
+                                    df_path_2.replace("*.parquet", ""), engine="pyarrow"
+                                )
+                                if df_path_2
+                                else None
                             )
                             times = timeit.repeat(
                                 lambda: func(df_1, df_2),
@@ -188,11 +210,15 @@ def run_benchmark(
                             df_1 = pd.read_parquet(
                                 df_path_1.replace("*.parquet", ""), engine="pyarrow"
                             )
-                            df_2 = pd.read_parquet(
-                                df_path_2.replace("*.parquet", ""), engine="pyarrow"
+                            df_2 = (
+                                pd.read_parquet(
+                                    df_path_2.replace("*.parquet", ""), engine="pyarrow"
+                                )
+                                if df_path_2
+                                else None
                             )
                             df_1_pr0 = df2pr0(df_1)
-                            df_2_pr0 = df2pr0(df_2)
+                            df_2_pr0 = df2pr0(df_2) if df_2 is not None else None
                             times = timeit.repeat(
                                 lambda: func(df_1_pr0, df_2_pr0, th),
                                 repeat=num_repeats,
@@ -202,11 +228,15 @@ def run_benchmark(
                             df_1 = pd.read_parquet(
                                 df_path_1.replace("*.parquet", ""), engine="pyarrow"
                             )
-                            df_2 = pd.read_parquet(
-                                df_path_2.replace("*.parquet", ""), engine="pyarrow"
+                            df_2 = (
+                                pd.read_parquet(
+                                    df_path_2.replace("*.parquet", ""), engine="pyarrow"
+                                )
+                                if df_path_2
+                                else None
                             )
                             df_1_pr1 = df2pr1(df_1)
-                            df_2_pr1 = df2pr1(df_2)
+                            df_2_pr1 = df2pr1(df_2) if df_2 is not None else None
                             times = timeit.repeat(
                                 lambda: func(df_1_pr1, df_2_pr1),
                                 repeat=num_repeats,
@@ -216,11 +246,19 @@ def run_benchmark(
                             df_1 = pd.read_parquet(
                                 df_path_1.replace("*.parquet", ""), engine="pyarrow"
                             ).sort_values(by=["contig", "pos_start", "pos_end"])
-                            df_2 = pd.read_parquet(
-                                df_path_2.replace("*.parquet", ""), engine="pyarrow"
-                            ).sort_values(by=["contig", "pos_start", "pos_end"])
+                            df_2 = (
+                                pd.read_parquet(
+                                    df_path_2.replace("*.parquet", ""), engine="pyarrow"
+                                ).sort_values(by=["contig", "pos_start", "pos_end"])
+                                if df_path_2
+                                else None
+                            )
                             df_1_bed = pybedtools.BedTool.from_dataframe(df_1)
-                            df_2_bed = pybedtools.BedTool.from_dataframe(df_2)
+                            df_2_bed = (
+                                pybedtools.BedTool.from_dataframe(df_2)
+                                if df_2 is not None
+                                else None
+                            )
                             times = timeit.repeat(
                                 lambda: func(df_1_bed, df_2_bed),
                                 repeat=num_repeats,
@@ -230,8 +268,12 @@ def run_benchmark(
                             df_1 = pd.read_parquet(
                                 df_path_1.replace("*.parquet", ""), engine="pyarrow"
                             )
-                            df_2 = pd.read_parquet(
-                                df_path_2.replace("*.parquet", ""), engine="pyarrow"
+                            df_2 = (
+                                pd.read_parquet(
+                                    df_path_2.replace("*.parquet", ""), engine="pyarrow"
+                                )
+                                if df_path_2
+                                else None
                             )
                             df_1_pg = GenomicBase(
                                 [
@@ -239,7 +281,9 @@ def run_benchmark(
                                     for r in df_1.itertuples()
                                 ]
                             )
-                            df_2_array = df_2.values.tolist()
+                            df_2_array = (
+                                df_2.values.tolist() if df_2 is not None else None
+                            )
                             times = timeit.repeat(
                                 lambda: func(df_1_pg, df_2_array),
                                 repeat=num_repeats,
@@ -249,8 +293,12 @@ def run_benchmark(
                             df_1 = pd.read_parquet(
                                 df_path_1.replace("*.parquet", ""), engine="pyarrow"
                             )
-                            df_2 = pd.read_parquet(
-                                df_path_2.replace("*.parquet", ""), engine="pyarrow"
+                            df_2 = (
+                                pd.read_parquet(
+                                    df_path_2.replace("*.parquet", ""), engine="pyarrow"
+                                )
+                                if df_path_2
+                                else None
                             )
                             df_1_gr = GenomicRanges.from_pandas(
                                 df_1.rename(
@@ -261,14 +309,18 @@ def run_benchmark(
                                     }
                                 )
                             )
-                            df_2_gr = GenomicRanges.from_pandas(
-                                df_2.rename(
-                                    columns={
-                                        "contig": "seqnames",
-                                        "pos_start": "starts",
-                                        "pos_end": "ends",
-                                    }
+                            df_2_gr = (
+                                GenomicRanges.from_pandas(
+                                    df_2.rename(
+                                        columns={
+                                            "contig": "seqnames",
+                                            "pos_start": "starts",
+                                            "pos_end": "ends",
+                                        }
+                                    )
                                 )
+                                if df_2 is not None
+                                else None
                             )
                             times = timeit.repeat(
                                 lambda: func(df_1_gr, df_2_gr),
@@ -416,6 +468,14 @@ def run(bench_config: str):
         count_overlaps_pybedtools,
         count_overlaps_genomicranges,
     ]
+
+    functions_merge = [
+        merge_polars_bio,
+        merge_bioframe,
+        merge_pyranges0,
+        merge_pyranges1,
+    ]
+
     prepare_datatests(datasets, BECH_DATA_ROOT)
 
     run_benchmark(
@@ -424,6 +484,7 @@ def run(bench_config: str):
         functions_overlap,
         functions_nearest,
         functions_count_overlaps,
+        functions_merge,
         BECH_DATA_ROOT,
         output_dir,
         baseline,
