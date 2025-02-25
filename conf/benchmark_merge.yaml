@@ -1,0 +1,23 @@
+benchmarks:
+  - name: merge-single
+    operation: merge
+    dataset: databio
+    tools:
+      - polars_bio
+      - bioframe
+      - pyranges0
+      - pyranges1
+#      - pybedtools
+#      - genomicranges
+    input_dataframes: false
+    num_repeats: 3
+    num_executions: 1
+    parallel: false
+
+    test-cases:
+      - "1"
+      - "2"
+      - "7"
+      - "0"
+      - "8"
+      - "4"

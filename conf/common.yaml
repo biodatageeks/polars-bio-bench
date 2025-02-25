@@ -29,6 +29,19 @@ test-cases:
   - name: "7-8"
     df_path_1: "ex-anno/*.parquet"
     df_path_2: "ex-rna/*.parquet"
+  ## unary operations
+  - name: "1"
+    df_path_1: "fBrain-DS14718/*.parquet"
+  - name: "2"
+    df_path_1: "exons/*.parquet"
+  - name: "7"
+    df_path_1: "ex-anno/*.parquet"
+  - name: "0"
+    df_path_1: "chainRn4/*.parquet"
+  - name: "8"
+    df_path_1: "ex-rna/*.parquet"
+  - name: "4"
+    df_path_1: "chainVicPac2/*.parquet"
 
 benchmark:
   baseline: bioframe # fastest, slowest or a tool name
