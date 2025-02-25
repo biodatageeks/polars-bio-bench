@@ -23,7 +23,8 @@ gdown = "^5.2.0"
 pyyaml = "^6.0.2"
 jinja2 = "^3.1.5"
 poetry-plugin-shell = "^1.0.0"
-polars-bio = { git ="https://github.com/biodatageeks/polars-bio.git", rev="2ae3f74905a7adffe28a301590f36c22f254da22"}
+#polars-bio = { git ="https://github.com/biodatageeks/polars-bio.git", rev="323c2dc9e4ba87ed5e76182373179fc13129a073"}
+polars-bio = "^0.6.1"
 setuptools = "^75.8.0"
 rich = "^13.9.4"
 rich-tools = "^0.5.1"

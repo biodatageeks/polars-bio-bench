@@ -82,19 +82,17 @@ def run_benchmark(
         for t in tqdm(b["test-cases"]):
             results = []
             for th in threads:
-                pb.ctx.set_option("datafusion.execution.target_partitions", str(th))
+                pb.set_option("datafusion.execution.target_partitions", str(th))
                 if th != 1:
-                    pb.ctx.set_option("datafusion.optimizer.repartition_joins", "true")
-                    pb.ctx.set_option(
-                        "datafusion.optimizer.repartition_file_scans", "true"
-                    )
-                    pb.ctx.set_option("datafusion.execution.coalesce_batches", "false")
+                    pb.set_option("datafusion.optimizer.repartition_joins", "true")
+                    pb.set_option("datafusion.optimizer.repartition_file_scans", "true")
+                    pb.set_option("datafusion.execution.coalesce_batches", "false")
                 else:
-                    pb.ctx.set_option("datafusion.optimizer.repartition_joins", "false")
-                    pb.ctx.set_option(
+                    pb.set_option("datafusion.optimizer.repartition_joins", "false")
+                    pb.set_option(
                         "datafusion.optimizer.repartition_file_scans", "false"
                     )
-                    pb.ctx.set_option("datafusion.execution.coalesce_batches", "false")
+                    pb.set_option("datafusion.execution.coalesce_batches", "false")
 
                 logger.info(
                     emoji.emojize(
