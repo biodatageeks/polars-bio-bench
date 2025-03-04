@@ -94,12 +94,18 @@ def overlap_genomicranges(df_1, df_2):
     len(df_1.find_overlaps(df_2, ignore_strand=True, query_type="any"))
 
 
-def count_overlaps_polars_bio(df_path_1, df_path_2, output_type):
+def count_overlaps_polars_bio_mz(df_path_1, df_path_2, output_type):
     if output_type == "polars.LazyFrame":
-        len(
-            pb.count_overlaps(
-                df_path_1, df_path_2, cols1=columns, cols2=columns
-            ).collect()
+        print(
+            len(
+                pb.count_overlaps(
+                    df_path_1,
+                    df_path_2,
+                    cols1=columns,
+                    cols2=columns,
+                    naive_query=False,
+                ).collect()
+            )
         )
     else:
         len(
@@ -113,12 +119,14 @@ def count_overlaps_polars_bio(df_path_1, df_path_2, output_type):
         )
 
 
-def count_overlaps_polars_bio_naive(df_path_1, df_path_2, output_type):
+def count_overlaps_polars_bio(df_path_1, df_path_2, output_type):
     if output_type == "polars.LazyFrame":
-        len(
-            pb.count_overlaps(
-                df_path_1, df_path_2, cols1=columns, cols2=columns, naive_query=True
-            ).collect()
+        print(
+            len(
+                pb.count_overlaps(
+                    df_path_1, df_path_2, cols1=columns, cols2=columns, naive_query=True
+                ).collect()
+            )
         )
     else:
         len(
@@ -133,23 +141,23 @@ def count_overlaps_polars_bio_naive(df_path_1, df_path_2, output_type):
 
 
 def count_overlaps_bioframe(df_1, df_2):
-    len(bf.count_overlaps(df_1, df_2, cols1=columns, cols2=columns))
+    print(len(bf.count_overlaps(df_1, df_2, cols1=columns, cols2=columns)))
 
 
 def count_overlaps_pyranges0(df_1_pr0, df_2_pr0, n=1):
-    len(df_1_pr0.count_overlaps(df_2_pr0))
+    print(len(df_1_pr0.count_overlaps(df_2_pr0)))
 
 
 def count_overlaps_pyranges1(df_1_pr1, df_2_pr1):
-    len(df_1_pr1.count_overlaps(df_2_pr1))
+    print(len(df_1_pr1.count_overlaps(df_2_pr1)))
 
 
 def count_overlaps_pybedtools(df_1_bed, df_2_bed):
-    len(df_1_bed.intersect(df_2_bed, wa=True, c=True))
+    print(len(df_1_bed.intersect(df_2_bed, wa=True, c=True)))
 
 
 def count_overlaps_genomicranges(df_1, df_2):
-    len(df_1.count_overlaps(df_2, ignore_strand=True, query_type="any"))
+    print(len(df_2.count_overlaps(df_1, ignore_strand=True, query_type="any")))
 
 
 def merge_polars_bio(df_path_1, df_path_2, output_type):
