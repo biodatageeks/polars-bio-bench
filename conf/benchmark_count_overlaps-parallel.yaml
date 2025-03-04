@@ -1,5 +1,5 @@
 benchmarks:
-  - name: count-overlaps
+  - name: count-overlaps-parallel
     operation: count_overlaps
     dataset: databio
     tools:
@@ -12,7 +12,11 @@ benchmarks:
     input_dataframes: false
     num_repeats: 3
     num_executions: 1
-    parallel: false
+    parallel: true
+    threads:
+      - 1
+      - 2
+      - 4
     test-cases:
       - "1-2"
       - "2-7"

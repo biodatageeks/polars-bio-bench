@@ -24,7 +24,6 @@ from operations import (
     count_overlaps_bioframe,
     count_overlaps_genomicranges,
     count_overlaps_polars_bio,
-    count_overlaps_polars_bio_naive,
     count_overlaps_pybedtools,
     count_overlaps_pyranges0,
     count_overlaps_pyranges1,
@@ -458,8 +457,8 @@ def run(bench_config: str):
         nearest_genomicranges,
     ]
     functions_count_overlaps = [
+        # count_overlaps_polars_bio_mz,
         count_overlaps_polars_bio,
-        count_overlaps_polars_bio_naive,
         count_overlaps_bioframe,
         count_overlaps_pyranges0,
         count_overlaps_pyranges1,
