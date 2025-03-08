@@ -7,8 +7,6 @@ benchmarks:
       - bioframe
       - pyranges0
       - pyranges1
-#      - pybedtools
-#      - genomicranges
     input_dataframes: false
     num_repeats: 3
     num_executions: 1

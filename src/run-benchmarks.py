@@ -27,6 +27,10 @@ from operations import (
     count_overlaps_pybedtools,
     count_overlaps_pyranges0,
     count_overlaps_pyranges1,
+    coverage_bioframe,
+    coverage_polars_bio,
+    coverage_pyranges0,
+    coverage_pyranges1,
     merge_bioframe,
     merge_polars_bio,
     merge_pyranges0,
@@ -55,6 +59,7 @@ def run_benchmark(
     functions_nearest,
     functions_count_overlaps,
     functions_merge,
+    functions_coverage,
     bech_data_root,
     output_dir,
     baseline,
@@ -143,6 +148,12 @@ def run_benchmark(
                         table = [
                             func
                             for func in functions_merge
+                            if func.__name__.startswith(f"{operation}_{tool}")
+                        ]
+                    elif operation == "coverage":
+                        table = [
+                            func
+                            for func in functions_coverage
                             if func.__name__.startswith(f"{operation}_{tool}")
                         ]
                     else:
@@ -473,6 +484,13 @@ def run(bench_config: str):
         merge_pyranges1,
     ]
 
+    functions_coverage = [
+        coverage_polars_bio,
+        coverage_bioframe,
+        coverage_pyranges0,
+        coverage_pyranges1,
+    ]
+
     prepare_datatests(datasets, BECH_DATA_ROOT)
 
     run_benchmark(
@@ -482,6 +500,7 @@ def run(bench_config: str):
         functions_nearest,
         functions_count_overlaps,
         functions_merge,
+        functions_coverage,
         BECH_DATA_ROOT,
         output_dir,
         baseline,

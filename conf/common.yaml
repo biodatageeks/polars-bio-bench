@@ -42,6 +42,9 @@ test-cases:
     df_path_1: "ex-rna/*.parquet"
   - name: "4"
     df_path_1: "chainVicPac2/*.parquet"
+  - name: "dgvSupport"
+    df_path_1: "dgvSupporting.parquet"
+    df_path_2: "dgvSupporting.parquet"
 
 benchmark:
   baseline: bioframe # fastest, slowest or a tool name

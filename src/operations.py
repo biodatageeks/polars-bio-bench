@@ -177,3 +177,30 @@ def merge_pyranges0(df_1_pr0, df_2_pr0, n=1):
 
 def merge_pyranges1(df_1_pr1, df_2_pr1):
     len(df_1_pr1.merge_overlaps())
+
+
+def coverage_polars_bio(df_path_1, df_path_2, output_type):
+    if output_type == "polars.LazyFrame":
+        len(pb.coverage(df_path_1, df_path_2, cols1=columns, cols2=columns).collect())
+    else:
+        len(
+            pb.coverage(
+                df_path_1,
+                df_path_2,
+                cols1=columns,
+                cols2=columns,
+                output_type=output_type,
+            )
+        )
+
+
+def coverage_bioframe(df_1, df_2):
+    len(bf.coverage(df_1, df_2, cols1=columns, cols2=columns))
+
+
+def coverage_pyranges0(df_1_pr0, df_2_pr0, n=1):
+    len(df_1_pr0.coverage(df_2_pr0))
+
+
+def coverage_pyranges1(df_1_pr1, df_2_pr1):
+    len(df_1_pr1.count_overlaps(df_2_pr1, calculate_coverage=True))
