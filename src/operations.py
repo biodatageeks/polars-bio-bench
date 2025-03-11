@@ -204,3 +204,11 @@ def coverage_pyranges0(df_1_pr0, df_2_pr0, n=1):
 
 def coverage_pyranges1(df_1_pr1, df_2_pr1):
     len(df_1_pr1.count_overlaps(df_2_pr1, calculate_coverage=True))
+
+
+def coverage_pybedtools(df_1_bed, df_2_bed):
+    len(df_1_bed.coverage(df_2_bed, counts=True))
+
+
+def coverage_genomicranges(df_1, df_2):
+    len(df_1.subset_by_overlaps(df_2))

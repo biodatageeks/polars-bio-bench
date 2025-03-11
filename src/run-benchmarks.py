@@ -28,7 +28,9 @@ from operations import (
     count_overlaps_pyranges0,
     count_overlaps_pyranges1,
     coverage_bioframe,
+    coverage_genomicranges,
     coverage_polars_bio,
+    coverage_pybedtools,
     coverage_pyranges0,
     coverage_pyranges1,
     merge_bioframe,
@@ -489,6 +491,8 @@ def run(bench_config: str):
         coverage_bioframe,
         coverage_pyranges0,
         coverage_pyranges1,
+        coverage_pybedtools,
+        coverage_genomicranges,
     ]
 
     prepare_datatests(datasets, BECH_DATA_ROOT)

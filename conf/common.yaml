@@ -45,7 +45,12 @@ test-cases:
   - name: "dgvSupport"
     df_path_1: "dgvSupporting.parquet"
     df_path_2: "dgvSupporting.parquet"
-
+  - name: "gnomad-21"
+    df_path_1: "gnomad.v4.1.sv.sites.parquet"
+    df_path_2: "gnomad.exomes.v4.1.sites.chr21.parquet"
+  - name: "gnomad-1"
+    df_path_1: "gnomad.v4.1.sv.sites.parquet"
+    df_path_2: "gnomad.exomes.v4.1.sites.chr1.parquet"
 benchmark:
   baseline: bioframe # fastest, slowest or a tool name
   export:
