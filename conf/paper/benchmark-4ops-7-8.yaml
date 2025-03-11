@@ -1,0 +1,65 @@
+benchmarks:
+  - name: overlap
+    operation: overlap
+    dataset: databio
+    tools:
+      - polars_bio
+      - bioframe
+      - pyranges0
+      - pyranges1
+      - pybedtools
+      - genomicranges
+    parallel: false
+    input_dataframes: false
+    num_repeats: 3
+    num_executions: 1
+    test-cases:
+      - "7-8"
+  - name: nearest
+    operation: nearest
+    dataset: databio
+    tools:
+      - polars_bio
+      - bioframe
+      - pyranges0
+      - pyranges1
+      - pybedtools
+#      - genomicranges Extremely slow
+    num_repeats: 3
+    parallel: false
+    input_dataframes: false
+    num_executions: 1
+    test-cases:
+      - "7-8"
+  - name: count-overlaps
+    operation: count_overlaps
+    dataset: databio
+    tools:
+      - polars_bio
+      - bioframe
+      - pyranges0
+      - pyranges1
+      - pybedtools
+      - genomicranges
+    input_dataframes: false
+    num_repeats: 3
+    num_executions: 1
+    parallel: false
+    test-cases:
+      - "7-8"
+  - name: coverage
+    operation: coverage
+    dataset: databio
+    tools:
+      - polars_bio
+      - bioframe
+      - pyranges0
+      - pyranges1
+      - pybedtools
+      - genomicranges
+    input_dataframes: false
+    num_repeats: 3
+    num_executions: 1
+    parallel: false
+    test-cases:
+      - "7-8"
