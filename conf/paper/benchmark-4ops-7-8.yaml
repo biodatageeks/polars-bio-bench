@@ -8,7 +8,7 @@ benchmarks:
       - pyranges0
       - pyranges1
       - pybedtools
-      - genomicranges
+#      - genomicranges
     parallel: false
     input_dataframes: false
     num_repeats: 3
@@ -23,7 +23,7 @@ benchmarks:
       - bioframe
       - pyranges0
       - pyranges1
-      - pybedtools
+      - pybedtool:s
 #      - genomicranges Extremely slow
     num_repeats: 3
     parallel: false
@@ -40,7 +40,7 @@ benchmarks:
       - pyranges0
       - pyranges1
       - pybedtools
-      - genomicranges
+#      - genomicranges
     input_dataframes: false
     num_repeats: 3
     num_executions: 1
@@ -56,7 +56,7 @@ benchmarks:
       - pyranges0
       - pyranges1
       - pybedtools
-      - genomicranges
+#      - genomicranges
     input_dataframes: false
     num_repeats: 3
     num_executions: 1
