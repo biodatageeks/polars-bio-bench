@@ -1,8 +1,27 @@
 datasets:
   - name: databio
+    format: zip
+    source: gdrive
+    unzip: true
     url: https://drive.google.com/uc?id=1lctmude31mSAh9fWjI60K1bDrbeDPGfm
   - name: databio-8p
+    format: zip
+    source: gdrive
+    unzip: true
     url: https://drive.google.com/uc?id=1Sj7nTB5gCUq9nbeQOg4zzS4tKO37M5Nd
+  - name: gnomad-vcf-chr21
+    source: gcs
+    unzip: false
+    url: gs://gcp-public-data--gnomad/release/4.1/vcf/exomes/gnomad.exomes.v4.1.sites.chr21.vcf.bgz
+  - name: gnomad-vcf-sv
+    source: gcs
+    unzip: false
+    url: gs://gcp-public-data--gnomad/release/4.1/genome_sv/gnomad.v4.1.sv.sites.vcf.gz
+  - name: dgvSupporting
+    source: gdrive
+    unzip: false
+    format: parquet
+    url: https://drive.google.com/uc?id=1xFx9clKJZ1JdKbCDyV_b0nA74b1RXw7t
 
 test-cases:
   - name: "1-2"
@@ -29,6 +48,12 @@ test-cases:
   - name: "7-8"
     df_path_1: "ex-anno/*.parquet"
     df_path_2: "ex-rna/*.parquet"
+  - name: "8-7"
+    df_path_1: "ex-rna/*.parquet"
+    df_path_2: "ex-anno/*.parquet"
+  - name: "0-5"
+    df_path_1: "chainRn4/*.parquet"
+    df_path_2: "chainXenTro3Link/*.parquet"
   ## unary operations
   - name: "1"
     df_path_1: "fBrain-DS14718/*.parquet"
@@ -46,12 +71,10 @@ test-cases:
     df_path_1: "dgvSupporting.parquet"
     df_path_2: "dgvSupporting.parquet"
   - name: "gnomad-21"
-    df_path_1: "gnomad.v4.1.sv.sites.parquet"
-    df_path_2: "gnomad.exomes.v4.1.sites.chr21.parquet"
-  - name: "gnomad-1"
-    df_path_1: "gnomad.v4.1.sv.sites.parquet"
-    df_path_2: "gnomad.exomes.v4.1.sites.chr1.parquet"
+    df_path_1: "gnomad.exomes.v4.1.sites.chr21.vcf.bgz"
+  - name: "gnomad-sv"
+    df_path_1: "gnomad.v4.1.sv.sites.vcf.gz"
 benchmark:
-  baseline: bioframe # fastest, slowest or a tool name
+  baseline: slowest # fastest, slowest or a tool name
   export:
     format: csv

@@ -1,0 +1,69 @@
+benchmarks:
+  - name: overlap
+    operation: overlap
+    dataset: databio
+    tools:
+      - polars_bio
+    input_dataframes: false
+    num_repeats: 3
+    num_executions: 1
+    parallel: true
+    threads:
+      - 1
+      - 2
+      - 4
+      - 6
+      - 8
+    test-cases:
+      - "7-8"
+  - name: nearest
+    operation: nearest
+    dataset: databio
+    tools:
+      - polars_bio
+    num_repeats: 3
+    input_dataframes: false
+    num_executions: 1
+    parallel: true
+    threads:
+      - 1
+      - 2
+      - 4
+      - 6
+      - 8
+    test-cases:
+      - "8-7"
+  - name: count-overlaps
+    operation: count_overlaps
+    dataset: databio
+    tools:
+      - polars_bio
+    input_dataframes: false
+    num_repeats: 3
+    num_executions: 1
+    parallel: true
+    threads:
+      - 1
+      - 2
+      - 4
+      - 6
+      - 8
+    test-cases:
+      - "8-7"
+  - name: coverage
+    operation: coverage
+    dataset: databio
+    tools:
+      - polars_bio
+    input_dataframes: false
+    num_repeats: 3
+    num_executions: 1
+    parallel: true
+    threads:
+      - 1
+      - 2
+      - 4
+      - 6
+      - 8
+    test-cases:
+      - "8-7"

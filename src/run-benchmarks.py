@@ -50,6 +50,7 @@ from operations import (
     overlap_pygenomics,
     overlap_pyranges0,
     overlap_pyranges1,
+    read_vcf_polars_bio,
 )
 from utils import df2pr0, df2pr1, prepare_datatests
 
@@ -62,12 +63,13 @@ def run_benchmark(
     functions_count_overlaps,
     functions_merge,
     functions_coverage,
+    functions_read_vcf,
     bech_data_root,
     output_dir,
     baseline,
     export_format,
+    console=Console(record=True),
 ):
-    console = Console(record=True)
     for b in tqdm(benchmarks, desc="Running benchmarks"):
         dataset = b["dataset"]
         operation = b["operation"]
@@ -88,7 +90,8 @@ def run_benchmark(
         for t in tqdm(b["test-cases"]):
             results = []
             for th in threads:
-                pb.set_option("datafusion.execution.target_partitions", str(th))
+                if operation not in ["read_vcf"]:
+                    pb.set_option("datafusion.execution.target_partitions", str(th))
                 if th != 1:
                     pb.set_option("datafusion.optimizer.repartition_joins", "true")
                     pb.set_option("datafusion.optimizer.repartition_file_scans", "true")
@@ -114,6 +117,7 @@ def run_benchmark(
                     if "df_path_1" in test
                     else None
                 )
+                print(df_path_1)
                 df_path_2 = (
                     f"{bech_data_root}/{dataset}/{test['df_path_2']}"
                     if "df_path_2" in test
@@ -158,6 +162,12 @@ def run_benchmark(
                             for func in functions_coverage
                             if func.__name__.startswith(f"{operation}_{tool}")
                         ]
+                    elif operation == "read_vcf":
+                        table = [
+                            func
+                            for func in functions_read_vcf
+                            if func.__name__.startswith(f"{operation}_{tool}")
+                        ]
                     else:
                         logger.error(
                             emoji.emojize(f"Operation {operation} not found :no_entry:")
@@ -175,13 +185,22 @@ def run_benchmark(
                         continue
                     for func in table:
                         if tool == "polars_bio":
-                            times = timeit.repeat(
-                                lambda: func(
-                                    df_path_1, df_path_2, output_type="polars.LazyFrame"
-                                ),
-                                repeat=num_repeats,
-                                number=num_executions,
-                            )
+                            if operation == "read_vcf":
+                                times = timeit.repeat(
+                                    lambda: func(df_path_1, th=th),
+                                    repeat=num_repeats,
+                                    number=num_executions,
+                                )
+                            else:
+                                times = timeit.repeat(
+                                    lambda: func(
+                                        df_path_1,
+                                        df_path_2,
+                                        output_type="polars.LazyFrame",
+                                    ),
+                                    repeat=num_repeats,
+                                    number=num_executions,
+                                )
                         elif input_dataframes and tool.startswith("polars_bio_"):
                             input_type = tool.split("_")[2].split(":")[0]
                             output_type = tool.split("_")[2].split(":")[1]
@@ -495,6 +514,10 @@ def run(bench_config: str):
         coverage_genomicranges,
     ]
 
+    functions_read_vcf = [
+        read_vcf_polars_bio,
+    ]
+
     prepare_datatests(datasets, BECH_DATA_ROOT)
 
     run_benchmark(
@@ -505,6 +528,7 @@ def run(bench_config: str):
         functions_count_overlaps,
         functions_merge,
         functions_coverage,
+        functions_read_vcf,
         BECH_DATA_ROOT,
         output_dir,
         baseline,

@@ -56,6 +56,14 @@ def overlap_bioframe(df_1, df_2):
 def overlap_polars_bio(df_path_1, df_path_2, output_type):
     if output_type == "polars.LazyFrame":
         len(pb.overlap(df_path_1, df_path_2, cols1=columns, cols2=columns).collect())
+    elif output_type == "datafusion.DataFrame":
+        pb.overlap(
+            df_path_1,
+            df_path_2,
+            cols1=columns,
+            cols2=columns,
+            output_type=output_type,
+        ).count()
     else:
         len(
             pb.overlap(
@@ -212,3 +220,8 @@ def coverage_pybedtools(df_1_bed, df_2_bed):
 
 def coverage_genomicranges(df_1, df_2):
     len(df_1.subset_by_overlaps(df_2))
+
+
+## Input file formats benchmarking
+def read_vcf_polars_bio(df_path_1, th=1):
+    len(pb.read_vcf(df_path_1, thread_num=th).collect())
