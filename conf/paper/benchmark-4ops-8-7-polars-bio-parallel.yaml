@@ -4,31 +4,33 @@ benchmarks:
     dataset: databio
     tools:
       - polars_bio
-      - bioframe
-      - pyranges0
-      - pyranges1
-      - pybedtools
-#      - genomicranges
-    parallel: false
     input_dataframes: false
     num_repeats: 3
-    num_executions: 1
+    num_executions: 2
+    parallel: true
+    threads:
+      - 1
+      - 2
+      - 4
+      - 6
+      - 8
     test-cases:
-      - "7-8"
+      - "8-7"
   - name: nearest
     operation: nearest
     dataset: databio
     tools:
       - polars_bio
-      - bioframe
-      - pyranges0
-      - pyranges1
-      - pybedtool:s
-#      - genomicranges Extremely slow
     num_repeats: 3
-    parallel: false
     input_dataframes: false
     num_executions: 1
+    parallel: true
+    threads:
+      - 1
+      - 2
+      - 4
+      - 6
+      - 8
     test-cases:
       - "8-7"
   - name: count-overlaps
@@ -36,15 +38,16 @@ benchmarks:
     dataset: databio
     tools:
       - polars_bio
-      - bioframe
-      - pyranges0
-      - pyranges1
-      - pybedtools
-#      - genomicranges
     input_dataframes: false
     num_repeats: 3
     num_executions: 1
-    parallel: false
+    parallel: true
+    threads:
+      - 1
+      - 2
+      - 4
+      - 6
+      - 8
     test-cases:
       - "8-7"
   - name: coverage
@@ -52,14 +55,15 @@ benchmarks:
     dataset: databio
     tools:
       - polars_bio
-      - bioframe
-      - pyranges0
-      - pyranges1
-      - pybedtools
-#      - genomicranges
     input_dataframes: false
     num_repeats: 3
     num_executions: 1
-    parallel: false
+    parallel: true
+    threads:
+      - 1
+      - 2
+      - 4
+      - 6
+      - 8
     test-cases:
       - "8-7"

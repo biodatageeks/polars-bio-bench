@@ -75,6 +75,6 @@ test-cases:
   - name: "gnomad-sv"
     df_path_1: "gnomad.v4.1.sv.sites.vcf.gz"
 benchmark:
-  baseline: slowest # fastest, slowest or a tool name
+  baseline: bioframe # fastest, slowest or a tool name
   export:
     format: csv

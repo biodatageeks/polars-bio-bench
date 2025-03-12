@@ -2286,7 +2286,7 @@ xlsxwriter = ["xlsxwriter"]
 
 [[package]]
 name = "polars-bio"
-version = "0.8.1"
+version = "0.8.2"
 description = "Blazing fast genomic operations on large Python dataframes"
 optional = false
 python-versions = ">=3.9,<3.13"
@@ -2305,8 +2305,8 @@ tqdm = ">=4.67.1,<4.68.0"
 [package.source]
 type = "git"
 url = "https://github.com/biodatageeks/polars-bio.git"
-reference = "0.8.1"
-resolved_reference = "e4a02bae620b1eebe1d28bbfe7f0cc4314ef31ef"
+reference = "67a61793c10cc71a8316f39742b071bda29880b8"
+resolved_reference = "67a61793c10cc71a8316f39742b071bda29880b8"
 
 [[package]]
 name = "pre-commit"
@@ -3620,4 +3620,4 @@ cffi = ["cffi (>=1.11)"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12,<3.13.0"
-content-hash = "76399b2ecd2bbb92a82578ed824337c9a48f78a6511c37648ec90a7a9b4d974e"
+content-hash = "50af09853ec29b91ed1b97a1bc3348be71a07cd1f1c31cbac901b184021b5f6d"
