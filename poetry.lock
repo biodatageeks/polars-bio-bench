@@ -2303,10 +2303,8 @@ pyarrow = ">=18.1.0,<18.2.0"
 tqdm = ">=4.67.1,<4.68.0"
 
 [package.source]
-type = "git"
-url = "https://github.com/biodatageeks/polars-bio.git"
-reference = "67a61793c10cc71a8316f39742b071bda29880b8"
-resolved_reference = "67a61793c10cc71a8316f39742b071bda29880b8"
+type = "directory"
+url = "../polars-bio"
 
 [[package]]
 name = "pre-commit"
@@ -3620,4 +3618,4 @@ cffi = ["cffi (>=1.11)"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12,<3.13.0"
-content-hash = "50af09853ec29b91ed1b97a1bc3348be71a07cd1f1c31cbac901b184021b5f6d"
+content-hash = "e396ffa0645ef5af16852b40c57ce4628555013eada42669660613382775fa55"
