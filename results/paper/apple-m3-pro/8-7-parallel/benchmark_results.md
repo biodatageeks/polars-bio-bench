@@ -1,52 +1,52 @@
-[18:01:08] ## Benchmark overlap for overlap with dataset databio                                                                                                                                               run-benchmarks.py:86
+[06:20:21] ## Benchmark overlap for overlap with dataset databio                                                                                                                                               run-benchmarks.py:86
 
-[18:01:35]   Benchmark Results, operation: overlap dataset: databio,                                                                                                                                          run-benchmarks.py:418
+[06:21:13]   Benchmark Results, operation: overlap dataset: databio,                                                                                                                                          run-benchmarks.py:418
                                     test: 8-7
 
            | Library      |  Min (s) |  Max (s) | Mean (s) | Speedup |
            |--------------|----------|----------|----------|---------|
-           | polars_bio   | 3.669992 | 4.567576 | 4.142872 |   1.00x |
-           | polars_bio-2 | 1.872993 | 1.986568 | 1.927047 |   2.15x |
-           | polars_bio-4 | 1.156394 | 1.182449 | 1.168503 |   3.55x |
-           | polars_bio-6 | 0.981693 | 1.002629 | 0.995204 |   4.16x |
-           | polars_bio-8 | 0.702201 | 0.749915 | 0.723033 |   5.73x |
+           | polars_bio   | 3.631019 | 4.222567 | 3.836674 |   1.00x |
+           | polars_bio-2 | 1.866739 | 1.947024 | 1.901366 |   2.02x |
+           | polars_bio-4 | 1.160112 | 1.171989 | 1.164340 |   3.30x |
+           | polars_bio-6 | 0.983742 | 0.994754 | 0.988346 |   3.88x |
+           | polars_bio-8 | 0.704727 | 0.722828 | 0.712285 |   5.39x |
 
            ## Benchmark nearest for nearest with dataset databio                                                                                                                                               run-benchmarks.py:86
 
-[18:01:51]   Benchmark Results, operation: nearest dataset: databio,                                                                                                                                          run-benchmarks.py:418
+[06:21:30]   Benchmark Results, operation: nearest dataset: databio,                                                                                                                                          run-benchmarks.py:418
                                     test: 8-7
 
            | Library      |  Min (s) |  Max (s) | Mean (s) | Speedup |
            |--------------|----------|----------|----------|---------|
-           | polars_bio   | 2.341672 | 2.486488 | 2.393080 |   1.00x |
-           | polars_bio-2 | 1.229150 | 1.258844 | 1.243750 |   1.92x |
-           | polars_bio-4 | 0.732996 | 0.744632 | 0.739464 |   3.24x |
-           | polars_bio-6 | 0.655340 | 0.673741 | 0.664448 |   3.60x |
-           | polars_bio-8 | 0.462252 | 0.480818 | 0.471103 |   5.08x |
+           | polars_bio   | 2.352758 | 2.503053 | 2.415894 |   1.00x |
+           | polars_bio-2 | 1.208868 | 1.297379 | 1.247201 |   1.94x |
+           | polars_bio-4 | 0.739411 | 0.760896 | 0.748205 |   3.23x |
+           | polars_bio-6 | 0.659575 | 0.670452 | 0.664539 |   3.64x |
+           | polars_bio-8 | 0.461611 | 0.478764 | 0.467581 |   5.17x |
 
            ## Benchmark count-overlaps for count_overlaps with dataset databio                                                                                                                                 run-benchmarks.py:86
 
-[18:02:02]    Benchmark Results, operation: count_overlaps dataset:                                                                                                                                           run-benchmarks.py:418
+[06:21:40]    Benchmark Results, operation: count_overlaps dataset:                                                                                                                                           run-benchmarks.py:418
                                databio, test: 8-7
 
            | Library      |  Min (s) |  Max (s) | Mean (s) | Speedup |
            |--------------|----------|----------|----------|---------|
-           | polars_bio   | 1.535449 | 1.562630 | 1.547632 |   1.00x |
-           | polars_bio-2 | 0.798849 | 0.805491 | 0.801319 |   1.93x |
-           | polars_bio-4 | 0.439225 | 0.458996 | 0.450230 |   3.44x |
-           | polars_bio-6 | 0.320933 | 0.337937 | 0.331990 |   4.66x |
-           | polars_bio-8 | 0.276917 | 0.457481 | 0.339130 |   4.56x |
+           | polars_bio   | 1.547673 | 1.557833 | 1.552131 |   1.00x |
+           | polars_bio-2 | 0.793873 | 0.803828 | 0.798642 |   1.94x |
+           | polars_bio-4 | 0.453521 | 0.460848 | 0.457059 |   3.40x |
+           | polars_bio-6 | 0.334935 | 0.341904 | 0.338485 |   4.59x |
+           | polars_bio-8 | 0.280059 | 0.280591 | 0.280255 |   5.54x |
 
            ## Benchmark coverage for coverage with dataset databio                                                                                                                                             run-benchmarks.py:86
 
-[18:02:10]  Benchmark Results, operation: coverage dataset: databio,                                                                                                                                          run-benchmarks.py:418
+[06:21:48]  Benchmark Results, operation: coverage dataset: databio,                                                                                                                                          run-benchmarks.py:418
                                     test: 8-7
 
            | Library      |  Min (s) |  Max (s) | Mean (s) | Speedup |
            |--------------|----------|----------|----------|---------|
-           | polars_bio   | 1.184437 | 1.193681 | 1.190128 |   1.00x |
-           | polars_bio-2 | 0.626552 | 0.631670 | 0.629656 |   1.89x |
-           | polars_bio-4 | 0.360965 | 0.366674 | 0.364691 |   3.26x |
-           | polars_bio-6 | 0.258221 | 0.278457 | 0.270340 |   4.40x |
-           | polars_bio-8 | 0.219943 | 0.230581 | 0.226905 |   5.25x |
+           | polars_bio   | 1.206831 | 1.219476 | 1.213735 |   1.00x |
+           | polars_bio-2 | 0.637306 | 0.644183 | 0.640547 |   1.89x |
+           | polars_bio-4 | 0.368383 | 0.371543 | 0.369612 |   3.28x |
+           | polars_bio-6 | 0.275598 | 0.281646 | 0.277798 |   4.37x |
+           | polars_bio-8 | 0.221916 | 0.235038 | 0.229151 |   5.30x |
 
