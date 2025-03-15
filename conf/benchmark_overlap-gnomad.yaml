@@ -1,14 +1,11 @@
+common:
+  baseline: polars_bio # fastest, slowest or a tool name
 benchmarks:
   - name: overlap-gnomad
     operation: overlap
     dataset: databio
     tools:
-#      - polars_bio
-      - bioframe
-#      - pyranges0
-#      - pyranges1
-#      - pybedtools
-#      - genomicranges
+      - polars_bio
     input_dataframes: false
     num_repeats: 1
     num_executions: 1
@@ -16,10 +13,3 @@ benchmarks:
     test-cases:
       - "gnomad-1"
 #      - "gnomad-21"
-#      - "2-7"
-#      - "1-0"
-#      - "7-0"
-#      - "7-3"
-#      - "0-8"
-#      - "4-8"
-#      - "7-8"

@@ -33,6 +33,11 @@ from operations import (
     coverage_pybedtools,
     coverage_pyranges0,
     coverage_pyranges1,
+    e2e_overlap_bioframe,
+    e2e_overlap_polars_bio,
+    e2e_overlap_polars_bio_streaming,
+    e2e_overlap_pyranges0,
+    e2e_overlap_pyranges1,
     merge_bioframe,
     merge_polars_bio,
     merge_pyranges0,
@@ -64,6 +69,7 @@ def run_benchmark(
     functions_merge,
     functions_coverage,
     functions_read_vcf,
+    functions_e2_overlap,
     bech_data_root,
     output_dir,
     baseline,
@@ -117,7 +123,6 @@ def run_benchmark(
                     if "df_path_1" in test
                     else None
                 )
-                print(df_path_1)
                 df_path_2 = (
                     f"{bech_data_root}/{dataset}/{test['df_path_2']}"
                     if "df_path_2" in test
@@ -166,6 +171,12 @@ def run_benchmark(
                         table = [
                             func
                             for func in functions_read_vcf
+                            if func.__name__.startswith(f"{operation}_{tool}")
+                        ]
+                    elif operation == "e2e_overlap":
+                        table = [
+                            func
+                            for func in functions_e2_overlap
                             if func.__name__.startswith(f"{operation}_{tool}")
                         ]
                     else:
@@ -220,57 +231,82 @@ def run_benchmark(
                                 number=num_executions,
                             )
                         elif tool == "bioframe" and th == 1:
-                            df_1 = pd.read_parquet(
-                                df_path_1.replace("*.parquet", ""), engine="pyarrow"
-                            )
-                            df_2 = (
-                                pd.read_parquet(
-                                    df_path_2.replace("*.parquet", ""), engine="pyarrow"
+                            if operation.startswith("e2e_"):
+                                times = timeit.repeat(
+                                    lambda: func(df_path_1, df_path_2),
+                                    repeat=num_repeats,
+                                    number=num_executions,
                                 )
-                                if df_path_2
-                                else None
-                            )
-                            times = timeit.repeat(
-                                lambda: func(df_1, df_2),
-                                repeat=num_repeats,
-                                number=num_executions,
-                            )
+                            else:
+                                df_1 = pd.read_parquet(
+                                    df_path_1.replace("*.parquet", ""), engine="pyarrow"
+                                )
+                                df_2 = (
+                                    pd.read_parquet(
+                                        df_path_2.replace("*.parquet", ""),
+                                        engine="pyarrow",
+                                    )
+                                    if df_path_2
+                                    else None
+                                )
+                                times = timeit.repeat(
+                                    lambda: func(df_1, df_2),
+                                    repeat=num_repeats,
+                                    number=num_executions,
+                                )
                         elif tool == "pyranges0":
-                            df_1 = pd.read_parquet(
-                                df_path_1.replace("*.parquet", ""), engine="pyarrow"
-                            )
-                            df_2 = (
-                                pd.read_parquet(
-                                    df_path_2.replace("*.parquet", ""), engine="pyarrow"
+                            if operation.startswith("e2e_"):
+                                times = timeit.repeat(
+                                    lambda: func(df_path_1, df_path_2),
+                                    repeat=num_repeats,
+                                    number=num_executions,
                                 )
-                                if df_path_2
-                                else None
-                            )
-                            df_1_pr0 = df2pr0(df_1)
-                            df_2_pr0 = df2pr0(df_2) if df_2 is not None else None
-                            times = timeit.repeat(
-                                lambda: func(df_1_pr0, df_2_pr0, th),
-                                repeat=num_repeats,
-                                number=num_executions,
-                            )
+                            else:
+                                df_1 = pd.read_parquet(
+                                    df_path_1.replace("*.parquet", ""), engine="pyarrow"
+                                )
+                                df_2 = (
+                                    pd.read_parquet(
+                                        df_path_2.replace("*.parquet", ""),
+                                        engine="pyarrow",
+                                    )
+                                    if df_path_2
+                                    else None
+                                )
+                                df_1_pr0 = df2pr0(df_1)
+                                df_2_pr0 = df2pr0(df_2) if df_2 is not None else None
+
+                                times = timeit.repeat(
+                                    lambda: func(df_1_pr0, df_2_pr0, th),
+                                    repeat=num_repeats,
+                                    number=num_executions,
+                                )
                         elif tool == "pyranges1" and th == 1:
-                            df_1 = pd.read_parquet(
-                                df_path_1.replace("*.parquet", ""), engine="pyarrow"
-                            )
-                            df_2 = (
-                                pd.read_parquet(
-                                    df_path_2.replace("*.parquet", ""), engine="pyarrow"
+                            if operation.startswith("e2e_"):
+                                times = timeit.repeat(
+                                    lambda: func(df_path_1, df_path_2),
+                                    repeat=num_repeats,
+                                    number=num_executions,
                                 )
-                                if df_path_2
-                                else None
-                            )
-                            df_1_pr1 = df2pr1(df_1)
-                            df_2_pr1 = df2pr1(df_2) if df_2 is not None else None
-                            times = timeit.repeat(
-                                lambda: func(df_1_pr1, df_2_pr1),
-                                repeat=num_repeats,
-                                number=num_executions,
-                            )
+                            else:
+                                df_1 = pd.read_parquet(
+                                    df_path_1.replace("*.parquet", ""), engine="pyarrow"
+                                )
+                                df_2 = (
+                                    pd.read_parquet(
+                                        df_path_2.replace("*.parquet", ""),
+                                        engine="pyarrow",
+                                    )
+                                    if df_path_2
+                                    else None
+                                )
+                                df_1_pr1 = df2pr1(df_1)
+                                df_2_pr1 = df2pr1(df_2) if df_2 is not None else None
+                                times = timeit.repeat(
+                                    lambda: func(df_1_pr1, df_2_pr1),
+                                    repeat=num_repeats,
+                                    number=num_executions,
+                                )
                         elif tool == "pybedtools" and th == 1:
                             df_1 = pd.read_parquet(
                                 df_path_1.replace("*.parquet", ""), engine="pyarrow"
@@ -356,11 +392,11 @@ def run_benchmark(
                                 repeat=num_repeats,
                                 number=num_executions,
                             )
-                        elif th == 1:
-                            logger.error(
-                                emoji.emojize(f"Tool {tool} not found :no_entry:")
-                            )
-                            exit(1)
+                        # elif th == 1:
+                        #     logger.error(
+                        #         emoji.emojize(f"Tool {tool} not found :no_entry:")
+                        #     )
+                        #     exit(1)
                         else:
                             continue
                         logger.info(
@@ -467,8 +503,8 @@ def run(bench_config: str):
         logger.info(emoji.emojize("Loaded benchmarks. :open_book:"))
     datasets = config["datasets"]
     test_cases = config["test-cases"]
+    baseline = benchmarks["common"]["baseline"].lower()
     benchmarks = benchmarks["benchmarks"]
-    baseline = config["benchmark"]["baseline"].lower()
     export_format = config["benchmark"]["export"]["format"].lower()
     functions_overlap = [
         overlap_polars_bio,
@@ -518,6 +554,14 @@ def run(bench_config: str):
         read_vcf_polars_bio,
     ]
 
+    functions_e2_overlap = [
+        e2e_overlap_polars_bio,
+        e2e_overlap_bioframe,
+        e2e_overlap_pyranges0,
+        e2e_overlap_pyranges1,
+        e2e_overlap_polars_bio_streaming,
+    ]
+
     prepare_datatests(datasets, BECH_DATA_ROOT)
 
     run_benchmark(
@@ -529,6 +573,7 @@ def run(bench_config: str):
         functions_merge,
         functions_coverage,
         functions_read_vcf,
+        functions_e2_overlap,
         BECH_DATA_ROOT,
         output_dir,
         baseline,

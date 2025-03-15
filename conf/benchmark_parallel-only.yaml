@@ -1,3 +1,5 @@
+common:
+  baseline: polars_bio # fastest, slowest or a tool name
 benchmarks:
   - name: overlap-parallel
     operation: overlap

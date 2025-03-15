@@ -1,7 +1,11 @@
 import itertools
 
 import bioframe as bf
+import pandas as pd
 import polars_bio as pb
+from memory_profiler import profile
+
+from utils import df2pr0, df2pr1
 
 columns = ("contig", "pos_start", "pos_end")
 
@@ -225,3 +229,64 @@ def coverage_genomicranges(df_1, df_2):
 ## Input file formats benchmarking
 def read_vcf_polars_bio(df_path_1, th=1):
     len(pb.read_vcf(df_path_1, thread_num=th).collect())
+
+
+## E2E overlap and export to csv
+OUTPUT_CSV = "/tmp/output.csv"
+
+fp = open("memory_profiler_polars_bio.log", "w+")
+
+
+@profile(stream=fp)
+def e2e_overlap_polars_bio(df_path_1, df_path_2, output_type):
+    df = pb.overlap(
+        df_path_1, df_path_2, cols1=columns, cols2=columns, output_type=output_type
+    ).collect()
+    df.write_csv(OUTPUT_CSV)
+
+
+fp = open("memory_profiler_polars_bio.log", "w+")
+
+
+@profile(stream=fp)
+def e2e_overlap_polars_bio_streaming(df_path_1, df_path_2, output_type):
+    pb.overlap(
+        df_path_1, df_path_2, cols1=columns, cols2=columns, streaming=True
+    ).sink_csv(OUTPUT_CSV)
+
+
+fp = open("memory_profiler_bioframe.log", "w+")
+
+
+@profile(stream=fp)
+def e2e_overlap_bioframe(df_path_1, df_path_2):
+    df_1 = pd.read_parquet(df_path_1.replace("*.parquet", ""))
+    df_2 = pd.read_parquet(df_path_2.replace("*.parquet", ""))
+    df = bf.overlap(df_1, df_2, cols1=columns, cols2=columns, how="inner")
+    df.to_csv("output.csv")
+
+
+fp = open("memory_profiler_pyranges0.log", "w+")
+
+
+@profile(stream=fp)
+def e2e_overlap_pyranges0(df_path_1, df_path_2):
+    df_1 = pd.read_parquet(df_path_1.replace("*.parquet", ""))
+    df_2 = pd.read_parquet(df_path_2.replace("*.parquet", ""))
+    df_1_pr0 = df2pr0(df_1)
+    df_2_pr0 = df2pr0(df_2)
+    df = df_1_pr0.join(df_2_pr0)
+    df.to_csv("output.csv")
+
+
+fp = open("memory_profiler_pyranges0.log", "w+")
+
+
+@profile(stream=fp)
+def e2e_overlap_pyranges1(df_path_1, df_path_2):
+    df_1 = pd.read_parquet(df_path_1.replace("*.parquet", ""))
+    df_2 = pd.read_parquet(df_path_2.replace("*.parquet", ""))
+    df_1_pr1 = df2pr1(df_1)
+    df_2_pr1 = df2pr1(df_2)
+    df = df_1_pr1.join_ranges(df_2_pr1)
+    df.to_csv("output.csv")

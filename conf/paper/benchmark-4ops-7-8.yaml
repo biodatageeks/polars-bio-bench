@@ -1,3 +1,5 @@
+common:
+  baseline: bioframe # fastest, slowest or a tool name
 benchmarks:
   - name: overlap
     operation: overlap
@@ -23,7 +25,7 @@ benchmarks:
       - bioframe
       - pyranges0
       - pyranges1
-      - pybedtool:s
+      - pybedtools
 #      - genomicranges Extremely slow
     num_repeats: 3
     parallel: false

@@ -1,3 +1,5 @@
+common:
+  baseline: bioframe # fastest, slowest or a tool name
 benchmarks:
   - name: overlap
     operation: overlap
