@@ -16,3 +16,4 @@ benchmarks:
     num_executions: 1
     test-cases:
       - "1-2"
+      - "8-7"

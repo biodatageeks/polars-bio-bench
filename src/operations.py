@@ -238,10 +238,8 @@ fp = open("memory_profiler_polars_bio.log", "w+")
 
 
 @profile(stream=fp)
-def e2e_overlap_polars_bio(df_path_1, df_path_2, output_type):
-    df = pb.overlap(
-        df_path_1, df_path_2, cols1=columns, cols2=columns, output_type=output_type
-    ).collect()
+def e2e_overlap_polars_bio(df_path_1, df_path_2, output_type=None):
+    df = pb.overlap(df_path_1, df_path_2, cols1=columns, cols2=columns).collect()
     df.write_csv(OUTPUT_CSV)
 
 
@@ -249,7 +247,7 @@ fp = open("memory_profiler_polars_bio.log", "w+")
 
 
 @profile(stream=fp)
-def e2e_overlap_polars_bio_streaming(df_path_1, df_path_2, output_type):
+def e2e_overlap_polars_bio_streaming(df_path_1, df_path_2, output_type=None):
     pb.overlap(
         df_path_1, df_path_2, cols1=columns, cols2=columns, streaming=True
     ).sink_csv(OUTPUT_CSV)
