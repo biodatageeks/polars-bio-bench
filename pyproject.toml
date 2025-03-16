@@ -38,3 +38,4 @@ pybedtools = "^0.10.0"
 pygenomics =  { git = "https://gitlab.com/gtamazian/pygenomics.git", rev = "0.1.1"}
 google-cloud-storage = "^3.1.0"
 memory-profiler ="^0.61.0"
+svgutils ="^0.3.4"
