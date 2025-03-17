@@ -1,0 +1,17 @@
+common:
+  baseline: polars_bio # fastest, slowest or a tool name
+benchmarks:
+  - name: count-overlaps
+    operation: count_overlaps
+    dataset: databio
+    tools:
+      - polars_bio
+#      - pyranges0  # both pyranges crashes
+#      - pyranges1
+      - bioframe
+    input_dataframes: false
+    num_repeats: 1
+    num_executions: 1
+    parallel: false
+    test-cases:
+      - "dgvSupport"

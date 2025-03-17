@@ -1,7 +1,11 @@
 import itertools
 
 import bioframe as bf
+import pandas as pd
 import polars_bio as pb
+from memory_profiler import profile
+
+from utils import df2pr0, df2pr1
 
 columns = ("contig", "pos_start", "pos_end")
 
@@ -56,6 +60,14 @@ def overlap_bioframe(df_1, df_2):
 def overlap_polars_bio(df_path_1, df_path_2, output_type):
     if output_type == "polars.LazyFrame":
         len(pb.overlap(df_path_1, df_path_2, cols1=columns, cols2=columns).collect())
+    elif output_type == "datafusion.DataFrame":
+        pb.overlap(
+            df_path_1,
+            df_path_2,
+            cols1=columns,
+            cols2=columns,
+            output_type=output_type,
+        ).count()
     else:
         len(
             pb.overlap(
@@ -177,3 +189,102 @@ def merge_pyranges0(df_1_pr0, df_2_pr0, n=1):
 
 def merge_pyranges1(df_1_pr1, df_2_pr1):
     len(df_1_pr1.merge_overlaps())
+
+
+def coverage_polars_bio(df_path_1, df_path_2, output_type):
+    if output_type == "polars.LazyFrame":
+        len(pb.coverage(df_path_1, df_path_2, cols1=columns, cols2=columns).collect())
+    else:
+        len(
+            pb.coverage(
+                df_path_1,
+                df_path_2,
+                cols1=columns,
+                cols2=columns,
+                output_type=output_type,
+            )
+        )
+
+
+def coverage_bioframe(df_1, df_2):
+    len(bf.coverage(df_1, df_2, cols1=columns, cols2=columns))
+
+
+def coverage_pyranges0(df_1_pr0, df_2_pr0, n=1):
+    len(df_1_pr0.coverage(df_2_pr0))
+
+
+def coverage_pyranges1(df_1_pr1, df_2_pr1):
+    len(df_1_pr1.count_overlaps(df_2_pr1, calculate_coverage=True))
+
+
+def coverage_pybedtools(df_1_bed, df_2_bed):
+    len(df_1_bed.coverage(df_2_bed, counts=True))
+
+
+def coverage_genomicranges(df_1, df_2):
+    len(df_1.subset_by_overlaps(df_2))
+
+
+## Input file formats benchmarking
+def read_vcf_polars_bio(df_path_1, th=1):
+    len(pb.read_vcf(df_path_1, thread_num=th).collect())
+
+
+## E2E overlap and export to csv
+OUTPUT_CSV = "/tmp/output.csv"
+
+fp = open("memory_profiler_polars_bio.log", "w+")
+
+
+@profile(stream=fp)
+def e2e_overlap_polars_bio(df_path_1, df_path_2, output_type=None):
+    df = pb.overlap(df_path_1, df_path_2, cols1=columns, cols2=columns).collect()
+    df.write_csv(OUTPUT_CSV)
+
+
+fp = open("memory_profiler_polars_bio.log", "w+")
+
+
+@profile(stream=fp)
+def e2e_overlap_polars_bio_streaming(df_path_1, df_path_2, output_type=None):
+    pb.overlap(
+        df_path_1, df_path_2, cols1=columns, cols2=columns, streaming=True
+    ).sink_csv(OUTPUT_CSV)
+
+
+fp = open("memory_profiler_bioframe.log", "w+")
+
+
+@profile(stream=fp)
+def e2e_overlap_bioframe(df_path_1, df_path_2):
+    df_1 = pd.read_parquet(df_path_1.replace("*.parquet", ""))
+    df_2 = pd.read_parquet(df_path_2.replace("*.parquet", ""))
+    df = bf.overlap(df_1, df_2, cols1=columns, cols2=columns, how="inner")
+    df.to_csv("output.csv")
+
+
+fp = open("memory_profiler_pyranges0.log", "w+")
+
+
+@profile(stream=fp)
+def e2e_overlap_pyranges0(df_path_1, df_path_2):
+    df_1 = pd.read_parquet(df_path_1.replace("*.parquet", ""))
+    df_2 = pd.read_parquet(df_path_2.replace("*.parquet", ""))
+    df_1_pr0 = df2pr0(df_1)
+    df_2_pr0 = df2pr0(df_2)
+    df = df_1_pr0.join(df_2_pr0)
+    df.to_csv("output.csv")
+
+
+fp = open("memory_profiler_pyranges0.log", "w+")
+
+
+@profile(stream=fp)
+def e2e_overlap_pyranges1(df_path_1, df_path_2):
+    df_1 = pd.read_parquet(df_path_1.replace("*.parquet", ""))
+    df_2 = pd.read_parquet(df_path_2.replace("*.parquet", ""))
+    df_1_pr1 = df2pr1(df_1)
+    df_2_pr1 = df2pr1(df_2)
+    df = df_1_pr1.join_ranges(df_2_pr1)
+    df.to_csv("output.csv")

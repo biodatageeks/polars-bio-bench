@@ -23,8 +23,8 @@ gdown = "^5.2.0"
 pyyaml = "^6.0.2"
 jinja2 = "^3.1.5"
 poetry-plugin-shell = "^1.0.0"
-#polars-bio = { git ="https://github.com/biodatageeks/polars-bio.git", rev="658ea9e1efde9b42edefa428f760c3a2a731bbce"}
-polars-bio = "^0.7.0"
+#polars-bio = { git ="https://github.com/biodatageeks/polars-bio.git", rev="0.8.3"}
+polars-bio = "0.8.3"
 setuptools = "^75.8.0"
 rich = "^13.9.4"
 rich-tools = "^0.5.1"
@@ -36,3 +36,6 @@ GenomicRanges = "^0.5.0"
 pyranges1 = { git = "https://github.com/mwiewior/pyranges1.git", rev = "949d7c15c1c2e217f4404415f79b386f326b6f8d"}
 pybedtools = "^0.10.0"
 pygenomics =  { git = "https://gitlab.com/gtamazian/pygenomics.git", rev = "0.1.1"}
+google-cloud-storage = "^3.1.0"
+memory-profiler ="^0.61.0"
+svgutils ="^0.3.4"

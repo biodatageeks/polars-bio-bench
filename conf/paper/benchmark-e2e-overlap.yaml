@@ -1,0 +1,19 @@
+common:
+  baseline: bioframe # fastest, slowest or a tool name
+benchmarks:
+  - name: e2e-overlap-csv
+    operation: e2e_overlap
+    dataset: databio
+    tools:
+      - polars_bio
+      - polars_bio_streaming
+      - bioframe
+      - pyranges0
+      - pyranges1
+    parallel: false
+    input_dataframes: false
+    num_repeats: 3
+    num_executions: 1
+    test-cases:
+      - "1-2"
+      - "8-7"

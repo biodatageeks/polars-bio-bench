@@ -1,3 +1,5 @@
+common:
+  baseline: polars_bio # fastest, slowest or a tool name
 benchmarks:
   - name: count-overlaps-parallel
     operation: count_overlaps
@@ -7,8 +9,6 @@ benchmarks:
       - bioframe
       - pyranges0
       - pyranges1
-#      - pybedtools
-#      - genomicranges
     input_dataframes: false
     num_repeats: 3
     num_executions: 1
