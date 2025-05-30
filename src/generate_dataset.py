@@ -57,13 +57,13 @@ def make_random_intervals(n=1e5, n_chroms=1, max_coord=None, max_length=10,
     starts = np.random.randint(0, max_coord, n)
     ends = starts + np.random.randint(1, max_length, n)
 
-    df = pd.DataFrame({"chrom": chroms, "start": starts, "end": ends})
+    df = pd.DataFrame({"contig": chroms, "pos_start": starts, "pos_end": ends})
 
     if categorical_chroms:
-        df["chrom"] = df["chrom"].astype("category")
+        df["contig"] = df["contig"].astype("category")
 
     if sort:
-        df = df.sort_values(["chrom", "start", "end"]).reset_index(drop=True)
+        df = df.sort_values(["contig", "pos_start", "pos_end"]).reset_index(drop=True)
 
     return df
 
