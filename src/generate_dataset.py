@@ -99,12 +99,11 @@ def find_test_cases(folder):
     return sorted(df1_cases & df2_cases, key=lambda x: int(x))
 
 def create_zip_archive(source_dir, dataset_id, project_root):
-    """Create ZIP archive of the data directory"""
+    """Create ZIP archive of the data directory with proper folder structure"""
     print_status("Creating ZIP archive...")
     
     # Place ZIP file in project root
     zip_name = os.path.join(project_root, f"{dataset_id}.zip")
-    base_name = os.path.join(project_root, dataset_id)
     
     # Remove old ZIP if exists
     if os.path.exists(zip_name):
@@ -112,7 +111,17 @@ def create_zip_archive(source_dir, dataset_id, project_root):
         print_status(f"Removed existing {zip_name}", 1)
     
     print_status(f"Archiving {source_dir} -> {zip_name}", 1)
-    shutil.make_archive(base_name, 'zip', source_dir)
+    
+    # Create a temporary directory structure with the dataset_id folder
+    import tempfile
+    with tempfile.TemporaryDirectory() as temp_dir:
+        # Create the dataset folder inside temp directory
+        dataset_folder = os.path.join(temp_dir, dataset_id)
+        shutil.copytree(source_dir, dataset_folder)
+        
+        # Create ZIP with the dataset folder structure
+        base_name = os.path.join(project_root, dataset_id)
+        shutil.make_archive(base_name, 'zip', temp_dir)
     
     size_mb = os.path.getsize(zip_name) / 1024 / 1024
     print_status(f"Created: {zip_name} ({size_mb:.1f} MB)", 1)
@@ -169,11 +178,18 @@ def create_config_files(dataset_id, zip_path, url, test_cases, conf_dir="tmp/con
     # Create config directory if it doesn't exist
     os.makedirs(conf_dir, exist_ok=True)
     
+    # Convert Google Drive URL to direct download format if needed
+    if "drive.google.com/open?id=" in url:
+        # Extract file ID from URL like: https://drive.google.com/open?id=1pew9OD-pn8svUmk0Hsq8lmdiMbSOCjdT
+        file_id = url.split("id=")[1]
+        url = f"https://drive.google.com/uc?id={file_id}"
+        print_status(f"Converted URL to direct download format: {url}", 1)
+    
     # Common configuration
     common_config = {
         "datasets": [{
             "name": dataset_id,
-            "source": "tgambin",
+            "source": "gdrive",
             "unzip": True,
             "format": "zip",
             "url": url,
@@ -188,7 +204,12 @@ def create_config_files(dataset_id, zip_path, url, test_cases, conf_dir="tmp/con
                 "df_path_2": f"df2-{case}.parquet",
             }
             for case in test_cases
-        ]
+        ],
+        "benchmark": {
+            "export": {
+                "format": "csv"
+            }
+        }
     }
     
     # Benchmark configuration
