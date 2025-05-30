@@ -7,6 +7,7 @@ from urllib.parse import urlparse
 
 import emoji
 import gdown
+import pandas as pd
 import pyranges as pr0
 import pyranges1 as pr1
 from google.cloud import storage
@@ -24,14 +25,11 @@ def df2pr0(df):
 
 
 ### pyranges1
-def df2pr1(df):
-    return pr1.PyRanges(
-        {
-            "Chromosome": df.contig,
-            "Start": df.pos_start,
-            "End": df.pos_end,
-        }
-    )
+def df2pr1(df: pd.DataFrame):
+    df = df.rename(
+        columns={"contig": "Chromosome", "pos_start": "Start", "pos_end": "End"}
+    ).astype({"Start": "int64", "End": "int64"})
+    return pr1.PyRanges(df)
 
 
 def download_from_gs(gs_url, destination_dir):
