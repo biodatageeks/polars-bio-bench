@@ -84,4 +84,114 @@ for tool in "polars_bio" "polars_bio_streaming" "bioframe" "pyranges0" "pyranges
 done
 ```
 
+## Generating New Datasets
+
+This repository includes a unified script for generating random genomic interval datasets and uploading them to cloud storage. The script creates datasets with unique timestamps and uploads them with proper directory structure.
+
+### Prerequisites for Dataset Generation
+
+1. **rclone** - Required for uploading datasets to Google Drive
+   ```bash
+   # Install rclone
+   curl https://rclone.org/install.sh | sudo bash
+   
+   # Configure rclone with your Google Drive (follow interactive setup)
+   rclone config
+   ```
+
+2. **Python dependencies** - The script requires pandas, numpy, and yaml:
+   ```bash
+   # These are already included in the poetry environment
+   poetry install
+   ```
+
+### Usage
+
+To generate a new dataset:
+
+```bash
+# From the polars-bio-bench root directory
+poetry run python src/generate_dataset.py
+```
+
+The script will:
+
+1. **Clean up old files** - Remove previous datasets and ZIP archives
+2. **Generate test data** - Create parquet files with different sizes (100, 1K, 10K, 100K, 1M records)
+3. **Create ZIP archive** - Package the datasets into a single ZIP file
+4. **Upload to Google Drive** - Upload via rclone and generate public download link
+5. **Generate configuration files** - Create YAML configs for benchmarking
+
+### Output Structure
+
+The script generates files in the following structure:
+
+```
+polars-bio-bench/
+├── tmp/
+│   ├── data/                          # Generated parquet files
+│   │   ├── df1-100.parquet
+│   │   ├── df2-100.parquet
+│   │   ├── df1-1000.parquet
+│   │   ├── df2-1000.parquet
+│   │   ├── ... (up to 1M records)
+│   └── conf/                          # Configuration files
+│       ├── common.yaml                # Dataset metadata and test cases
+│       └── random.yaml                # Benchmark definitions
+└── random_intervals_YYYYMMDD_HHMMSS.zip  # ZIP archive for upload
+```
+
+### Generated Dataset Properties
+
+- **Dataset ID**: `random_intervals_YYYYMMDD_HHMMSS` (unique timestamp)
+- **Test cases**: 5 different sizes (100, 1K, 10K, 100K, 1M records)
+- **File format**: Parquet files with genomic intervals (chrom, start, end)
+- **Chromosome range**: chr1 only for simplicity
+- **Coordinate range**: Random intervals up to dataset size
+- **Archive size**: ~17-18 MB (compressed)
+
+### Configuration Files
+
+**common.yaml** - Contains dataset metadata:
+```yaml
+datasets:
+- name: random_intervals_20250530_231351
+  source: tgambin
+  unzip: true
+  format: zip
+  url: https://drive.google.com/open?id=...
+  # ... additional metadata
+test-cases:
+- name: '100'
+  df_path_1: df1-100.parquet
+  df_path_2: df2-100.parquet
+# ... more test cases
+```
+
+**random.yaml** - Contains benchmark definitions for overlap and nearest operations with various tools and parallelization options.
+
+### Cloud Storage
+
+Datasets are automatically uploaded to:
+- **Remote path**: `tgambin:polars-bio-datasets/{dataset_id}/`
+- **Public URL**: Generated automatically via rclone link
+- **Access**: Public download links for easy integration
+
+### Integration with Benchmarks
+
+Once generated, the new dataset can be used in benchmarks by:
+1. Copying the configuration files to the main `conf/` directory
+2. Updating benchmark YAML files to reference the new dataset ID
+3. Running benchmarks with the new configuration
+
+Example:
+```bash
+# Copy generated configs (optional)
+cp tmp/conf/common.yaml conf/
+cp tmp/conf/random.yaml conf/benchmark_random_new.yaml
+
+# Run benchmarks with new dataset
+poetry run python src/run-benchmarks.py --bench-config conf/benchmark_random_new.yaml
+```
+
 
