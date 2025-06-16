@@ -73,7 +73,7 @@ def generate_test_data(data_dir="tmp/data"):
     
     os.makedirs(data_dir, exist_ok=True)
     
-    sizes = [1e2, 1e3, 1e4, 1e5, 1e6]
+    sizes = [1e2, 1e3, 1e4, 1e5, 1e6, 10e6]
     for i, n in enumerate(sizes):
         n_int = int(n)
         print_status(f"Generating dataset {i+1}/{len(sizes)}: n={n_int}", 1)
