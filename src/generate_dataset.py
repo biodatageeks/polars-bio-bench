@@ -11,6 +11,7 @@ import subprocess
 import yaml
 import re
 import pandas as pd
+import polars as pl
 import numpy as np
 from datetime import datetime
 
@@ -57,13 +58,18 @@ def make_random_intervals(n=1e5, n_chroms=1, max_coord=None, max_length=10,
     starts = np.random.randint(0, max_coord, n)
     ends = starts + np.random.randint(1, max_length, n)
 
-    df = pd.DataFrame({"contig": chroms, "pos_start": starts, "pos_end": ends})
+    # Create Polars DataFrame
+    df = pl.DataFrame({
+        "contig": chroms, 
+        "pos_start": starts, 
+        "pos_end": ends
+    })
 
     if categorical_chroms:
-        df["contig"] = df["contig"].astype("category")
+        df = df.with_columns(pl.col("contig").cast(pl.Categorical))
 
     if sort:
-        df = df.sort_values(["contig", "pos_start", "pos_end"]).reset_index(drop=True)
+        df = df.sort(["contig", "pos_start", "pos_end"])
 
     return df
 
@@ -84,8 +90,11 @@ def generate_test_data(data_dir="tmp/data"):
         path1 = os.path.join(data_dir, f'df1-{n_int}.parquet')
         path2 = os.path.join(data_dir, f'df2-{n_int}.parquet')
         
-        df1.to_parquet(path1)
-        df2.to_parquet(path2)
+        # Write with partitioning to 8 parts using row_group_size
+        # Calculate row_group_size to approximately create 8 row groups
+        row_group_size = max(1, len(df1) // 8)
+        df1.write_parquet(path1, row_group_size=row_group_size)
+        df2.write_parquet(path2, row_group_size=row_group_size)
         
         print_status(f"Saved: {os.path.basename(path1)}, {os.path.basename(path2)}", 2)
 
@@ -218,35 +227,64 @@ def create_config_files(dataset_id, zip_path, url, test_cases, conf_dir="tmp/con
         "benchmarks": []
     }
     
-    # Define benchmark types
-    benchmark_definitions = [
-        ("overlap-single", "overlap", False, []),
-        ("nearest-single", "nearest", False, []),
-        ("overlap-parallel", "overlap", True, [1, 2, 4]),
-        ("nearest-parallel", "nearest", True, [1, 2, 4]),
-    ]
+    # Define operations
+    operations = ["overlap", "nearest", "coverage", "count_overlaps"]
     
-    for name, operation, parallel, threads in benchmark_definitions:
-        tools = ["polars_bio", "bioframe", "pyranges0", "pyranges1", "pybedtools"]
-        if "overlap" in name:
-            tools.extend(["genomicranges", "pygenomics"])
+    # Define test case groups
+    small_test_cases = [case for case in test_cases if int(case) <= 100000]  # 100 to 100000
+    large_test_cases = [case for case in test_cases if int(case) >= 1000000]  # 1000000 to 10000000
+    
+    for operation in operations:
+        # Single benchmarks - split into small and large datasets
         
-        benchmark = {
-            "name": name,
+        # Small datasets (100-100000) - all tools
+        tools_all = ["polars_bio", "bioframe", "pyranges0", "pyranges1", "pybedtools"]
+        if operation in ["overlap", "count_overlaps"]:
+            tools_all.extend(["genomicranges", "pygenomics"])
+        
+        benchmark_small = {
+            "name": f"{operation}-single-small",
             "operation": operation,
             "dataset": dataset_id,
-            "tools": tools,
-            "parallel": parallel,
+            "tools": tools_all,
+            "parallel": False,
             "input_dataframes": False,
             "num_repeats": 3,
             "num_executions": 1,
-            "test-cases": list(test_cases)  # Create a copy to avoid YAML references
+            "test-cases": list(small_test_cases)
         }
+        benchmark_config["benchmarks"].append(benchmark_small)
         
-        if parallel and threads:
-            benchmark["threads"] = threads
+        # Large datasets (1000000-10000000) - fast tools only
+        tools_fast = ["polars_bio", "bioframe", "pyranges0", "pyranges1"]
         
-        benchmark_config["benchmarks"].append(benchmark)
+        benchmark_large = {
+            "name": f"{operation}-single-large",
+            "operation": operation,
+            "dataset": dataset_id,
+            "tools": tools_fast,
+            "parallel": False,
+            "input_dataframes": False,
+            "num_repeats": 3,
+            "num_executions": 1,
+            "test-cases": list(large_test_cases)
+        }
+        benchmark_config["benchmarks"].append(benchmark_large)
+        
+        # Parallel benchmarks - only polars_bio for all test cases
+        benchmark_parallel = {
+            "name": f"{operation}-parallel",
+            "operation": operation,
+            "dataset": dataset_id,
+            "tools": ["polars_bio"],
+            "parallel": True,
+            "input_dataframes": False,
+            "num_repeats": 3,
+            "num_executions": 1,
+            "test-cases": list(test_cases),
+            "threads": [1, 2, 4, 6, 8]
+        }
+        benchmark_config["benchmarks"].append(benchmark_parallel)
     
     # Save files
     common_path = os.path.join(conf_dir, "common.yaml")

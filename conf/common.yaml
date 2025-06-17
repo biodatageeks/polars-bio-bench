@@ -22,6 +22,14 @@ datasets:
     unzip: false
     format: parquet
     url: https://drive.google.com/uc?id=1xFx9clKJZ1JdKbCDyV_b0nA74b1RXw7t
+  - name: random_intervals_20250611_010000
+    source: gdrive
+    unzip: true
+    format: zip
+    url: https://drive.google.com/uc?id=1OqKjXOu87MEFcWNiYGckVVtW0EVN8clM
+    remote_path: tgambin:polars-bio-datasets/random_intervals_20250611_010000/random_intervals_20250611_010000.zip
+    generated: '2025-06-11T01:00:37.557002'
+    size_mb: 191.1
 
 test-cases:
   - name: "1-2"
@@ -74,6 +82,24 @@ test-cases:
     df_path_1: "gnomad.exomes.v4.1.sites.chr21.vcf.bgz"
   - name: "gnomad-sv"
     df_path_1: "gnomad.v4.1.sv.sites.vcf.gz"
+  - name: '100'
+    df_path_1: df1-100.parquet
+    df_path_2: df2-100.parquet
+  - name: '1000'
+    df_path_1: df1-1000.parquet
+    df_path_2: df2-1000.parquet
+  - name: '10000'
+    df_path_1: df1-10000.parquet
+    df_path_2: df2-10000.parquet
+  - name: '100000'
+    df_path_1: df1-100000.parquet
+    df_path_2: df2-100000.parquet
+  - name: '1000000'
+    df_path_1: df1-1000000.parquet
+    df_path_2: df2-1000000.parquet
+  - name: '10000000'
+    df_path_1: df1-10000000.parquet
+    df_path_2: df2-10000000.parquet
 benchmark:
   export:
     format: csv
