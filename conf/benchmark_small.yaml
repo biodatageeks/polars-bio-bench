@@ -3,7 +3,7 @@ common:
 benchmarks:
   - name: overlap-single
     operation: overlap
-    dataset: databio
+    dataset: random_intervals_20250530_233650
     tools:
       - polars_bio
       - bioframe
@@ -17,12 +17,12 @@ benchmarks:
     num_repeats: 3
     num_executions: 1
     test-cases:
-      - "1-2"
-      - "2-7"
-      - "1-0"
+      - "100"
+      - "1000"
+      - "10000"
   - name: nearest-single
     operation: nearest
-    dataset: databio
+    dataset: random_intervals_20250530_233650
     tools:
       - polars_bio
       - bioframe
@@ -35,12 +35,12 @@ benchmarks:
     input_dataframes: false
     num_executions: 1
     test-cases:
-      - "1-2"
-      - "2-7"
-      - "1-0"
+      - "100"
+      - "1000"
+      - "10000"
   - name: overlap-parallel
     operation: overlap
-    dataset: databio
+    dataset: random_intervals_20250530_233650
     tools:
       - polars_bio
       - bioframe

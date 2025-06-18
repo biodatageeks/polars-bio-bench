@@ -13,12 +13,36 @@ import re
 import pandas as pd
 import polars as pl
 import numpy as np
+import uuid
 from datetime import datetime
+from pyspark.sql import SparkSession
+from pyspark.sql.types import StructType, StructField, StringType, IntegerType
 
 def print_status(msg, level=0):
     """Print status message with proper indentation and flushing"""
     indent = "  " * level
     print(f"{indent}{msg}", flush=True)
+
+def get_spark_session():
+    """Initialize and return Spark session with proper memory configuration"""
+    print_status("Initializing Spark session...")
+    spark = SparkSession.builder \
+        .appName("ParquetPartitioning") \
+        .config("spark.driver.memory", "4g") \
+        .config("spark.driver.maxResultSize", "2g") \
+        .config("spark.executor.memory", "4g") \
+        .config("spark.executor.cores", "2") \
+        .config("spark.sql.adaptive.enabled", "true") \
+        .config("spark.sql.adaptive.coalescePartitions.enabled", "true") \
+        .config("spark.sql.adaptive.advisoryPartitionSizeInBytes", "128MB") \
+        .config("spark.sql.shuffle.partitions", "8") \
+        .config("spark.serializer", "org.apache.spark.serializer.KryoSerializer") \
+        .config("spark.sql.execution.arrow.pyspark.enabled", "true") \
+        .getOrCreate()
+    
+    # Set log level to reduce verbose output
+    spark.sparkContext.setLogLevel("WARN")
+    return spark
 
 def cleanup_old_files(data_dir, conf_dir, project_root):
     """Remove old files before generating new ones"""
@@ -74,37 +98,117 @@ def make_random_intervals(n=1e5, n_chroms=1, max_coord=None, max_length=10,
     return df
 
 def generate_test_data(data_dir="tmp/data"):
-    """Generate test datasets with various sizes"""
+    """Generate test datasets with various sizes and partition them using Spark"""
     print_status("Generating test datasets...")
     
     os.makedirs(data_dir, exist_ok=True)
     
-    sizes = [1e2, 1e3, 1e4, 1e5, 1e6, 10e6]
-    for i, n in enumerate(sizes):
-        n_int = int(n)
-        print_status(f"Generating dataset {i+1}/{len(sizes)}: n={n_int}", 1)
-        
-        df1 = make_random_intervals(n=n, n_chroms=1)
-        df2 = make_random_intervals(n=n, n_chroms=1)
-        
-        path1 = os.path.join(data_dir, f'df1-{n_int}.parquet')
-        path2 = os.path.join(data_dir, f'df2-{n_int}.parquet')
-        
-        # Write with partitioning to 8 parts using row_group_size
-        # Calculate row_group_size to approximately create 8 row groups
-        row_group_size = max(1, len(df1) // 8)
-        df1.write_parquet(path1, row_group_size=row_group_size)
-        df2.write_parquet(path2, row_group_size=row_group_size)
-        
-        print_status(f"Saved: {os.path.basename(path1)}, {os.path.basename(path2)}", 2)
+    # Initialize Spark session
+    spark = get_spark_session()
+    
+    try:
+        sizes = [1e2, 1e3, 1e4, 1e5, 1e6, 10e6]
+        for i, n in enumerate(sizes):
+            n_int = int(n)
+            print_status(f"Generating dataset {i+1}/{len(sizes)}: n={n_int}", 1)
+            
+            # Define output paths
+            path1 = os.path.join(data_dir, f'df1-{n_int}.parquet')
+            path2 = os.path.join(data_dir, f'df2-{n_int}.parquet')
+            
+            # Remove existing directories if they exist
+            if os.path.exists(path1):
+                shutil.rmtree(path1)
+            if os.path.exists(path2):
+                shutil.rmtree(path2)
+            
+            # For very large datasets (>=1M), use a different approach to avoid memory issues
+            if n_int >= 10000000000:
+                print_status(f"Using chunked processing for large dataset (n={n_int})", 2)
+                
+                # Create directories for partitions
+                os.makedirs(path1, exist_ok=True)
+                os.makedirs(path2, exist_ok=True)
+                
+                # Generate data in chunks and write as separate partition files
+                chunk_size = n_int // 8  # 8 partitions
+                for partition_idx in range(8):
+                    start_idx = partition_idx * chunk_size
+                    if partition_idx == 7:  # Last partition gets remainder
+                        chunk_n = n_int - start_idx
+                    else:
+                        chunk_n = chunk_size
+                    
+                    print_status(f"Generating partition {partition_idx + 1}/8 (n={chunk_n})", 3)
+                    
+                    # Generate chunk data
+                    df1_chunk = make_random_intervals(n=chunk_n, n_chroms=1)
+                    df2_chunk = make_random_intervals(n=chunk_n, n_chroms=1)
+                    
+                    # Write as individual parquet files
+                    part1_file = os.path.join(path1, f"part-{partition_idx:05d}-{uuid.uuid4()}.snappy.parquet")
+                    part2_file = os.path.join(path2, f"part-{partition_idx:05d}-{uuid.uuid4()}.snappy.parquet")
+                    
+                    df1_chunk.write_parquet(part1_file)
+                    df2_chunk.write_parquet(part2_file)
+                
+                partition_count_1 = len([f for f in os.listdir(path1) if f.startswith('part-')])
+                partition_count_2 = len([f for f in os.listdir(path2) if f.startswith('part-')])
+                
+            else:
+                # For smaller datasets, use Spark as before
+                print_status(f"Using Spark for smaller dataset (n={n_int})", 2)
+                
+                # Generate data using Polars
+                df1_polars = make_random_intervals(n=n, n_chroms=1)
+                df2_polars = make_random_intervals(n=n, n_chroms=1)
+                
+                # Convert to Pandas for Spark compatibility
+                df1_pandas = df1_polars.to_pandas()
+                df2_pandas = df2_polars.to_pandas()
+                
+                # Create Spark DataFrames
+                df1_spark = spark.createDataFrame(df1_pandas)
+                df2_spark = spark.createDataFrame(df2_pandas)
+                
+                print_status(f"Partitioning df1 into 8 partitions...", 3)
+                # Repartition to 8 partitions and write
+                df1_spark.repartition(8).write.mode("overwrite").parquet(path1)
+                
+                print_status(f"Partitioning df2 into 8 partitions...", 3)
+                df2_spark.repartition(8).write.mode("overwrite").parquet(path2)
+                
+                # Verify partitioning
+                partition_count_1 = len([f for f in os.listdir(path1) if f.startswith('part-')])
+                partition_count_2 = len([f for f in os.listdir(path2) if f.startswith('part-')])
+            
+            print_status(f"Saved: {os.path.basename(path1)} ({partition_count_1} partitions), "
+                        f"{os.path.basename(path2)} ({partition_count_2} partitions)", 2)
+    
+    finally:
+        # Stop Spark session
+        print_status("Stopping Spark session...", 1)
+        spark.stop()
 
 def find_test_cases(folder):
-    """Find matching test case pairs"""
-    files = os.listdir(folder)
-    df1_cases = {re.match(r'df1-(\d+)\.parquet$', f).group(1)
-                 for f in files if re.match(r'df1-(\d+)\.parquet$', f)}
-    df2_cases = {re.match(r'df2-(\d+)\.parquet$', f).group(1)
-                 for f in files if re.match(r'df2-(\d+)\.parquet$', f)}
+    """Find matching test case pairs (now directories instead of files)"""
+    items = os.listdir(folder)
+    df1_cases = set()
+    df2_cases = set()
+    
+    for item in items:
+        item_path = os.path.join(folder, item)
+        if os.path.isdir(item_path):
+            # Check for df1 directories
+            df1_match = re.match(r'df1-(\d+)\.parquet$', item)
+            if df1_match:
+                df1_cases.add(df1_match.group(1))
+            
+            # Check for df2 directories
+            df2_match = re.match(r'df2-(\d+)\.parquet$', item)
+            if df2_match:
+                df2_cases.add(df2_match.group(1))
+    
     return sorted(df1_cases & df2_cases, key=lambda x: int(x))
 
 def create_zip_archive(source_dir, dataset_id, project_root):
@@ -209,8 +313,8 @@ def create_config_files(dataset_id, zip_path, url, test_cases, conf_dir="tmp/con
         "test-cases": [
             {
                 "name": case,
-                "df_path_1": f"df1-{case}.parquet",
-                "df_path_2": f"df2-{case}.parquet",
+                "df_path_1": f"df1-{case}.parquet/*.parquet",
+                "df_path_2": f"df2-{case}.parquet/*.parquet",
             }
             for case in test_cases
         ],

@@ -99,8 +99,8 @@ def run_benchmark(
                 if operation not in ["read_vcf"]:
                     pb.set_option("datafusion.execution.target_partitions", str(th))
                 if th != 1:
-                    pb.set_option("datafusion.optimizer.repartition_joins", "true")
-                    pb.set_option("datafusion.optimizer.repartition_file_scans", "true")
+                    pb.set_option("datafusion.optimizer.repartition_joins", "false")
+                    pb.set_option("datafusion.optimizer.repartition_file_scans", "false")
                     pb.set_option("datafusion.execution.coalesce_batches", "false")
                 else:
                     pb.set_option("datafusion.optimizer.repartition_joins", "false")

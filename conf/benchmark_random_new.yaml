@@ -1,0 +1,173 @@
+common:
+  baseline: polars_bio
+benchmarks:
+- name: overlap-single
+  operation: overlap
+  dataset: random_intervals_20250611_010000
+  tools:
+  - polars_bio
+  - bioframe
+  - pyranges0
+  - pyranges1
+  #- pybedtools
+  #- genomicranges
+  #- pygenomics
+  parallel: false
+  input_dataframes: false
+  num_repeats: 3
+  num_executions: 1
+  test-cases:
+  - '100'
+  - '1000'
+  - '10000'
+  - '100000'
+  - '1000000'
+  - '10000000'
+- name: nearest-single
+  operation: nearest
+  dataset: random_intervals_20250611_010000
+  tools:
+  - polars_bio
+  - bioframe
+  - pyranges0
+  - pyranges1
+  #- pybedtools
+  parallel: false
+  input_dataframes: false
+  num_repeats: 3
+  num_executions: 1
+  test-cases:
+  - '100'
+  - '1000'
+  - '10000'
+  - '100000'
+  - '1000000'
+  - '10000000'
+- name: count_overlaps-single
+  operation: count_overlaps
+  dataset: random_intervals_20250611_010000
+  tools:
+  - polars_bio
+  - bioframe
+  - pyranges0
+  - pyranges1
+  #- pybedtools
+  parallel: false
+  input_dataframes: false
+  num_repeats: 3
+  num_executions: 1
+  test-cases:
+  - '100'
+  - '1000'
+  - '10000'
+  - '100000'
+  - '1000000'
+  - '10000000'
+- name: coverage-single
+  operation: coverage
+  dataset: random_intervals_20250611_010000
+  tools:
+  - polars_bio
+  - bioframe
+  - pyranges0
+  - pyranges1
+  #- pybedtools
+  parallel: false
+  input_dataframes: false
+  num_repeats: 3
+  num_executions: 1
+  test-cases:
+  - '100'
+  - '1000'
+  - '10000'
+  - '100000'
+  - '1000000'
+  - '10000000'
+- name: overlap-parallel
+  operation: overlap
+  dataset: random_intervals_20250611_010000
+  tools:
+  - polars_bio
+  parallel: true
+  input_dataframes: false
+  num_repeats: 3
+  num_executions: 1
+  test-cases:
+  - '100'
+  - '1000'
+  - '10000'
+  - '100000'
+  - '1000000'
+  - '10000000'
+  threads:
+  - 1
+  - 2
+  - 4
+  - 6
+  - 8
+- name: nearest-parallel
+  operation: nearest
+  dataset: random_intervals_20250611_010000
+  tools:
+  - polars_bio
+  parallel: true
+  input_dataframes: false
+  num_repeats: 3
+  num_executions: 1
+  test-cases:
+  - '100'
+  - '1000'
+  - '10000'
+  - '100000'
+  - '1000000'
+  - '10000000'
+  threads:
+  - 1
+  - 2
+  - 4
+  - 6
+  - 8
+- name: count_overlaps-parallel
+  operation: count_overlaps
+  dataset: random_intervals_20250611_010000
+  tools:
+  - polars_bio
+  parallel: true
+  input_dataframes: false
+  num_repeats: 3
+  num_executions: 1
+  test-cases:
+  - '100'
+  - '1000'
+  - '10000'
+  - '100000'
+  - '1000000'
+  - '10000000'
+  threads:
+  - 1
+  - 2
+  - 4
+  - 6
+  - 8
+- name: coverage-parallel
+  operation: coverage
+  dataset: random_intervals_20250611_010000
+  tools:
+  - polars_bio
+  parallel: true
+  input_dataframes: false
+  num_repeats: 3
+  num_executions: 1
+  test-cases:
+  - '100'
+  - '1000'
+  - '10000'
+  - '100000'
+  - '1000000'
+  - '10000000'
+  threads:
+  - 1
+  - 2
+  - 4
+  - 6
+  - 8
