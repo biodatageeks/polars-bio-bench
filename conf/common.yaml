@@ -22,12 +22,22 @@ datasets:
     unzip: false
     format: parquet
     url: https://drive.google.com/uc?id=1xFx9clKJZ1JdKbCDyV_b0nA74b1RXw7t
-  - name: random_intervals_20250617_113640
+  - name: random_intervals_20250622_221714-1p
     source: gdrive
     unzip: true
     format: zip
-    url: https://drive.google.com/uc?id=1lS7rzfo9t1PUrk5xr3-Lc_jcBVrEmEK4
-    remote_path: tgambin:polars-bio-datasets/random_intervals_20250618_194028/random_intervals_20250618_194028.zip
+    url: https://drive.google.com/uc?id=1qCkSozLN20B2l6EiYYGqwthZk3_RzYZW
+    remote_path: tgambin:polars-bio-datasets/random_intervals_20250622_221714-1p/random_intervals_20250622_221714-1p.zip
+    generated: '2025-06-22T22:21:48.321367'
+    size_mb: 181.1
+  - name: random_intervals_20250622_221714-8p
+    source: gdrive
+    unzip: true
+    format: zip
+    url: https://drive.google.com/uc?id=1ZvpNAdNFck7XgExJnJm-dwhbBJyW9VAw
+    remote_path: tgambin:polars-bio-datasets/random_intervals_20250622_221714-8p/random_intervals_20250622_221714-8p.zip
+    generated: '2025-06-22T22:21:48.321405'
+    size_mb: 181.2
 test-cases:
   - name: "1-2"
     df_path_1: "fBrain-DS14718/*.parquet"
@@ -79,24 +89,54 @@ test-cases:
     df_path_1: "gnomad.exomes.v4.1.sites.chr21.vcf.bgz"
   - name: "gnomad-sv"
     df_path_1: "gnomad.v4.1.sv.sites.vcf.gz"
-  - name: '100'
+  - name: 100-1p
     df_path_1: df1-100.parquet/*.parquet
     df_path_2: df2-100.parquet/*.parquet
-  - name: '1000'
+    dataset: random_intervals_20250622_221714-1p
+  - name: 1000-1p
     df_path_1: df1-1000.parquet/*.parquet
     df_path_2: df2-1000.parquet/*.parquet
-  - name: '10000'
+    dataset: random_intervals_20250622_221714-1p
+  - name: 10000-1p
     df_path_1: df1-10000.parquet/*.parquet
     df_path_2: df2-10000.parquet/*.parquet
-  - name: '100000'
+    dataset: random_intervals_20250622_221714-1p
+  - name: 100000-1p
     df_path_1: df1-100000.parquet/*.parquet
     df_path_2: df2-100000.parquet/*.parquet
-  - name: '1000000'
+    dataset: random_intervals_20250622_221714-1p
+  - name: 1000000-1p
     df_path_1: df1-1000000.parquet/*.parquet
     df_path_2: df2-1000000.parquet/*.parquet
-  - name: '10000000'
+    dataset: random_intervals_20250622_221714-1p
+  - name: 10000000-1p
     df_path_1: df1-10000000.parquet/*.parquet
     df_path_2: df2-10000000.parquet/*.parquet
+    dataset: random_intervals_20250622_221714-1p
+  - name: 100-8p
+    df_path_1: df1-100.parquet/*.parquet
+    df_path_2: df2-100.parquet/*.parquet
+    dataset: random_intervals_20250622_221714-8p
+  - name: 1000-8p
+    df_path_1: df1-1000.parquet/*.parquet
+    df_path_2: df2-1000.parquet/*.parquet
+    dataset: random_intervals_20250622_221714-8p
+  - name: 10000-8p
+    df_path_1: df1-10000.parquet/*.parquet
+    df_path_2: df2-10000.parquet/*.parquet
+    dataset: random_intervals_20250622_221714-8p
+  - name: 100000-8p
+    df_path_1: df1-100000.parquet/*.parquet
+    df_path_2: df2-100000.parquet/*.parquet
+    dataset: random_intervals_20250622_221714-8p
+  - name: 1000000-8p
+    df_path_1: df1-1000000.parquet/*.parquet
+    df_path_2: df2-1000000.parquet/*.parquet
+    dataset: random_intervals_20250622_221714-8p
+  - name: 10000000-8p
+    df_path_1: df1-10000000.parquet/*.parquet
+    df_path_2: df2-10000000.parquet/*.parquet
+    dataset: random_intervals_20250622_221714-8p
 benchmark:
   export:
     format: csv

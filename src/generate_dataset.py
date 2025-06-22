@@ -97,9 +97,9 @@ def make_random_intervals(n=1e5, n_chroms=1, max_coord=None, max_length=10,
 
     return df
 
-def generate_test_data(data_dir="tmp/data"):
+def generate_test_data(data_dir="tmp/data", num_partitions=8):
     """Generate test datasets with various sizes and partition them using Spark"""
-    print_status("Generating test datasets...")
+    print_status(f"Generating test datasets with {num_partitions} partition(s)...")
     
     os.makedirs(data_dir, exist_ok=True)
     
@@ -122,68 +122,82 @@ def generate_test_data(data_dir="tmp/data"):
             if os.path.exists(path2):
                 shutil.rmtree(path2)
             
-            # For very large datasets (>=1M), use a different approach to avoid memory issues
-            if n_int >= 10000000000:
-                print_status(f"Using chunked processing for large dataset (n={n_int})", 2)
-                
-                # Create directories for partitions
-                os.makedirs(path1, exist_ok=True)
-                os.makedirs(path2, exist_ok=True)
-                
-                # Generate data in chunks and write as separate partition files
-                chunk_size = n_int // 8  # 8 partitions
-                for partition_idx in range(8):
-                    start_idx = partition_idx * chunk_size
-                    if partition_idx == 7:  # Last partition gets remainder
-                        chunk_n = n_int - start_idx
-                    else:
-                        chunk_n = chunk_size
-                    
-                    print_status(f"Generating partition {partition_idx + 1}/8 (n={chunk_n})", 3)
-                    
-                    # Generate chunk data
-                    df1_chunk = make_random_intervals(n=chunk_n, n_chroms=1)
-                    df2_chunk = make_random_intervals(n=chunk_n, n_chroms=1)
-                    
-                    # Write as individual parquet files
-                    part1_file = os.path.join(path1, f"part-{partition_idx:05d}-{uuid.uuid4()}.snappy.parquet")
-                    part2_file = os.path.join(path2, f"part-{partition_idx:05d}-{uuid.uuid4()}.snappy.parquet")
-                    
-                    df1_chunk.write_parquet(part1_file)
-                    df2_chunk.write_parquet(part2_file)
-                
-                partition_count_1 = len([f for f in os.listdir(path1) if f.startswith('part-')])
-                partition_count_2 = len([f for f in os.listdir(path2) if f.startswith('part-')])
-                
-            else:
-                # For smaller datasets, use Spark as before
-                print_status(f"Using Spark for smaller dataset (n={n_int})", 2)
-                
-                # Generate data using Polars
-                df1_polars = make_random_intervals(n=n, n_chroms=1)
-                df2_polars = make_random_intervals(n=n, n_chroms=1)
-                
-                # Convert to Pandas for Spark compatibility
-                df1_pandas = df1_polars.to_pandas()
-                df2_pandas = df2_polars.to_pandas()
-                
-                # Create Spark DataFrames
-                df1_spark = spark.createDataFrame(df1_pandas)
-                df2_spark = spark.createDataFrame(df2_pandas)
-                
-                print_status(f"Partitioning df1 into 8 partitions...", 3)
-                # Repartition to 8 partitions and write
-                df1_spark.repartition(8).write.mode("overwrite").parquet(path1)
-                
-                print_status(f"Partitioning df2 into 8 partitions...", 3)
-                df2_spark.repartition(8).write.mode("overwrite").parquet(path2)
-                
-                # Verify partitioning
-                partition_count_1 = len([f for f in os.listdir(path1) if f.startswith('part-')])
-                partition_count_2 = len([f for f in os.listdir(path2) if f.startswith('part-')])
+            # Generate data using Polars
+            df1_polars = make_random_intervals(n=n, n_chroms=1)
+            df2_polars = make_random_intervals(n=n, n_chroms=1)
+            
+            # Convert to Pandas for Spark compatibility
+            df1_pandas = df1_polars.to_pandas()
+            df2_pandas = df2_polars.to_pandas()
+            
+            # Create Spark DataFrames
+            df1_spark = spark.createDataFrame(df1_pandas)
+            df2_spark = spark.createDataFrame(df2_pandas)
+            
+            print_status(f"Partitioning df1 into {num_partitions} partitions...", 2)
+            # Repartition and write
+            df1_spark.repartition(num_partitions).write.mode("overwrite").parquet(path1)
+            
+            print_status(f"Partitioning df2 into {num_partitions} partitions...", 2)
+            df2_spark.repartition(num_partitions).write.mode("overwrite").parquet(path2)
+            
+            # Verify partitioning
+            partition_count_1 = len([f for f in os.listdir(path1) if f.startswith('part-')])
+            partition_count_2 = len([f for f in os.listdir(path2) if f.startswith('part-')])
             
             print_status(f"Saved: {os.path.basename(path1)} ({partition_count_1} partitions), "
                         f"{os.path.basename(path2)} ({partition_count_2} partitions)", 2)
+    
+    finally:
+        # Stop Spark session
+        print_status("Stopping Spark session...", 1)
+        spark.stop()
+
+def create_partitioned_versions(base_data_dir, output_dir_1p, output_dir_8p):
+    """Create 1-partition and 8-partition versions from the same base data"""
+    print_status("Creating partitioned versions from base data...")
+    
+    # Initialize Spark session
+    spark = get_spark_session()
+    
+    try:
+        # Create output directories
+        os.makedirs(output_dir_1p, exist_ok=True)
+        os.makedirs(output_dir_8p, exist_ok=True)
+        
+        # Find all parquet directories in base data
+        parquet_dirs = [d for d in os.listdir(base_data_dir) 
+                       if os.path.isdir(os.path.join(base_data_dir, d)) and d.endswith('.parquet')]
+        
+        for parquet_dir in parquet_dirs:
+            print_status(f"Processing {parquet_dir}...", 1)
+            
+            base_path = os.path.join(base_data_dir, parquet_dir)
+            path_1p = os.path.join(output_dir_1p, parquet_dir)
+            path_8p = os.path.join(output_dir_8p, parquet_dir)
+            
+            # Remove existing directories if they exist
+            if os.path.exists(path_1p):
+                shutil.rmtree(path_1p)
+            if os.path.exists(path_8p):
+                shutil.rmtree(path_8p)
+            
+            # Read the base data
+            df_spark = spark.read.parquet(base_path)
+            
+            print_status(f"Creating 1-partition version...", 2)
+            # Create 1-partition version
+            df_spark.repartition(1).write.mode("overwrite").parquet(path_1p)
+            
+            print_status(f"Creating 8-partition version...", 2)
+            # Create 8-partition version
+            df_spark.repartition(8).write.mode("overwrite").parquet(path_8p)
+            
+            # Verify partitioning
+            partition_count_1p = len([f for f in os.listdir(path_1p) if f.startswith('part-')])
+            partition_count_8p = len([f for f in os.listdir(path_8p) if f.startswith('part-')])
+            
+            print_status(f"Created: {parquet_dir} -> 1p({partition_count_1p} partitions), 8p({partition_count_8p} partitions)", 2)
     
     finally:
         # Stop Spark session
@@ -404,59 +418,154 @@ def create_config_files(dataset_id, zip_path, url, test_cases, conf_dir="tmp/con
                   default_flow_style=False)
     print_status(f"Saved: {random_path}", 1)
 
+def create_combined_config_files(datasets_info, conf_dir="tmp/conf"):
+    """Create YAML configuration files for both datasets"""
+    print_status("Creating combined configuration files...")
+    
+    # Create config directory if it doesn't exist
+    os.makedirs(conf_dir, exist_ok=True)
+    
+    # Common configuration - combine both datasets
+    datasets_config = []
+    all_test_cases = []
+    
+    for dataset_info in datasets_info:
+        # Convert Google Drive URL to direct download format if needed
+        url = dataset_info["url"]
+        if "drive.google.com/open?id=" in url:
+            file_id = url.split("id=")[1]
+            url = f"https://drive.google.com/uc?id={file_id}"
+        
+        datasets_config.append({
+            "name": dataset_info["dataset_id"],
+            "source": "gdrive",
+            "unzip": True,
+            "format": "zip",
+            "url": url,
+            "remote_path": f"tgambin:polars-bio-datasets/{dataset_info['dataset_id']}/{os.path.basename(dataset_info['zip_path'])}",
+            "generated": datetime.now().isoformat(),
+            "size_mb": round(os.path.getsize(dataset_info["zip_path"]) / 1024 / 1024, 1)
+        })
+        
+        # Add test cases for this dataset
+        for case in dataset_info["test_cases"]:
+            all_test_cases.append({
+                "name": f"{case}-{dataset_info['dataset_id'].split('-')[-1]}",  # e.g., "100-1p", "1000-8p"
+                "df_path_1": f"df1-{case}.parquet/*.parquet",
+                "df_path_2": f"df2-{case}.parquet/*.parquet",
+                "dataset": dataset_info["dataset_id"]
+            })
+    
+    common_config = {
+        "datasets": datasets_config,
+        "test-cases": all_test_cases,
+        "benchmark": {
+            "export": {
+                "format": "csv"
+            }
+        }
+    }
+    
+    # Save combined config
+    common_path = os.path.join(conf_dir, "common.yaml")
+    with open(common_path, "w") as f:
+        yaml.dump(common_config, f, sort_keys=False, allow_unicode=True, 
+                  default_flow_style=False)
+    print_status(f"Saved combined config: {common_path}", 1)
+
 def main():
     """Main execution function"""
     # Generate unique dataset ID with timestamp
-    dataset_id = datetime.now().strftime("random_intervals_%Y%m%d_%H%M%S")
+    base_dataset_id = datetime.now().strftime("random_intervals_%Y%m%d_%H%M%S")
     
     # Define directory structure - use absolute paths relative to polars-bio-bench root
     script_dir = os.path.dirname(os.path.abspath(__file__))
     project_root = os.path.dirname(script_dir)  # Go up from src/ to polars-bio-bench/
-    data_dir = os.path.join(project_root, "tmp", "data")
     conf_dir = os.path.join(project_root, "tmp", "conf")
     
     print_status("=" * 60)
     print_status(f"DATASET GENERATION AND UPLOAD")
-    print_status(f"Dataset ID: {dataset_id}")
+    print_status(f"Base Dataset ID: {base_dataset_id}")
+    print_status(f"Will generate: {base_dataset_id}-1p and {base_dataset_id}-8p")
     print_status(f"Project root: {project_root}")
-    print_status(f"Data directory: {data_dir}")
     print_status(f"Config directory: {conf_dir}")
     print_status("=" * 60)
     
+    datasets_info = []
+    
     try:
-        # Step 1: Clean up old files
-        cleanup_old_files(data_dir=data_dir, conf_dir=conf_dir, project_root=project_root)
+        # Step 1: Generate base data once
+        print_status("=" * 60)
+        print_status("GENERATING BASE DATA")
+        print_status("=" * 60)
         
-        # Step 2: Generate test data
-        generate_test_data(data_dir=data_dir)
+        base_data_dir = os.path.join(project_root, "tmp", "data-base")
+        cleanup_old_files(data_dir=base_data_dir, conf_dir=conf_dir, project_root=project_root)
+        generate_test_data(data_dir=base_data_dir, num_partitions=8)  # Generate with 8 partitions first
         
-        # Step 3: Find test cases
-        print_status("Discovering test cases...")
-        test_cases = find_test_cases(data_dir)
-        print_status(f"Found {len(test_cases)} test cases: {test_cases}", 1)
+        # Step 2: Create partitioned versions from base data
+        print_status("=" * 60)
+        print_status("CREATING PARTITIONED VERSIONS")
+        print_status("=" * 60)
         
-        # Step 4: Create ZIP archive
-        zip_path = create_zip_archive(data_dir, dataset_id, project_root)
+        data_dir_1p = os.path.join(project_root, "tmp", "data-1p")
+        data_dir_8p = os.path.join(project_root, "tmp", "data-8p")
         
-        # Step 5: Upload to remote storage
-        url = upload_to_remote(zip_path, dataset_id)
-        if not url:
-            print_status("ERROR: Upload failed!", 0)
+        create_partitioned_versions(base_data_dir, data_dir_1p, data_dir_8p)
+        
+        # Step 3: Create datasets and upload
+        dataset_configs = [
+            {"id": f"{base_dataset_id}-1p", "dir": data_dir_1p, "partitions": "1-partition"},
+            {"id": f"{base_dataset_id}-8p", "dir": data_dir_8p, "partitions": "8-partition"}
+        ]
+        
+        for config in dataset_configs:
+            print_status("=" * 60)
+            print_status(f"PROCESSING {config['partitions'].upper()} VERSION")
+            print_status("=" * 60)
+            
+            dataset_id = config["id"]
+            data_dir = config["dir"]
+            
+            test_cases = find_test_cases(data_dir)
+            print_status(f"Found {len(test_cases)} test cases: {test_cases}", 1)
+            
+            zip_path = create_zip_archive(data_dir, dataset_id, project_root)
+            url = upload_to_remote(zip_path, dataset_id)
+            
+            if url:
+                datasets_info.append({
+                    "dataset_id": dataset_id,
+                    "zip_path": zip_path,
+                    "url": url,
+                    "test_cases": test_cases
+                })
+        
+        if not datasets_info:
+            print_status("ERROR: No datasets were successfully generated!", 0)
             sys.exit(1)
         
-        # Step 6: Create configuration files
-        create_config_files(dataset_id, zip_path, url, test_cases, conf_dir=conf_dir)
+        # Step 4: Create combined configuration files
+        create_combined_config_files(datasets_info, conf_dir=conf_dir)
+        
+        # Step 5: Cleanup base data directory
+        print_status("Cleaning up base data directory...", 0)
+        if os.path.exists(base_data_dir):
+            shutil.rmtree(base_data_dir)
         
         # Summary
         print_status("=" * 60)
         print_status("GENERATION COMPLETED SUCCESSFULLY")
         print_status("=" * 60)
-        print_status(f"Dataset ID: {dataset_id}")
-        print_status(f"ZIP file: {zip_path}")
-        print_status(f"Remote location: tgambin:polars-bio-datasets/{dataset_id}/")
-        print_status(f"Public URL: {url}")
-        print_status(f"Test cases: {len(test_cases)} ({', '.join(test_cases)})")
-        print_status(f"Configuration files: {conf_dir}/common.yaml, {conf_dir}/random.yaml")
+        
+        for dataset_info in datasets_info:
+            print_status(f"Dataset ID: {dataset_info['dataset_id']}")
+            print_status(f"ZIP file: {dataset_info['zip_path']}")
+            print_status(f"Public URL: {dataset_info['url']}")
+            print_status(f"Test cases: {len(dataset_info['test_cases'])} ({', '.join(dataset_info['test_cases'])})")
+            print_status("-" * 40)
+        
+        print_status(f"Configuration files: {conf_dir}/common.yaml")
         print_status("=" * 60)
         
     except KeyboardInterrupt:
@@ -464,6 +573,8 @@ def main():
         sys.exit(1)
     except Exception as e:
         print_status(f"ERROR: {e}", 0)
+        import traceback
+        traceback.print_exc()
         sys.exit(1)
 
 if __name__ == "__main__":
