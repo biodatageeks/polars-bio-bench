@@ -71,16 +71,34 @@ export POLARS_MAX_THREADS=1
 Example of running memory profiler for polars_bio with 1-2 dataset for polars_bio:
 ```bash
 PRFOF_FILE="polars_bio_1-2.dat"
-mprof run --output $PRFOF_FILE python src/run-memory-profiler.py --bench-config conf/paper/benchmark-e2e-overlap.yaml --tool polars_bio --test-case 1-2
+mprof run --output $PRFOF_FILE python src/run-memory-profiler.py --bench-config conf/paper/benchmark-e2e-overlap.yaml --tool polars_bio --test-case 1-2 --operation overlap
 mprof plot $PRFOF_FILE
 ```
 
+#### Synthetic
 ```bash
-for tool in "polars_bio" "polars_bio_streaming" "bioframe" "pyranges0" "pyranges1"; do
-    for test_case in "8-7"; do
-        PRFOF_FILE="${tool}_${test_case}.dat"
-        mprof run --output $PRFOF_FILE python src/run-memory-profiler.py --bench-config conf/paper/benchmark-e2e-overlap.yaml --tool $tool --test-case $test_case
-    done
+BENCHMARK_TYPE="synthetic"
+for operation in "overlap" "nearest" "coverage" "count-overlaps"; do
+   for tool in "polars_bio" "polars_bio_streaming" "bioframe" "pyranges0" "pyranges1"; do
+       for test_case in "100" "10000000"; do
+           PRFOF_FILE="${tool}_${operation}_${test_case}.dat"
+           mprof run --output $PRFOF_FILE python src/run-memory-profiler.py --bench-config conf/paper/benchmark-e2e-${BENCHMARK_TYPE}.yaml --tool $tool --test-case $test_case --operation $operation
+       done
+   done
+done
+```
+
+
+#### Real
+```bash
+BENCHMARK_TYPE="real"
+for operation in "overlap" "nearest" "coverage" "count-overlaps"; do
+   for tool in "polars_bio" "polars_bio_streaming" "bioframe" "pyranges0" "pyranges1"; do
+       for test_case in "1-2" "8-7"; do
+           PRFOF_FILE="${tool}_${operation}_${test_case}.dat"
+           mprof run --output $PRFOF_FILE python src/run-memory-profiler.py --bench-config conf/paper/benchmark-e2e-${BENCHMARK_TYPE}.yaml --tool $tool --test-case $test_case --operation $operation
+       done
+   done
 done
 ```
 
@@ -94,7 +112,7 @@ This repository includes a unified script for generating random genomic interval
    ```bash
    # Install rclone
    curl https://rclone.org/install.sh | sudo bash
-   
+
    # Configure rclone with your Google Drive (follow interactive setup)
    rclone config
    ```

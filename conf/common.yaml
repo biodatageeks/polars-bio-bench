@@ -1,31 +1,102 @@
 datasets:
-- name: random_intervals_20250618_194028
-  source: gdrive
-  unzip: true
-  format: zip
-  url: https://drive.google.com/uc?id=1lS7rzfo9t1PUrk5xr3-Lc_jcBVrEmEK4
-  remote_path: tgambin:polars-bio-datasets/random_intervals_20250618_194028/random_intervals_20250618_194028.zip
-  generated: '2025-06-18T19:43:44.531529'
-  size_mb: 181.2
+  - name: databio
+    format: zip
+    source: gdrive
+    unzip: true
+    url: https://drive.google.com/uc?id=1lctmude31mSAh9fWjI60K1bDrbeDPGfm
+  - name: databio-8p
+    format: zip
+    source: gdrive
+    unzip: true
+    url: https://drive.google.com/uc?id=1Sj7nTB5gCUq9nbeQOg4zzS4tKO37M5Nd
+  - name: gnomad-vcf-chr21
+    source: gcs
+    unzip: false
+    url: gs://gcp-public-data--gnomad/release/4.1/vcf/exomes/gnomad.exomes.v4.1.sites.chr21.vcf.bgz
+  - name: gnomad-vcf-sv
+    source: gcs
+    unzip: false
+    url: gs://gcp-public-data--gnomad/release/4.1/genome_sv/gnomad.v4.1.sv.sites.vcf.gz
+  - name: dgvSupporting
+    source: gdrive
+    unzip: false
+    format: parquet
+    url: https://drive.google.com/uc?id=1xFx9clKJZ1JdKbCDyV_b0nA74b1RXw7t
+  - name: random_intervals_20250617_113640
+    source: gdrive
+    unzip: true
+    format: zip
+    url: https://drive.google.com/uc?id=1lS7rzfo9t1PUrk5xr3-Lc_jcBVrEmEK4
+    remote_path: tgambin:polars-bio-datasets/random_intervals_20250618_194028/random_intervals_20250618_194028.zip
 test-cases:
-- name: '100'
-  df_path_1: df1-100.parquet/*.parquet
-  df_path_2: df2-100.parquet/*.parquet
-- name: '1000'
-  df_path_1: df1-1000.parquet/*.parquet
-  df_path_2: df2-1000.parquet/*.parquet
-- name: '10000'
-  df_path_1: df1-10000.parquet/*.parquet
-  df_path_2: df2-10000.parquet/*.parquet
-- name: '100000'
-  df_path_1: df1-100000.parquet/*.parquet
-  df_path_2: df2-100000.parquet/*.parquet
-- name: '1000000'
-  df_path_1: df1-1000000.parquet/*.parquet
-  df_path_2: df2-1000000.parquet/*.parquet
-- name: '10000000'
-  df_path_1: df1-10000000.parquet/*.parquet
-  df_path_2: df2-10000000.parquet/*.parquet
+  - name: "1-2"
+    df_path_1: "fBrain-DS14718/*.parquet"
+    df_path_2: "exons/*.parquet"
+  - name: "2-7"
+    df_path_1: "exons/*.parquet"
+    df_path_2: "ex-anno/*.parquet"
+  - name: "1-0"
+    df_path_1: "fBrain-DS14718/*.parquet"
+    df_path_2: "chainRn4/*.parquet"
+  - name: "7-0"
+    df_path_1: "ex-anno/*.parquet"
+    df_path_2: "chainRn4/*.parquet"
+  - name: "7-3"
+    df_path_1: "ex-anno/*.parquet"
+    df_path_2: "chainOrnAna1/*.parquet"
+  - name: "0-8"
+    df_path_1: "chainRn4/*.parquet"
+    df_path_2: "ex-rna/*.parquet"
+  - name: "4-8"
+    df_path_1: "chainVicPac2/*.parquet"
+    df_path_2: "ex-rna/*.parquet"
+  - name: "7-8"
+    df_path_1: "ex-anno/*.parquet"
+    df_path_2: "ex-rna/*.parquet"
+  - name: "8-7"
+    df_path_1: "ex-rna/*.parquet"
+    df_path_2: "ex-anno/*.parquet"
+  - name: "0-5"
+    df_path_1: "chainRn4/*.parquet"
+    df_path_2: "chainXenTro3Link/*.parquet"
+  ## unary operations
+  - name: "1"
+    df_path_1: "fBrain-DS14718/*.parquet"
+  - name: "2"
+    df_path_1: "exons/*.parquet"
+  - name: "7"
+    df_path_1: "ex-anno/*.parquet"
+  - name: "0"
+    df_path_1: "chainRn4/*.parquet"
+  - name: "8"
+    df_path_1: "ex-rna/*.parquet"
+  - name: "4"
+    df_path_1: "chainVicPac2/*.parquet"
+  - name: "dgvSupport"
+    df_path_1: "dgvSupport/dgvSupporting.parquet"
+    df_path_2: "/dgvSupportdgvSupporting.parquet"
+  - name: "gnomad-21"
+    df_path_1: "gnomad.exomes.v4.1.sites.chr21.vcf.bgz"
+  - name: "gnomad-sv"
+    df_path_1: "gnomad.v4.1.sv.sites.vcf.gz"
+  - name: '100'
+    df_path_1: df1-100.parquet/*.parquet
+    df_path_2: df2-100.parquet/*.parquet
+  - name: '1000'
+    df_path_1: df1-1000.parquet/*.parquet
+    df_path_2: df2-1000.parquet/*.parquet
+  - name: '10000'
+    df_path_1: df1-10000.parquet/*.parquet
+    df_path_2: df2-10000.parquet/*.parquet
+  - name: '100000'
+    df_path_1: df1-100000.parquet/*.parquet
+    df_path_2: df2-100000.parquet/*.parquet
+  - name: '1000000'
+    df_path_1: df1-1000000.parquet/*.parquet
+    df_path_2: df2-1000000.parquet/*.parquet
+  - name: '10000000'
+    df_path_1: df1-10000000.parquet/*.parquet
+    df_path_2: df2-10000000.parquet/*.parquet
 benchmark:
   export:
     format: csv

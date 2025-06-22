@@ -243,12 +243,51 @@ def e2e_overlap_polars_bio(df_path_1, df_path_2, output_type=None):
     df.write_csv(OUTPUT_CSV)
 
 
+@profile(stream=fp)
+def e2e_nearest_polars_bio(df_path_1, df_path_2, output_type=None):
+    df = pb.nearest(df_path_1, df_path_2, cols1=columns, cols2=columns).collect()
+    df.write_csv(OUTPUT_CSV)
+
+
+@profile(stream=fp)
+def e2e_coverage_polars_bio(df_path_1, df_path_2, output_type=None):
+    df = pb.coverage(df_path_1, df_path_2, cols1=columns, cols2=columns).collect()
+    df.write_csv(OUTPUT_CSV)
+
+
+@profile(stream=fp)
+def e2e_count_overlaps_polars_bio(df_path_1, df_path_2, output_type=None):
+    df = pb.count_overlaps(df_path_1, df_path_2, cols1=columns, cols2=columns).collect()
+    df.write_csv(OUTPUT_CSV)
+
+
 fp = open("memory_profiler_polars_bio.log", "w+")
 
 
 @profile(stream=fp)
 def e2e_overlap_polars_bio_streaming(df_path_1, df_path_2, output_type=None):
     pb.overlap(
+        df_path_1, df_path_2, cols1=columns, cols2=columns, streaming=True
+    ).sink_csv(OUTPUT_CSV)
+
+
+@profile(stream=fp)
+def e2e_nearest_polars_bio_streaming(df_path_1, df_path_2, output_type=None):
+    pb.nearest(
+        df_path_1, df_path_2, cols1=columns, cols2=columns, streaming=True
+    ).sink_csv(OUTPUT_CSV)
+
+
+@profile(stream=fp)
+def e2e_coverage_polars_bio_streaming(df_path_1, df_path_2, output_type=None):
+    pb.coverage(
+        df_path_1, df_path_2, cols1=columns, cols2=columns, streaming=True
+    ).sink_csv(OUTPUT_CSV)
+
+
+@profile(stream=fp)
+def e2e_count_overlaps_polars_bio_streaming(df_path_1, df_path_2, output_type=None):
+    pb.count_overlaps(
         df_path_1, df_path_2, cols1=columns, cols2=columns, streaming=True
     ).sink_csv(OUTPUT_CSV)
 
@@ -261,6 +300,30 @@ def e2e_overlap_bioframe(df_path_1, df_path_2):
     df_1 = pd.read_parquet(df_path_1.replace("*.parquet", ""))
     df_2 = pd.read_parquet(df_path_2.replace("*.parquet", ""))
     df = bf.overlap(df_1, df_2, cols1=columns, cols2=columns, how="inner")
+    df.to_csv("output.csv")
+
+
+@profile(stream=fp)
+def e2e_nearest_bioframe(df_path_1, df_path_2):
+    df_1 = pd.read_parquet(df_path_1.replace("*.parquet", ""))
+    df_2 = pd.read_parquet(df_path_2.replace("*.parquet", ""))
+    df = bf.closest(df_1, df_2, cols1=columns, cols2=columns)
+    df.to_csv("output.csv")
+
+
+@profile(stream=fp)
+def e2e_coverage_bioframe(df_path_1, df_path_2):
+    df_1 = pd.read_parquet(df_path_1.replace("*.parquet", ""))
+    df_2 = pd.read_parquet(df_path_2.replace("*.parquet", ""))
+    df = bf.coverage(df_1, df_2, cols1=columns, cols2=columns)
+    df.to_csv("output.csv")
+
+
+@profile(stream=fp)
+def e2e_count_overlaps_bioframe(df_path_1, df_path_2):
+    df_1 = pd.read_parquet(df_path_1.replace("*.parquet", ""))
+    df_2 = pd.read_parquet(df_path_2.replace("*.parquet", ""))
+    df = bf.count_overlaps(df_1, df_2, cols1=columns, cols2=columns)
     df.to_csv("output.csv")
 
 
@@ -277,6 +340,36 @@ def e2e_overlap_pyranges0(df_path_1, df_path_2):
     df.to_csv("output.csv")
 
 
+@profile(stream=fp)
+def e2e_nearest_pyranges0(df_path_1, df_path_2):
+    df_1 = pd.read_parquet(df_path_1.replace("*.parquet", ""))
+    df_2 = pd.read_parquet(df_path_2.replace("*.parquet", ""))
+    df_1_pr0 = df2pr0(df_1)
+    df_2_pr0 = df2pr0(df_2)
+    df = df_1_pr0.nearest(df_2_pr0)
+    df.to_csv("output.csv")
+
+
+@profile(stream=fp)
+def e2e_coverage_pyranges0(df_path_1, df_path_2):
+    df_1 = pd.read_parquet(df_path_1.replace("*.parquet", ""))
+    df_2 = pd.read_parquet(df_path_2.replace("*.parquet", ""))
+    df_1_pr0 = df2pr0(df_1)
+    df_2_pr0 = df2pr0(df_2)
+    df = df_1_pr0.coverage(df_2_pr0)
+    df.to_csv("output.csv")
+
+
+@profile(stream=fp)
+def e2e_count_overlaps_pyranges0(df_path_1, df_path_2):
+    df_1 = pd.read_parquet(df_path_1.replace("*.parquet", ""))
+    df_2 = pd.read_parquet(df_path_2.replace("*.parquet", ""))
+    df_1_pr0 = df2pr0(df_1)
+    df_2_pr0 = df2pr0(df_2)
+    df = df_1_pr0.count_overlaps(df_2_pr0)
+    df.to_csv("output.csv")
+
+
 fp = open("memory_profiler_pyranges0.log", "w+")
 
 
@@ -287,4 +380,34 @@ def e2e_overlap_pyranges1(df_path_1, df_path_2):
     df_1_pr1 = df2pr1(df_1)
     df_2_pr1 = df2pr1(df_2)
     df = df_1_pr1.join_ranges(df_2_pr1)
+    df.to_csv("output.csv")
+
+
+@profile(stream=fp)
+def e2e_nearest_pyranges1(df_path_1, df_path_2):
+    df_1 = pd.read_parquet(df_path_1.replace("*.parquet", ""))
+    df_2 = pd.read_parquet(df_path_2.replace("*.parquet", ""))
+    df_1_pr1 = df2pr1(df_1)
+    df_2_pr1 = df2pr1(df_2)
+    df = df_1_pr1.nearest(df_2_pr1)
+    df.to_csv("output.csv")
+
+
+@profile(stream=fp)
+def e2e_coverage_pyranges1(df_path_1, df_path_2):
+    df_1 = pd.read_parquet(df_path_1.replace("*.parquet", ""))
+    df_2 = pd.read_parquet(df_path_2.replace("*.parquet", ""))
+    df_1_pr1 = df2pr1(df_1)
+    df_2_pr1 = df2pr1(df_2)
+    df = df_1_pr1.count_overlaps(df_2_pr1, calculate_coverage=True)
+    df.to_csv("output.csv")
+
+
+@profile(stream=fp)
+def e2e_count_overlaps_pyranges1(df_path_1, df_path_2):
+    df_1 = pd.read_parquet(df_path_1.replace("*.parquet", ""))
+    df_2 = pd.read_parquet(df_path_2.replace("*.parquet", ""))
+    df_1_pr1 = df2pr1(df_1)
+    df_2_pr1 = df2pr1(df_2)
+    df = df_1_pr1.count_overlaps(df_2_pr1)
     df.to_csv("output.csv")

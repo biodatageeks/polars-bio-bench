@@ -1,0 +1,67 @@
+common:
+  baseline: bioframe # fastest, slowest or a tool name
+benchmarks:
+  - name: e2e-overlap-csv
+    operation: e2e_overlap
+    dataset: random_intervals_20250617_113640
+    tools:
+      - polars_bio
+      - polars_bio_streaming
+      - bioframe
+      - pyranges0
+      - pyranges1
+    parallel: false
+    input_dataframes: false
+    num_repeats: 3
+    num_executions: 1
+    test-cases:
+      - "100"
+      - "10000000"
+  - name: e2e-nearest-csv
+    operation: e2e_nearest
+    dataset: random_intervals_20250617_113640
+    tools:
+      - polars_bio
+      - polars_bio_streaming
+      - bioframe
+      - pyranges0
+      - pyranges1
+    parallel: false
+    input_dataframes: false
+    num_repeats: 3
+    num_executions: 1
+    test-cases:
+      - "100"
+      - "10000000"
+  - name: e2e-coverage-csv
+    operation: e2e_coverage
+    dataset: random_intervals_20250617_113640
+    tools:
+      - polars_bio
+      - polars_bio_streaming
+      - bioframe
+      - pyranges0
+      - pyranges1
+    parallel: false
+    input_dataframes: false
+    num_repeats: 3
+    num_executions: 1
+    test-cases:
+      - "100"
+      - "10000000"
+  - name: e2e-count-overlaps-csv
+    operation: e2e_count_overlaps
+    dataset: random_intervals_20250617_113640
+    tools:
+      - polars_bio
+      - polars_bio_streaming
+      - bioframe
+      - pyranges0
+      - pyranges1
+    parallel: false
+    input_dataframes: false
+    num_repeats: 3
+    num_executions: 1
+    test-cases:
+      - "100"
+      - "10000000"
