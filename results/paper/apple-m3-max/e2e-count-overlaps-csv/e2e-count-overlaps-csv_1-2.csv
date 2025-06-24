@@ -1,5 +1,5 @@
-Library,Min (s),Max (s),Mean (s),Speedup
-polars_bio,0.034520,0.037714,0.035927,9.27x
-polars_bio_streaming,0.035863,0.036756,0.036414,9.14x
-bioframe,0.328145,0.338734,0.332951,1.00x
-pyranges1,0.532739,0.544914,0.538646,0.62x
+Library,Min (s),Max (s),Mean (s),Speedup,Peak memory (MB)
+polars_bio,0.034520,0.037714,0.035927,9.27x,294.266
+polars_bio_streaming,0.035863,0.036756,0.036414,9.14x,278.438
+bioframe,0.328145,0.338734,0.332951,1.00x,306.234
+pyranges1,0.532739,0.544914,0.538646,0.62x,328.328
