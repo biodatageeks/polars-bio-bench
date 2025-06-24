@@ -1,6 +1,4 @@
 CMDLINE python src/run-memory-profiler.py --bench-config conf/paper/benchmark-e2e-real.yaml --tool pyranges1 --test-case 8-7 --operation coverage
-MEM 0.187500 1750798588.9838
-CMDLINE python src/run-memory-profiler.py --bench-config conf/paper/benchmark-e2e-real.yaml --tool pyranges1 --test-case 8-7 --operation coverage
 MEM 0.390625 1750798595.1593
 MEM 28.687500 1750798595.2647
 MEM 44.250000 1750798595.3690
