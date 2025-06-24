@@ -33,6 +33,21 @@ from operations import (
     coverage_pybedtools,
     coverage_pyranges0,
     coverage_pyranges1,
+    e2e_count_overlaps_bioframe,
+    e2e_count_overlaps_polars_bio,
+    e2e_count_overlaps_polars_bio_streaming,
+    e2e_count_overlaps_pyranges0,
+    e2e_count_overlaps_pyranges1,
+    e2e_coverage_bioframe,
+    e2e_coverage_polars_bio,
+    e2e_coverage_polars_bio_streaming,
+    e2e_coverage_pyranges0,
+    e2e_coverage_pyranges1,
+    e2e_nearest_bioframe,
+    e2e_nearest_polars_bio,
+    e2e_nearest_polars_bio_streaming,
+    e2e_nearest_pyranges0,
+    e2e_nearest_pyranges1,
     e2e_overlap_bioframe,
     e2e_overlap_polars_bio,
     e2e_overlap_polars_bio_streaming,
@@ -69,7 +84,7 @@ def run_benchmark(
     functions_merge,
     functions_coverage,
     functions_read_vcf,
-    functions_e2_overlap,
+    functions_e2,
     bech_data_root,
     output_dir,
     baseline,
@@ -100,7 +115,9 @@ def run_benchmark(
                     pb.set_option("datafusion.execution.target_partitions", str(th))
                 if th != 1:
                     pb.set_option("datafusion.optimizer.repartition_joins", "false")
-                    pb.set_option("datafusion.optimizer.repartition_file_scans", "false")
+                    pb.set_option(
+                        "datafusion.optimizer.repartition_file_scans", "false"
+                    )
                     pb.set_option("datafusion.execution.coalesce_batches", "false")
                 else:
                     pb.set_option("datafusion.optimizer.repartition_joins", "false")
@@ -173,10 +190,15 @@ def run_benchmark(
                             for func in functions_read_vcf
                             if func.__name__.startswith(f"{operation}_{tool}")
                         ]
-                    elif operation == "e2e_overlap":
+                    elif operation in [
+                        "e2e_overlap",
+                        "e2e_nearest",
+                        "e2e_coverage",
+                        "e2e_count_overlaps",
+                    ]:
                         table = [
                             func
-                            for func in functions_e2_overlap
+                            for func in functions_e2
                             if func.__name__.startswith(f"{operation}_{tool}")
                         ]
                     else:
@@ -554,12 +576,27 @@ def run(bench_config: str):
         read_vcf_polars_bio,
     ]
 
-    functions_e2_overlap = [
+    functions_e2 = [
         e2e_overlap_polars_bio,
         e2e_overlap_bioframe,
         e2e_overlap_pyranges0,
         e2e_overlap_pyranges1,
         e2e_overlap_polars_bio_streaming,
+        e2e_nearest_polars_bio,
+        e2e_nearest_bioframe,
+        e2e_nearest_pyranges0,
+        e2e_nearest_pyranges1,
+        e2e_nearest_polars_bio_streaming,
+        e2e_coverage_polars_bio,
+        e2e_coverage_bioframe,
+        e2e_coverage_pyranges0,
+        e2e_coverage_pyranges1,
+        e2e_coverage_polars_bio_streaming,
+        e2e_count_overlaps_polars_bio,
+        e2e_count_overlaps_bioframe,
+        e2e_count_overlaps_pyranges0,
+        e2e_count_overlaps_pyranges1,
+        e2e_count_overlaps_polars_bio_streaming,
     ]
 
     prepare_datatests(datasets, BECH_DATA_ROOT)
@@ -573,7 +610,7 @@ def run(bench_config: str):
         functions_merge,
         functions_coverage,
         functions_read_vcf,
-        functions_e2_overlap,
+        functions_e2,
         BECH_DATA_ROOT,
         output_dir,
         baseline,
