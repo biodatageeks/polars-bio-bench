@@ -1,0 +1,5 @@
+Library,Min (s),Max (s),Mean (s),Speedup
+polars_bio,1.806838,1.845584,1.825940,54.33x
+polars_bio_streaming,1.681187,1.767811,1.714943,57.85x
+bioframe,97.918020,101.736351,99.210461,1.00x
+pyranges1,19.498264,19.676838,19.561322,5.07x
