@@ -1,0 +1,299 @@
+common:
+  baseline: bioframe
+benchmarks:
+- name: overlap
+  operation: overlap
+  dataset: random_intervals_20250622_221714-1p
+  tools:
+  - polars_bio
+  - bioframe
+  - pyranges0
+  - pyranges1
+  - pybedtools
+  - genomicranges
+  - pygenomics
+  parallel: false
+  input_dataframes: false
+  num_repeats: 3
+  num_executions: 1
+  test-cases:
+  - '100-1p'
+  - '1000-1p'
+  - '10000-1p'
+  - '100000-1p'
+- name: overlap
+  operation: overlap
+  dataset: random_intervals_20250622_221714-1p
+  tools:
+  - polars_bio
+  - bioframe
+  - pyranges0
+  - pyranges1
+  parallel: false
+  input_dataframes: false
+  num_repeats: 3
+  num_executions: 1
+  test-cases:
+  - '1000000-1p'
+  - '10000000-1p'
+- name: overlap
+  operation: overlap
+  dataset: random_intervals_20250622_221714-1p
+  tools:
+  - polars_bio
+  parallel: true
+  input_dataframes: false
+  num_repeats: 3
+  num_executions: 1
+  test-cases:
+  - '100-1p'
+  - '1000-1p'
+  - '10000-1p'
+  - '100000-1p'
+  - '1000000-1p'
+  - '10000000-1p'
+  threads:
+  - 1
+- name: overlap-parallel-8p
+  operation: overlap
+  dataset: random_intervals_20250622_221714-8p
+  tools:
+  - polars_bio
+  parallel: true
+  input_dataframes: false
+  num_repeats: 3
+  num_executions: 1
+  test-cases:
+  - '100-8p'
+  - '1000-8p'
+  - '10000-8p'
+  - '100000-8p'
+  - '1000000-8p'
+  - '10000000-8p'
+  threads:
+  - 1
+  - 2
+  - 4
+  - 6
+  - 8
+- name: nearest
+  operation: nearest
+  dataset: random_intervals_20250622_221714-1p
+  tools:
+  - polars_bio
+  - bioframe
+  - pyranges0
+  - pyranges1
+  - pybedtools
+  parallel: false
+  input_dataframes: false
+  num_repeats: 3
+  num_executions: 1
+  test-cases:
+  - '100-1p'
+  - '1000-1p'
+  - '10000-1p'
+  - '100000-1p'
+- name: nearest
+  operation: nearest
+  dataset: random_intervals_20250622_221714-1p
+  tools:
+  - polars_bio
+  - bioframe
+  - pyranges0
+  - pyranges1
+  parallel: false
+  input_dataframes: false
+  num_repeats: 3
+  num_executions: 1
+  test-cases:
+  - '1000000-1p'
+  - '10000000-1p'
+- name: nearest-parallel-1p
+  operation: nearest
+  dataset: random_intervals_20250622_221714-1p
+  tools:
+  - polars_bio
+  parallel: true
+  input_dataframes: false
+  num_repeats: 3
+  num_executions: 1
+  test-cases:
+  - '100-1p'
+  - '1000-1p'
+  - '10000-1p'
+  - '100000-1p'
+  - '1000000-1p'
+  - '10000000-1p'
+  threads:
+  - 1
+- name: nearest-parallel-8p
+  operation: nearest
+  dataset: random_intervals_20250622_221714-8p
+  tools:
+  - polars_bio
+  parallel: true
+  input_dataframes: false
+  num_repeats: 3
+  num_executions: 1
+  test-cases:
+  - '100-8p'
+  - '1000-8p'
+  - '10000-8p'
+  - '100000-8p'
+  - '1000000-8p'
+  - '10000000-8p'
+  threads:
+  - 1
+  - 2
+  - 4
+  - 6
+  - 8
+- name: coverage
+  operation: coverage
+  dataset: random_intervals_20250622_221714-1p
+  tools:
+  - polars_bio
+  - bioframe
+#  - pyranges0
+  - pyranges1
+  - pybedtools
+  parallel: false
+  input_dataframes: false
+  num_repeats: 3
+  num_executions: 1
+  test-cases:
+  - '100-1p'
+  - '1000-1p'
+  - '10000-1p'
+  - '100000-1p'
+- name: coverage
+  operation: coverage
+  dataset: random_intervals_20250622_221714-1p
+  tools:
+  - polars_bio
+  - bioframe
+#  - pyranges0
+  - pyranges1
+  parallel: false
+  input_dataframes: false
+  num_repeats: 3
+  num_executions: 1
+  test-cases:
+  - '1000000-1p'
+  - '10000000-1p'
+- name: coverage-parallel-1p
+  operation: coverage
+  dataset: random_intervals_20250622_221714-1p
+  tools:
+  - polars_bio
+  parallel: true
+  input_dataframes: false
+  num_repeats: 3
+  num_executions: 1
+  test-cases:
+  - '100-1p'
+  - '1000-1p'
+  - '10000-1p'
+  - '100000-1p'
+  - '1000000-1p'
+  - '10000000-1p'
+  threads:
+  - 1
+- name: coverage-parallel-8p
+  operation: coverage
+  dataset: random_intervals_20250622_221714-8p
+  tools:
+  - polars_bio
+  parallel: true
+  input_dataframes: false
+  num_repeats: 3
+  num_executions: 1
+  test-cases:
+  - '100-8p'
+  - '1000-8p'
+  - '10000-8p'
+  - '100000-8p'
+  - '1000000-8p'
+  - '10000000-8p'
+  threads:
+  - 1
+  - 2
+  - 4
+  - 6
+  - 8
+- name: count-overlaps
+  operation: count_overlaps
+  dataset: random_intervals_20250622_221714-1p
+  tools:
+  - polars_bio
+  - bioframe
+#  - pyranges0
+  - pyranges1
+  - pybedtools
+  - genomicranges
+  - pygenomics
+  parallel: false
+  input_dataframes: false
+  num_repeats: 3
+  num_executions: 1
+  test-cases:
+  - '100-1p'
+  - '1000-1p'
+  - '10000-1p'
+  - '100000-1p'
+- name: count-overlaps
+  operation: count_overlaps
+  dataset: random_intervals_20250622_221714-1p
+  tools:
+  - polars_bio
+  - bioframe
+#  - pyranges0
+  - pyranges1
+  parallel: false
+  input_dataframes: false
+  num_repeats: 3
+  num_executions: 1
+  test-cases:
+  - '1000000-1p'
+  - '10000000-1p'
+- name: count-overlaps-parallel-1p
+  operation: count_overlaps
+  dataset: random_intervals_20250622_221714-1p
+  tools:
+  - polars_bio
+  parallel: true
+  input_dataframes: false
+  num_repeats: 3
+  num_executions: 1
+  test-cases:
+  - '100-1p'
+  - '1000-1p'
+  - '10000-1p'
+  - '100000-1p'
+  - '1000000-1p'
+  - '10000000-1p'
+  threads:
+  - 1
+- name: count-overlaps-parallel-8p
+  operation: count_overlaps
+  dataset: random_intervals_20250622_221714-8p
+  tools:
+  - polars_bio
+  parallel: true
+  input_dataframes: false
+  num_repeats: 3
+  num_executions: 1
+  test-cases:
+  - '100-8p'
+  - '1000-8p'
+  - '10000-8p'
+  - '100000-8p'
+  - '1000000-8p'
+  - '10000000-8p'
+  threads:
+  - 1
+  - 2
+  - 4
+  - 6
+  - 8
