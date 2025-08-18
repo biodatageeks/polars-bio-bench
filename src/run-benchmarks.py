@@ -102,6 +102,7 @@ def run_benchmark(
         num_repeats = b["num_repeats"]
         parallel = b["parallel"]
         threads = b["threads"] if parallel else [1]
+        repartition = b["repartition"] if "repartition" in b else False
         input_dataframes = b["input_dataframes"]
         tools = b["tools"]
         all_algorithms = b["all_algorithms"] if "all_algorithms" in b else False
@@ -124,13 +125,16 @@ def run_benchmark(
                         "datafusion.optimizer.repartition_file_scans", "false"
                     )
                     pb.set_option("datafusion.execution.coalesce_batches", "false")
+                elif th > 1 and repartition:
+                    pb.set_option("datafusion.optimizer.repartition_joins", "true")
+                    pb.set_option("datafusion.optimizer.repartition_file_scans", "true")
+                    pb.set_option("datafusion.execution.coalesce_batches", "false")
                 else:
                     pb.set_option("datafusion.optimizer.repartition_joins", "false")
                     pb.set_option(
                         "datafusion.optimizer.repartition_file_scans", "false"
                     )
                     pb.set_option("datafusion.execution.coalesce_batches", "false")
-
                 logger.info(
                     emoji.emojize(
                         f"Running benchmark {b["name"]} with {th} threads :gear: "
@@ -287,7 +291,9 @@ def run_benchmark(
                                     repeat=num_repeats,
                                     number=num_executions,
                                 )
-                        elif tool == "pyranges0":
+                        elif (
+                            tool == "pyranges0" and th == 1
+                        ):  # disable parallel for pyranges0
                             if operation.startswith("e2e_"):
                                 times = timeit.repeat(
                                     lambda: func(df_path_1, df_path_2),
