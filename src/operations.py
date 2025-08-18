@@ -42,7 +42,7 @@ def nearest_pyranges0(df_1_pr0, df_2_pr0, n=1):
 
 
 def nearest_pyranges1(df_1_pr1, df_2_pr1):
-    len(df_1_pr1.nearest(df_2_pr1))
+    len(df_1_pr1.nearest_ranges(df_2_pr1))
 
 
 def nearest_pybedtools(df_1_bed, df_2_bed):
@@ -126,7 +126,7 @@ def overlap_pyranges0(df_1_pr0, df_2_pr0, n=1):
 
 
 def overlap_pyranges1(df_1_pr1, df_2_pr1):
-    len(df_1_pr1.join_ranges(df_2_pr1))
+    len(df_1_pr1.join_overlaps(df_2_pr1))
 
 
 def overlap_pybedtools(df_1_bed, df_2_bed):

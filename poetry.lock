@@ -1294,14 +1294,14 @@ i18n = ["Babel (>=2.7)"]
 
 [[package]]
 name = "jsonschema"
-version = "4.25.0"
+version = "4.25.1"
 description = "An implementation of JSON Schema validation for Python"
 optional = false
 python-versions = ">=3.9"
 groups = ["dev"]
 files = [
-    {file = "jsonschema-4.25.0-py3-none-any.whl", hash = "sha256:24c2e8da302de79c8b9382fee3e76b355e44d2a4364bb207159ce10b517bd716"},
-    {file = "jsonschema-4.25.0.tar.gz", hash = "sha256:e63acf5c11762c0e6672ffb61482bdf57f0876684d8d249c0fe2d730d48bc55f"},
+    {file = "jsonschema-4.25.1-py3-none-any.whl", hash = "sha256:3fba0169e345c7175110351d456342c364814cfcf3b964ba4587f22915230a63"},
+    {file = "jsonschema-4.25.1.tar.gz", hash = "sha256:e4a9655ce0da0c0b67a085847e00a3a51449e1157f4f75e9fb5aa545e122eb85"},
 ]
 
 [package.dependencies]
@@ -2637,8 +2637,8 @@ files = [
 ]
 
 [[package]]
-name = "pyranges"
-version = "0.1.2"
+name = "pyranges0"
+version = "0.1.4"
 description = "GenomicRanges for Python."
 optional = false
 python-versions = "*"
@@ -2658,38 +2658,34 @@ dev = ["black (==24.4.2)", "bumpver", "isort (==5.13.2)", "mypy (==1.8.0)", "pip
 
 [package.source]
 type = "git"
-url = "https://github.com/pyranges/pyranges.git"
-reference = "4f0a153336e7153cdfea15b141ce4ea35a24e233"
-resolved_reference = "4f0a153336e7153cdfea15b141ce4ea35a24e233"
+url = "https://github.com/mwiewior/pyranges.git"
+reference = "fb045581175617761facd757e816861440232c79"
+resolved_reference = "fb045581175617761facd757e816861440232c79"
 
 [[package]]
 name = "pyranges1"
-version = "1.0.3"
+version = "1.1.3"
 description = "GenomicRanges for Python."
 optional = false
 python-versions = ">=3.12.0"
 groups = ["dev"]
-files = []
-develop = false
+files = [
+    {file = "pyranges1-1.1.3-py3-none-any.whl", hash = "sha256:2c5f349b44e244d91a3951b230dabef3729bb78dbc93740da7b503d3884d6d7f"},
+    {file = "pyranges1-1.1.3.tar.gz", hash = "sha256:b3cd329c742fe3bf7313131070694e69819d768c73786693277e1641ca42f02f"},
+]
 
 [package.dependencies]
 natsort = "*"
-ncls = ">=0.0.63"
 pandas = "*"
-sorted_nearest = ">=0.0.33"
+ruranges = ">=0.0.9"
 tabulate = "*"
 
 [package.extras]
 add-ons = ["bamread", "joblib", "pyBigWig", "pyfaidx", "pyrle (>=0.0.39)"]
-all = ["pyranges1[add-ons]", "pyranges1[dev]", "pyranges1[docs]"]
-dev = ["hypothesis (>=6.92.1)", "pandas-stubs", "pyright", "pytest-watcher", "pytest-xdist", "ruff (==0.3.0)", "tox", "types-tabulate"]
+all = ["pyranges1[add-ons]", "pyranges1[cli]", "pyranges1[dev]", "pyranges1[docs]"]
+cli = ["fire"]
+dev = ["hypothesis (>=6.92.1)", "pandas-stubs", "pyright", "pytest-watcher", "pytest-xdist", "ruff (==0.11.0)", "tox", "types-tabulate"]
 docs = ["sphinx", "sphinx-autoapi", "sphinx_rtd_theme", "sphinxcontrib-napoleon"]
-
-[package.source]
-type = "git"
-url = "https://github.com/mwiewior/pyranges1.git"
-reference = "949d7c15c1c2e217f4404415f79b386f326b6f8d"
-resolved_reference = "949d7c15c1c2e217f4404415f79b386f326b6f8d"
 
 [[package]]
 name = "pysam"
@@ -3294,6 +3290,24 @@ files = [
 pyasn1 = ">=0.1.3"
 
 [[package]]
+name = "ruranges"
+version = "0.0.11"
+description = ""
+optional = false
+python-versions = ">=3.12"
+groups = ["dev"]
+files = [
+    {file = "ruranges-0.0.11-cp312-cp312-manylinux_2_28_aarch64.whl", hash = "sha256:65d6ab945eb72831751110ed2840c09c6f37d63fff558c30c7ab8fa32043beec"},
+    {file = "ruranges-0.0.11-cp312-cp312-manylinux_2_28_x86_64.whl", hash = "sha256:967573a5d86d24f4c2ceb9917b39636266f114b0ca8e218dbb23e4d6c3617a33"},
+    {file = "ruranges-0.0.11-cp313-cp313-manylinux_2_28_aarch64.whl", hash = "sha256:a001dc8a3cf5644889ebfc5aeb4f6ffe72b3779e609cf72455505f63a06af8c0"},
+    {file = "ruranges-0.0.11-cp313-cp313-manylinux_2_28_x86_64.whl", hash = "sha256:4a0053fa65fefe539b907f3323c02a3400b28325352486feb76ba745a7e231a4"},
+    {file = "ruranges-0.0.11.tar.gz", hash = "sha256:b1c5c4220072939176f17955ff8cafc894325a810feb3d51ac9cbad614e4d677"},
+]
+
+[package.dependencies]
+numpy = "*"
+
+[[package]]
 name = "secretstorage"
 version = "3.3.3"
 description = "Python bindings to FreeDesktop.org Secret Service API"
@@ -3784,4 +3798,4 @@ cffi = ["cffi (>=1.17) ; python_version >= \"3.13\" and platform_python_implemen
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12,<3.13.0"
-content-hash = "9d8cf4e8e61c20214ede1ff60ada4f14003d4c215f43dfe408599688470f9faa"
+content-hash = "5a6a6b0dd498e3c55f4c9489c80a582cfab56dcdb5fe01180a47fc7efbeb5387"
