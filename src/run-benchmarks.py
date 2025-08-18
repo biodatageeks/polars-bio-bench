@@ -66,6 +66,10 @@ from operations import (
     overlap_bioframe,
     overlap_genomicranges,
     overlap_polars_bio,
+    overlap_polars_bio_arrayintervaltree,
+    overlap_polars_bio_intervaltree,
+    overlap_polars_bio_lapper,
+    overlap_polars_bio_superintervals,
     overlap_pybedtools,
     overlap_pygenomics,
     overlap_pyranges0,
@@ -100,6 +104,7 @@ def run_benchmark(
         threads = b["threads"] if parallel else [1]
         input_dataframes = b["input_dataframes"]
         tools = b["tools"]
+        all_algorithms = b["all_algorithms"] if "all_algorithms" in b else False
         if input_dataframes:
             dataframes_io = b["dataframes_io"]
             for d in dataframes_io:
@@ -154,7 +159,13 @@ def run_benchmark(
                     times = None
                     func = None
                     table = None
-                    if operation == "overlap":
+                    if operation == "overlap" and not all_algorithms:
+                        table = [
+                            func
+                            for func in functions_overlap
+                            if func.__name__ == f"{operation}_{tool}"
+                        ]
+                    elif operation == "overlap" and all_algorithms:
                         table = [
                             func
                             for func in functions_overlap
@@ -530,6 +541,10 @@ def run(bench_config: str):
     export_format = config["benchmark"]["export"]["format"].lower()
     functions_overlap = [
         overlap_polars_bio,
+        overlap_polars_bio_intervaltree,
+        overlap_polars_bio_arrayintervaltree,
+        overlap_polars_bio_lapper,
+        overlap_polars_bio_superintervals,
         overlap_bioframe,
         overlap_pyranges0,
         overlap_pyranges1,

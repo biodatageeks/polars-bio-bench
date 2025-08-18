@@ -80,6 +80,47 @@ def overlap_polars_bio(df_path_1, df_path_2, output_type):
         )
 
 
+# Coitrees, IntervalTree, ArrayIntervalTree, Lapper, SuperIntervals
+def overlap_polars_bio_intervaltree(df_path_1, df_path_2, output_type):
+    len(
+        pb.overlap(
+            df_path_1, df_path_2, cols1=columns, cols2=columns, algorithm="IntervalTree"
+        ).collect()
+    )
+
+
+def overlap_polars_bio_arrayintervaltree(df_path_1, df_path_2, output_type):
+    len(
+        pb.overlap(
+            df_path_1,
+            df_path_2,
+            cols1=columns,
+            cols2=columns,
+            algorithm="ArrayIntervalTree",
+        ).collect()
+    )
+
+
+def overlap_polars_bio_lapper(df_path_1, df_path_2, output_type):
+    len(
+        pb.overlap(
+            df_path_1, df_path_2, cols1=columns, cols2=columns, algorithm="Lapper"
+        ).collect()
+    )
+
+
+def overlap_polars_bio_superintervals(df_path_1, df_path_2, output_type):
+    len(
+        pb.overlap(
+            df_path_1,
+            df_path_2,
+            cols1=columns,
+            cols2=columns,
+            algorithm="SuperIntervals",
+        ).collect()
+    )
+
+
 def overlap_pyranges0(df_1_pr0, df_2_pr0, n=1):
     len(df_1_pr0.join(df_2_pr0, nb_cpu=n))
 
