@@ -66,6 +66,10 @@ from operations import (
     overlap_bioframe,
     overlap_genomicranges,
     overlap_polars_bio,
+    overlap_polars_bio_arrayintervaltree,
+    overlap_polars_bio_intervaltree,
+    overlap_polars_bio_lapper,
+    overlap_polars_bio_superintervals,
     overlap_pybedtools,
     overlap_pygenomics,
     overlap_pyranges0,
@@ -98,8 +102,10 @@ def run_benchmark(
         num_repeats = b["num_repeats"]
         parallel = b["parallel"]
         threads = b["threads"] if parallel else [1]
+        repartition = b["repartition"] if "repartition" in b else False
         input_dataframes = b["input_dataframes"]
         tools = b["tools"]
+        all_algorithms = b["all_algorithms"] if "all_algorithms" in b else False
         if input_dataframes:
             dataframes_io = b["dataframes_io"]
             for d in dataframes_io:
@@ -119,13 +125,16 @@ def run_benchmark(
                         "datafusion.optimizer.repartition_file_scans", "false"
                     )
                     pb.set_option("datafusion.execution.coalesce_batches", "false")
+                elif th > 1 and repartition:
+                    pb.set_option("datafusion.optimizer.repartition_joins", "true")
+                    pb.set_option("datafusion.optimizer.repartition_file_scans", "true")
+                    pb.set_option("datafusion.execution.coalesce_batches", "false")
                 else:
                     pb.set_option("datafusion.optimizer.repartition_joins", "false")
                     pb.set_option(
                         "datafusion.optimizer.repartition_file_scans", "false"
                     )
                     pb.set_option("datafusion.execution.coalesce_batches", "false")
-
                 logger.info(
                     emoji.emojize(
                         f"Running benchmark {b["name"]} with {th} threads :gear: "
@@ -154,7 +163,13 @@ def run_benchmark(
                     times = None
                     func = None
                     table = None
-                    if operation == "overlap":
+                    if operation == "overlap" and not all_algorithms:
+                        table = [
+                            func
+                            for func in functions_overlap
+                            if func.__name__ == f"{operation}_{tool}"
+                        ]
+                    elif operation == "overlap" and all_algorithms:
                         table = [
                             func
                             for func in functions_overlap
@@ -276,7 +291,9 @@ def run_benchmark(
                                     repeat=num_repeats,
                                     number=num_executions,
                                 )
-                        elif tool == "pyranges0":
+                        elif (
+                            tool == "pyranges0" and th == 1
+                        ):  # disable parallel for pyranges0
                             if operation.startswith("e2e_"):
                                 times = timeit.repeat(
                                     lambda: func(df_path_1, df_path_2),
@@ -530,6 +547,10 @@ def run(bench_config: str):
     export_format = config["benchmark"]["export"]["format"].lower()
     functions_overlap = [
         overlap_polars_bio,
+        overlap_polars_bio_intervaltree,
+        overlap_polars_bio_arrayintervaltree,
+        overlap_polars_bio_lapper,
+        overlap_polars_bio_superintervals,
         overlap_bioframe,
         overlap_pyranges0,
         overlap_pyranges1,

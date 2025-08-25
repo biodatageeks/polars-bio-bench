@@ -7,8 +7,8 @@ from urllib.parse import urlparse
 
 import emoji
 import gdown
-import pyranges as pr0
-import pyranges1 as pr1
+import pyranges as pr1
+import pyranges0 as pr0
 from google.cloud import storage
 from tqdm import tqdm
 
