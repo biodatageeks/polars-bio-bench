@@ -102,6 +102,20 @@ for operation in "overlap" "nearest" "coverage" "count-overlaps"; do
 done
 ```
 
+### New benchmark Sep 2025
+```bash
+BENCHMARK_TYPE="real"
+for operation in "overlap" ; do
+   for tool in "genomicranges" ; do
+       for test_case in "8-7"; do
+           PRFOF_FILE="${tool}_${operation}_${test_case}.dat"
+           mprof run --output $PRFOF_FILE python src/run-memory-profiler.py --bench-config conf/paper/benchmark-e2e-${BENCHMARK_TYPE}.yaml --tool $tool --test-case $test_case --operation $operation
+       done
+   done
+done
+
+```
+
 ## Generating New Datasets
 
 This repository includes a unified script for generating random genomic interval datasets and uploading them to cloud storage. The script creates datasets with unique timestamps and uploads them with proper directory structure.
@@ -212,4 +226,16 @@ cp tmp/conf/random.yaml conf/benchmark_random_new.yaml
 poetry run python src/run-benchmarks.py --bench-config conf/benchmark_random_new.yaml
 ```
 
+
+## Known Issues
+On MacOS with MX chips you may encounter the following error when installing polars-bio from source with poetry:
+```shell
+ld: symbol(s) not found for architecture arm64
+clang: error: linker command failed with exit code 1 (use -v to see invocation)
+
+```
+To fix this, you can set the following environment variable when installing or updating polars-bio:
+```shell
+ RUSTFLAGS="-Clink-arg=-undefined -Clink-arg=dynamic_lookup -Ctarget-cpu=native" poetry update
+```
 

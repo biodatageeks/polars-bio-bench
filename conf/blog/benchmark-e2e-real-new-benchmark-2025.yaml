@@ -1,0 +1,48 @@
+common:
+  baseline: fastest # fastest, slowest or a tool name
+benchmarks:
+  - name: e2e-overlap-csv
+    operation: e2e_overlap
+    dataset: databio
+    tools:
+#      - polars_bio
+#      - polars_bio_streaming
+#      - pyranges1
+      - genomicranges
+    parallel: false
+    input_dataframes: false
+    num_repeats: 3
+    num_executions: 1
+    test-cases:
+#      - "1-2"
+      - "8-7"
+#  - name: e2e-nearest-csv
+#    operation: e2e_nearest
+#    dataset: databio
+#    tools:
+#      - polars_bio
+#      - polars_bio_streaming
+##      - pyranges1
+##      - genomicranges
+#    parallel: false
+#    input_dataframes: false
+#    num_repeats: 3
+#    num_executions: 1
+#    test-cases:
+#      - "1-2"
+#      - "8-7"
+#  - name: e2e-count-overlaps-csv
+#    operation: e2e_count_overlaps
+#    dataset: databio
+#    tools:
+#      - polars_bio
+#      - polars_bio_streaming
+##      - pyranges1
+##      - genomicranges
+#    parallel: false
+#    input_dataframes: false
+#    num_repeats: 3
+#    num_executions: 1
+#    test-cases:
+#      - "1-2"
+#      - "8-7"

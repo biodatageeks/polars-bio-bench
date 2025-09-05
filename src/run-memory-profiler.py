@@ -22,6 +22,7 @@ from operations import (  # ## overlap; ## nearest; ## coverage; ## count_overla
     e2e_nearest_pyranges0,
     e2e_nearest_pyranges1,
     e2e_overlap_bioframe,
+    e2e_overlap_genomicranges,
     e2e_overlap_polars_bio,
     e2e_overlap_polars_bio_streaming,
     e2e_overlap_pyranges0,
@@ -89,6 +90,7 @@ def run(bench_config: str, tool: str, test_case: str, operation: str):
         e2e_overlap_pyranges0,
         e2e_overlap_pyranges1,
         e2e_overlap_polars_bio_streaming,
+        e2e_overlap_genomicranges,
         ### nearest
         e2e_nearest_polars_bio,
         e2e_nearest_bioframe,
