@@ -1,9 +1,35 @@
 common:
   baseline: polars_bio # fastest, slowest or a tool name
 benchmarks:
-#  - name: overlap
+  - name: overlap
+    operation: overlap
+    dataset: databio
+    tools:
+      - polars_bio
+#      - genomicranges
+#      - pyranges0
+#      - pyranges1
+#      - bioframe
+    parallel: false
+    repartition: true # for polars to automatically repartition scans and joins not relying on manual partitioning
+    threads:
+      - 1
+      - 2
+      - 4
+      - 6
+      - 8
+    input_dataframes: false
+    num_repeats: 3
+    num_executions: 1
+    all_algorithms: true
+    test-cases:
+      - "1-2"
+      - "7-3"
+      - "8-7"
+
+#  - name: overlap-synth
 #    operation: overlap
-#    dataset: databio
+#    dataset: random_intervals_20250622_221714-1p
 #    tools:
 #      - polars_bio
 #      - genomicranges
@@ -21,31 +47,7 @@ benchmarks:
 #    num_executions: 1
 #    all_algorithms: true
 #    test-cases:
-##      - "1-2"
-##      - "7-3"
-#      - "8-7"
-
-  - name: overlap-synth
-    operation: overlap
-    dataset: random_intervals_20250622_221714-1p
-    tools:
-      - polars_bio
-      - genomicranges
-      - pyranges0
-      - pyranges1
-      - bioframe
-    parallel: true
-    repartition: true # for polars to automatically repartition scans and joins not relying on manual partitioning
-    threads:
-      - 1
-      - 2
-      - 4
-    input_dataframes: false
-    num_repeats: 3
-    num_executions: 1
-    all_algorithms: true
-    test-cases:
-      - '10000-1p'
-      - '100000-1p'
-      - '1000000-1p'
-      - '10000000-1p'
+#      - '10000-1p'
+#      - '100000-1p'
+#      - '1000000-1p'
+#      - '10000000-1p'

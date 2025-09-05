@@ -2,10 +2,12 @@ import itertools
 
 import bioframe as bf
 import pandas as pd
+import polars as pl
 import polars_bio as pb
+from genomicranges import GenomicRanges
 from memory_profiler import profile
 
-from utils import df2pr0, df2pr1
+from utils import df2pr0, df2pr1, overlaps_to_df
 
 columns = ("contig", "pos_start", "pos_end")
 
@@ -49,8 +51,8 @@ def nearest_pybedtools(df_1_bed, df_2_bed):
     len(df_1_bed.closest(df_2_bed, s=False, t="first"))
 
 
-def nearest_genomicranges(df_1, df_2):
-    len(df_1.nearest(df_2, ignore_strand=True, select="arbitrary"))
+def nearest_genomicranges(df_1, df_2, n: int = 1):
+    len(df_1.nearest(df_2, ignore_strand=True, select="arbitrary", num_threads=n))
 
 
 def overlap_bioframe(df_1, df_2):
@@ -143,8 +145,8 @@ def overlap_pygenomics(df_1_pg, df_2_array):
     )
 
 
-def overlap_genomicranges(df_1, df_2):
-    len(df_1.find_overlaps(df_2, ignore_strand=True, query_type="any"))
+def overlap_genomicranges(df_1, df_2, n: int = 1):
+    len(df_1.find_overlaps(df_2, ignore_strand=True, query_type="any", num_threads=n))
 
 
 def count_overlaps_polars_bio_mz(df_path_1, df_path_2, output_type):
@@ -209,8 +211,14 @@ def count_overlaps_pybedtools(df_1_bed, df_2_bed):
     print(len(df_1_bed.intersect(df_2_bed, wa=True, c=True)))
 
 
-def count_overlaps_genomicranges(df_1, df_2):
-    print(len(df_2.count_overlaps(df_1, ignore_strand=True, query_type="any")))
+def count_overlaps_genomicranges(df_1, df_2, n: int = 1):
+    print(
+        len(
+            df_1.count_overlaps(
+                df_2, ignore_strand=True, query_type="any", num_threads=n
+            )
+        )
+    )
 
 
 def merge_polars_bio(df_path_1, df_path_2, output_type):
@@ -263,10 +271,6 @@ def coverage_pybedtools(df_1_bed, df_2_bed):
     len(df_1_bed.coverage(df_2_bed, counts=True))
 
 
-def coverage_genomicranges(df_1, df_2):
-    len(df_1.subset_by_overlaps(df_2))
-
-
 ## Input file formats benchmarking
 def read_vcf_polars_bio(df_path_1, th=1):
     len(pb.read_vcf(df_path_1, thread_num=th).collect())
@@ -307,30 +311,31 @@ fp = open("memory_profiler_polars_bio.log", "w+")
 
 @profile(stream=fp)
 def e2e_overlap_polars_bio_streaming(df_path_1, df_path_2, output_type=None):
-    pb.overlap(
-        df_path_1, df_path_2, cols1=columns, cols2=columns, streaming=True
-    ).sink_csv(OUTPUT_CSV)
+    if pb.__version__ > "0.12.0":
+        pb.overlap(df_path_1, df_path_2, cols1=columns, cols2=columns).sink_csv(
+            OUTPUT_CSV
+        )
+    else:
+        pb.overlap(
+            df_path_1, df_path_2, cols1=columns, cols2=columns, streaming=True
+        ).sink_csv(OUTPUT_CSV)
 
 
 @profile(stream=fp)
 def e2e_nearest_polars_bio_streaming(df_path_1, df_path_2, output_type=None):
-    pb.nearest(
-        df_path_1, df_path_2, cols1=columns, cols2=columns, streaming=True
-    ).sink_csv(OUTPUT_CSV)
+    pb.nearest(df_path_1, df_path_2, cols1=columns, cols2=columns).sink_csv(OUTPUT_CSV)
 
 
 @profile(stream=fp)
 def e2e_coverage_polars_bio_streaming(df_path_1, df_path_2, output_type=None):
-    pb.coverage(
-        df_path_1, df_path_2, cols1=columns, cols2=columns, streaming=True
-    ).sink_csv(OUTPUT_CSV)
+    pb.coverage(df_path_1, df_path_2, cols1=columns, cols2=columns).sink_csv(OUTPUT_CSV)
 
 
 @profile(stream=fp)
 def e2e_count_overlaps_polars_bio_streaming(df_path_1, df_path_2, output_type=None):
-    pb.count_overlaps(
-        df_path_1, df_path_2, cols1=columns, cols2=columns, streaming=True
-    ).sink_csv(OUTPUT_CSV)
+    pb.count_overlaps(df_path_1, df_path_2, cols1=columns, cols2=columns).sink_csv(
+        OUTPUT_CSV
+    )
 
 
 fp = open("memory_profiler_bioframe.log", "w+")
@@ -420,7 +425,7 @@ def e2e_overlap_pyranges1(df_path_1, df_path_2):
     df_2 = pd.read_parquet(df_path_2.replace("*.parquet", ""))
     df_1_pr1 = df2pr1(df_1)
     df_2_pr1 = df2pr1(df_2)
-    df = df_1_pr1.join_ranges(df_2_pr1)
+    df = df_1_pr1.join_overlaps(df_2_pr1)
     df.to_csv("output.csv")
 
 
@@ -430,7 +435,7 @@ def e2e_nearest_pyranges1(df_path_1, df_path_2):
     df_2 = pd.read_parquet(df_path_2.replace("*.parquet", ""))
     df_1_pr1 = df2pr1(df_1)
     df_2_pr1 = df2pr1(df_2)
-    df = df_1_pr1.nearest(df_2_pr1)
+    df = df_1_pr1.nearest_ranges(df_2_pr1)
     df.to_csv("output.csv")
 
 
@@ -452,3 +457,103 @@ def e2e_count_overlaps_pyranges1(df_path_1, df_path_2):
     df_2_pr1 = df2pr1(df_2)
     df = df_1_pr1.count_overlaps(df_2_pr1)
     df.to_csv("output.csv")
+
+
+# GenomicRanges E2E tests
+fp = open("memory_profiler_genomicranges.log", "w+")
+
+
+@profile(stream=fp)
+def e2e_overlap_genomicranges(df_path_1, df_path_2, n: int = 1):
+    df_1 = pl.read_parquet(df_path_1)
+    df_2 = pl.read_parquet(df_path_2) if df_path_2 else None
+    df_1_gr = GenomicRanges.from_polars(
+        df_1.rename(
+            {
+                "contig": "seqnames",
+                "pos_start": "starts",
+                "pos_end": "ends",
+            }
+        )
+    )
+    df_2_gr = (
+        GenomicRanges.from_polars(
+            df_2.rename(
+                {
+                    "contig": "seqnames",
+                    "pos_start": "starts",
+                    "pos_end": "ends",
+                }
+            )
+        )
+        if df_2 is not None
+        else None
+    )
+    hits = df_1_gr.find_overlaps(
+        df_2_gr, ignore_strand=True, query_type="any", num_threads=n
+    )
+    df = overlaps_to_df(df_1_gr, df_2_gr, hits, backend="polars")
+    df.write_csv(OUTPUT_CSV)
+    # hits.to_polars().write_csv(OUTPUT_CSV)
+
+
+@profile(stream=fp)
+def e2e_nearest_genomicranges(df_path_1, df_path_2, n: int = 1):
+    df_1 = pl.read_parquet(df_path_1)
+    df_2 = pl.read_parquet(df_path_2) if df_path_2 else None
+    df_1_gr = GenomicRanges.from_polars(
+        df_1.rename(
+            {
+                "contig": "seqnames",
+                "pos_start": "starts",
+                "pos_end": "ends",
+            }
+        )
+    )
+    df_2_gr = (
+        GenomicRanges.from_polars(
+            df_2.rename(
+                {
+                    "contig": "seqnames",
+                    "pos_start": "starts",
+                    "pos_end": "ends",
+                }
+            )
+        )
+        if df_2 is not None
+        else None
+    )
+    df = df_1_gr.nearest(df_2_gr, ignore_strand=True, select="arbitrary", num_threads=n)
+    df.to_polars().write_csv(OUTPUT_CSV)
+
+
+@profile(stream=fp)
+def e2e_count_overlaps_genomicranges(df_path_1, df_path_2, n: int = 1):
+    df_1 = pl.read_parquet(df_path_1)
+    df_2 = pl.read_parquet(df_path_2) if df_path_2 else None
+    df_1_gr = GenomicRanges.from_polars(
+        df_1.rename(
+            {
+                "contig": "seqnames",
+                "pos_start": "starts",
+                "pos_end": "ends",
+            }
+        )
+    )
+    df_2_gr = (
+        GenomicRanges.from_polars(
+            df_2.rename(
+                {
+                    "contig": "seqnames",
+                    "pos_start": "starts",
+                    "pos_end": "ends",
+                }
+            )
+        )
+        if df_2 is not None
+        else None
+    )
+    df = df_1_gr.count_overlaps(
+        df_2_gr, ignore_strand=True, query_type="any", num_threads=n
+    )
+    df.to_polars().write_csv(OUTPUT_CSV)

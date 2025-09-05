@@ -7,6 +7,7 @@ from urllib.parse import urlparse
 
 import emoji
 import gdown
+import numpy as np
 import pyranges as pr1
 import pyranges0 as pr0
 from google.cloud import storage
@@ -93,3 +94,60 @@ def prepare_datatests(datasets, BECH_DATA_ROOT):
         else:
             Path.mkdir(Path(f"{BECH_DATA_ROOT}/{dataset}"), parents=True, exist_ok=True)
     logger.info(emoji.emojize("Downloaded all benchmark datasets :check_mark_button:"))
+
+
+def overlaps_to_df(query_gr, subject_gr, hits_bf, backend="polars"):
+    # Convert hits to pandas to check available columns
+    hits_df = hits_bf.to_pandas() if hasattr(hits_bf, "to_pandas") else hits_bf
+
+    # Determine correct column names for query and subject indices
+    if "queryHits" in hits_df.columns:
+        q_idx = np.asarray(hits_df["queryHits"], dtype=int)
+        s_idx = np.asarray(hits_df["subjectHits"], dtype=int)
+    elif "query_hits" in hits_df.columns:
+        # SWAP: Based on debugging, self_hits contains query indices, query_hits contains subject indices
+        q_idx = np.asarray(hits_df["self_hits"], dtype=int)  # Actually query indices
+        s_idx = np.asarray(hits_df["query_hits"], dtype=int)  # Actually subject indices
+    else:
+        # Fallback: assume first two columns are indices
+        cols = list(hits_df.columns)
+        q_idx = np.asarray(hits_df[cols[0]], dtype=int)
+        s_idx = np.asarray(hits_df[cols[1]], dtype=int)
+        print(f"Using fallback columns: {cols[0]} -> query, {cols[1]} -> subject")
+
+    # Bounds checking to prevent index errors - ensure indices are 0-based and within bounds
+    q_len = len(query_gr.seqnames)
+    s_len = len(subject_gr.seqnames)
+
+    # Filter indices to ensure they're within bounds (0-based indexing)
+    valid_mask = (q_idx >= 0) & (q_idx < q_len) & (s_idx >= 0) & (s_idx < s_len)
+
+    q_idx = q_idx[valid_mask]
+    s_idx = s_idx[valid_mask]
+
+    # pull arrays from GenomicRanges
+    q_seq = np.asarray(query_gr.seqnames)[q_idx]
+    q_start = np.asarray(query_gr.ranges.start)[q_idx]
+    q_end = np.asarray(query_gr.ranges.end)[q_idx]
+
+    s_seq = np.asarray(subject_gr.seqnames)[s_idx]
+    s_start = np.asarray(subject_gr.ranges.start)[s_idx]
+    s_end = np.asarray(subject_gr.ranges.end)[s_idx]
+
+    data = {
+        "contig1": q_seq,
+        "start1": q_start,
+        "end1": q_end,
+        "contig2": s_seq,
+        "start2": s_start,
+        "end2": s_end,
+    }
+
+    if backend == "polars":
+        import polars as pl
+
+        return pl.DataFrame(data)
+    else:
+        import pandas as pd
+
+        return pd.DataFrame(data)

@@ -1,0 +1,57 @@
+common:
+  baseline: polars_bio
+benchmarks:
+  - name: overlap-gr-vs-polars-parallel
+    operation: overlap
+    dataset: databio
+    tools:
+      - polars_bio
+      - genomicranges
+    parallel: true
+    threads: [1, 2, 4, 6, 8]
+    input_dataframes: false
+    num_repeats: 3
+    num_executions: 1
+    test-cases:
+      - "1-2"
+      - "2-1"
+      - "7-3"
+      - "3-7"
+      - "8-7"
+      - "7-8"
+  - name: nearest-gr-vs-polars-parallel
+    operation: nearest
+    dataset: databio
+    tools:
+      - polars_bio
+      - genomicranges
+    parallel: true
+    threads: [1, 2, 4, 6, 8]
+    input_dataframes: false
+    num_repeats: 3
+    num_executions: 1
+    test-cases:
+      - "1-2"
+      - "2-1"
+      - "7-3"
+      - "3-7"
+      - "8-7"
+      - "7-8"
+  - name: count-overlaps-gr-vs-polars-parallel
+    operation: count_overlaps
+    dataset: databio
+    tools:
+      - polars_bio
+      - genomicranges
+    parallel: true
+    threads: [1, 2, 4, 6, 8]
+    input_dataframes: false
+    num_repeats: 3
+    num_executions: 1
+    test-cases:
+      - "1-2"
+      - "2-1"
+      - "7-3"
+      - "3-7"
+      - "8-7"
+      - "7-8"

@@ -28,12 +28,12 @@ from operations import (
     count_overlaps_pyranges0,
     count_overlaps_pyranges1,
     coverage_bioframe,
-    coverage_genomicranges,
     coverage_polars_bio,
     coverage_pybedtools,
     coverage_pyranges0,
     coverage_pyranges1,
     e2e_count_overlaps_bioframe,
+    e2e_count_overlaps_genomicranges,
     e2e_count_overlaps_polars_bio,
     e2e_count_overlaps_polars_bio_streaming,
     e2e_count_overlaps_pyranges0,
@@ -44,11 +44,13 @@ from operations import (
     e2e_coverage_pyranges0,
     e2e_coverage_pyranges1,
     e2e_nearest_bioframe,
+    e2e_nearest_genomicranges,
     e2e_nearest_polars_bio,
     e2e_nearest_polars_bio_streaming,
     e2e_nearest_pyranges0,
     e2e_nearest_pyranges1,
     e2e_overlap_bioframe,
+    e2e_overlap_genomicranges,
     e2e_overlap_polars_bio,
     e2e_overlap_polars_bio_streaming,
     e2e_overlap_pyranges0,
@@ -114,6 +116,8 @@ def run_benchmark(
             f"## Benchmark {b["name"]} for {operation} with dataset {dataset} \n"
         )
         logger.info(emoji.emojize(f"Running benchmark {b["name"]} :racing_car: "))
+        # share settings across benchmarks
+        pb.set_option("datafusion.execution.batch_size", str(1 * 65536))
         for t in tqdm(b["test-cases"]):
             results = []
             for th in threads:
@@ -143,7 +147,16 @@ def run_benchmark(
                 logger.info(
                     emoji.emojize(f"Loading test case {t}... :chequered_flag:  ")
                 )
-                test = [test for test in test_cases if test["name"] == t][0]
+                test_match = [test for test in test_cases if test["name"] == t]
+                if not test_match:
+                    logger.warning(
+                        emoji.emojize(
+                            f"Test case {t} not found in conf/common.yaml :warning: Skipping."
+                        )
+                    )
+                    console.log(f":bulb: Skipping unknown test-case '{t}'")
+                    continue
+                test = test_match[0]
                 df_path_1 = (
                     f"{bech_data_root}/{dataset}/{test['df_path_1']}"
                     if "df_path_1" in test
@@ -393,29 +406,27 @@ def run_benchmark(
                                 repeat=num_repeats,
                                 number=num_executions,
                             )
-                        elif tool == "genomicranges" and th == 1:
-                            df_1 = pd.read_parquet(
-                                df_path_1.replace("*.parquet", ""), engine="pyarrow"
-                            )
-                            df_2 = (
-                                pd.read_parquet(
-                                    df_path_2.replace("*.parquet", ""), engine="pyarrow"
+                        elif tool == "genomicranges":
+                            if operation.startswith("e2e_"):
+                                times = timeit.repeat(
+                                    lambda: func(df_path_1, df_path_2, n=th),
+                                    repeat=num_repeats,
+                                    number=num_executions,
                                 )
-                                if df_path_2
-                                else None
-                            )
-                            df_1_gr = GenomicRanges.from_pandas(
-                                df_1.rename(
-                                    columns={
-                                        "contig": "seqnames",
-                                        "pos_start": "starts",
-                                        "pos_end": "ends",
-                                    }
+                            else:
+                                df_1 = pd.read_parquet(
+                                    df_path_1.replace("*.parquet", ""), engine="pyarrow"
                                 )
-                            )
-                            df_2_gr = (
-                                GenomicRanges.from_pandas(
-                                    df_2.rename(
+                                df_2 = (
+                                    pd.read_parquet(
+                                        df_path_2.replace("*.parquet", ""),
+                                        engine="pyarrow",
+                                    )
+                                    if df_path_2
+                                    else None
+                                )
+                                df_1_gr = GenomicRanges.from_pandas(
+                                    df_1.rename(
                                         columns={
                                             "contig": "seqnames",
                                             "pos_start": "starts",
@@ -423,14 +434,24 @@ def run_benchmark(
                                         }
                                     )
                                 )
-                                if df_2 is not None
-                                else None
-                            )
-                            times = timeit.repeat(
-                                lambda: func(df_1_gr, df_2_gr),
-                                repeat=num_repeats,
-                                number=num_executions,
-                            )
+                                df_2_gr = (
+                                    GenomicRanges.from_pandas(
+                                        df_2.rename(
+                                            columns={
+                                                "contig": "seqnames",
+                                                "pos_start": "starts",
+                                                "pos_end": "ends",
+                                            }
+                                        )
+                                    )
+                                    if df_2 is not None
+                                    else None
+                                )
+                                times = timeit.repeat(
+                                    lambda: func(df_1_gr, df_2_gr, n=th),
+                                    repeat=num_repeats,
+                                    number=num_executions,
+                                )
                         # elif th == 1:
                         #     logger.error(
                         #         emoji.emojize(f"Tool {tool} not found :no_entry:")
@@ -590,7 +611,6 @@ def run(bench_config: str):
         coverage_pyranges0,
         coverage_pyranges1,
         coverage_pybedtools,
-        coverage_genomicranges,
     ]
 
     functions_read_vcf = [
@@ -602,11 +622,13 @@ def run(bench_config: str):
         e2e_overlap_bioframe,
         e2e_overlap_pyranges0,
         e2e_overlap_pyranges1,
+        e2e_overlap_genomicranges,
         e2e_overlap_polars_bio_streaming,
         e2e_nearest_polars_bio,
         e2e_nearest_bioframe,
         e2e_nearest_pyranges0,
         e2e_nearest_pyranges1,
+        e2e_nearest_genomicranges,
         e2e_nearest_polars_bio_streaming,
         e2e_coverage_polars_bio,
         e2e_coverage_bioframe,
@@ -617,6 +639,7 @@ def run(bench_config: str):
         e2e_count_overlaps_bioframe,
         e2e_count_overlaps_pyranges0,
         e2e_count_overlaps_pyranges1,
+        e2e_count_overlaps_genomicranges,
         e2e_count_overlaps_polars_bio_streaming,
     ]
 
