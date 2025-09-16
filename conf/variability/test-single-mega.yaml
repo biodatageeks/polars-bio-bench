@@ -1,0 +1,15 @@
+common:
+  baseline: polars_bio
+
+benchmarks:
+  - name: overlap-mega-sparse-test
+    operation: overlap
+    dataset: variability
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 1  # Single run for quick test
+    num_executions: 1
+    test-cases:
+      - "mega_sparse"

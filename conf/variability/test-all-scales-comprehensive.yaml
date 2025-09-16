@@ -1,0 +1,252 @@
+common:
+  baseline: polars_bio
+
+benchmarks:
+  # Comprehensive variability analysis across ALL scales
+  # From 1K intervals to 10M intervals - complete scalability test
+
+  # Small scale (1K intervals) - baseline with proper statistical replicates
+  - name: overlap-small-sparse
+    operation: overlap
+    dataset: variability
+    tools: [polars_bio]
+    parallel: false
+    input_dataframes: false
+    num_repeats: 10  # Sufficient for proper std dev calculation
+    num_executions: 1
+    test-cases: ["small_sparse"]
+
+  - name: coverage-small-sparse
+    operation: coverage
+    dataset: variability
+    tools: [polars_bio]
+    parallel: false
+    input_dataframes: false
+    num_repeats: 10
+    num_executions: 1
+    test-cases: ["small_sparse"]
+
+  - name: overlap-small-dense
+    operation: overlap
+    dataset: variability
+    tools: [polars_bio]
+    parallel: false
+    input_dataframes: false
+    num_repeats: 10
+    num_executions: 1
+    test-cases: ["small_dense"]
+
+  - name: coverage-small-dense
+    operation: coverage
+    dataset: variability
+    tools: [polars_bio]
+    parallel: false
+    input_dataframes: false
+    num_repeats: 10
+    num_executions: 1
+    test-cases: ["small_dense"]
+
+  # Medium scale (50K intervals)
+  - name: overlap-medium-sparse
+    operation: overlap
+    dataset: variability
+    tools: [polars_bio]
+    parallel: false
+    input_dataframes: false
+    num_repeats: 8  # Good statistical power
+    num_executions: 1
+    test-cases: ["medium_sparse"]
+
+  - name: coverage-medium-sparse
+    operation: coverage
+    dataset: variability
+    tools: [polars_bio]
+    parallel: false
+    input_dataframes: false
+    num_repeats: 8
+    num_executions: 1
+    test-cases: ["medium_sparse"]
+
+  - name: overlap-medium-dense
+    operation: overlap
+    dataset: variability
+    tools: [polars_bio]
+    parallel: false
+    input_dataframes: false
+    num_repeats: 8
+    num_executions: 1
+    test-cases: ["medium_dense"]
+
+  - name: coverage-medium-dense
+    operation: coverage
+    dataset: variability
+    tools: [polars_bio]
+    parallel: false
+    input_dataframes: false
+    num_repeats: 8
+    num_executions: 1
+    test-cases: ["medium_dense"]
+
+  # Large scale (200K intervals)
+  - name: overlap-large-sparse
+    operation: overlap
+    dataset: variability
+    tools: [polars_bio]
+    parallel: false
+    input_dataframes: false
+    num_repeats: 6  # Adequate for larger datasets
+    num_executions: 1
+    test-cases: ["large_sparse"]
+
+  - name: coverage-large-sparse
+    operation: coverage
+    dataset: variability
+    tools: [polars_bio]
+    parallel: false
+    input_dataframes: false
+    num_repeats: 6
+    num_executions: 1
+    test-cases: ["large_sparse"]
+
+  - name: overlap-large-dense
+    operation: overlap
+    dataset: variability
+    tools: [polars_bio]
+    parallel: false
+    input_dataframes: false
+    num_repeats: 6
+    num_executions: 1
+    test-cases: ["large_dense"]
+
+  - name: coverage-large-dense
+    operation: coverage
+    dataset: variability
+    tools: [polars_bio]
+    parallel: false
+    input_dataframes: false
+    num_repeats: 6
+    num_executions: 1
+    test-cases: ["large_dense"]
+
+  # Mega scale (100K intervals)
+  - name: overlap-mega-sparse
+    operation: overlap
+    dataset: variability
+    tools: [polars_bio]
+    parallel: false
+    input_dataframes: false
+    num_repeats: 5  # Minimum for proper statistics
+    num_executions: 1
+    test-cases: ["mega_sparse"]
+
+  - name: coverage-mega-sparse
+    operation: coverage
+    dataset: variability
+    tools: [polars_bio]
+    parallel: false
+    input_dataframes: false
+    num_repeats: 5
+    num_executions: 1
+    test-cases: ["mega_sparse"]
+
+  - name: overlap-mega-dense
+    operation: overlap
+    dataset: variability
+    tools: [polars_bio]
+    parallel: false
+    input_dataframes: false
+    num_repeats: 5
+    num_executions: 1
+    test-cases: ["mega_dense"]
+
+  - name: coverage-mega-dense
+    operation: coverage
+    dataset: variability
+    tools: [polars_bio]
+    parallel: false
+    input_dataframes: false
+    num_repeats: 5
+    num_executions: 1
+    test-cases: ["mega_dense"]
+
+  # Ultra scale (1M intervals)
+  - name: overlap-ultra-1m-sparse
+    operation: overlap
+    dataset: variability
+    tools: [polars_bio]
+    parallel: false
+    input_dataframes: false
+    num_repeats: 5  # Minimum for very large datasets
+    num_executions: 1
+    test-cases: ["ultra_1m_sparse"]
+
+  - name: coverage-ultra-1m-sparse
+    operation: coverage
+    dataset: variability
+    tools: [polars_bio]
+    parallel: false
+    input_dataframes: false
+    num_repeats: 5
+    num_executions: 1
+    test-cases: ["ultra_1m_sparse"]
+
+  - name: overlap-ultra-1m-dense
+    operation: overlap
+    dataset: variability
+    tools: [polars_bio]
+    parallel: false
+    input_dataframes: false
+    num_repeats: 5
+    num_executions: 1
+    test-cases: ["ultra_1m_dense"]
+
+  - name: coverage-ultra-1m-dense
+    operation: coverage
+    dataset: variability
+    tools: [polars_bio]
+    parallel: false
+    input_dataframes: false
+    num_repeats: 5
+    num_executions: 1
+    test-cases: ["ultra_1m_dense"]
+
+  # Extreme scale (10M intervals) - limited repeats due to computational cost
+  - name: overlap-extreme-10m-sparse
+    operation: overlap
+    dataset: variability
+    tools: [polars_bio]
+    parallel: false
+    input_dataframes: false
+    num_repeats: 3  # Minimum viable for stats (computationally expensive)
+    num_executions: 1
+    test-cases: ["extreme_10m_sparse"]
+
+  - name: coverage-extreme-10m-sparse
+    operation: coverage
+    dataset: variability
+    tools: [polars_bio]
+    parallel: false
+    input_dataframes: false
+    num_repeats: 3
+    num_executions: 1
+    test-cases: ["extreme_10m_sparse"]
+
+  - name: overlap-extreme-10m-dense
+    operation: overlap
+    dataset: variability
+    tools: [polars_bio]
+    parallel: false
+    input_dataframes: false
+    num_repeats: 3
+    num_executions: 1
+    test-cases: ["extreme_10m_dense"]
+
+  - name: coverage-extreme-10m-dense
+    operation: coverage
+    dataset: variability
+    tools: [polars_bio]
+    parallel: false
+    input_dataframes: false
+    num_repeats: 3
+    num_executions: 1
+    test-cases: ["extreme_10m_dense"]

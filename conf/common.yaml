@@ -38,6 +38,11 @@ datasets:
     remote_path: tgambin:polars-bio-datasets/random_intervals_20250622_221714-8p/random_intervals_20250622_221714-8p.zip
     generated: '2025-06-22T22:21:48.321405'
     size_mb: 181.2
+  - name: variability
+    source: local
+    unzip: false
+    format: parquet
+    local_path: data/variability
 test-cases:
   - name: "1-2"
     df_path_1: "fBrain-DS14718/*.parquet"
@@ -149,6 +154,73 @@ test-cases:
     df_path_1: df1-10000000.parquet/*.parquet
     df_path_2: df2-10000000.parquet/*.parquet
     dataset: random_intervals_20250622_221714-8p
+  # Variability analysis test cases
+  - name: small_sparse
+    df_path_1: df1-small_sparse.parquet
+    df_path_2: df2-small_sparse.parquet
+    dataset: variability
+  - name: small_medium
+    df_path_1: df1-small_medium.parquet
+    df_path_2: df2-small_medium.parquet
+    dataset: variability
+  - name: small_dense
+    df_path_1: df1-small_dense.parquet
+    df_path_2: df2-small_dense.parquet
+    dataset: variability
+  - name: medium_sparse
+    df_path_1: df1-medium_sparse.parquet
+    df_path_2: df2-medium_sparse.parquet
+    dataset: variability
+  - name: medium_medium
+    df_path_1: df1-medium_medium.parquet
+    df_path_2: df2-medium_medium.parquet
+    dataset: variability
+  - name: medium_dense
+    df_path_1: df1-medium_dense.parquet
+    df_path_2: df2-medium_dense.parquet
+    dataset: variability
+  - name: large_sparse
+    df_path_1: df1-large_sparse.parquet
+    df_path_2: df2-large_sparse.parquet
+    dataset: variability
+  - name: large_medium
+    df_path_1: df1-large_medium.parquet
+    df_path_2: df2-large_medium.parquet
+    dataset: variability
+  - name: large_dense
+    df_path_1: df1-large_dense.parquet
+    df_path_2: df2-large_dense.parquet
+    dataset: variability
+  # Mega-scale datasets (100x larger than small)
+  - name: mega_sparse
+    df_path_1: df1-mega_sparse.parquet
+    df_path_2: df2-mega_sparse.parquet
+    dataset: variability
+  - name: mega_medium
+    df_path_1: df1-mega_medium.parquet
+    df_path_2: df2-mega_medium.parquet
+    dataset: variability
+  - name: mega_dense
+    df_path_1: df1-mega_dense.parquet
+    df_path_2: df2-mega_dense.parquet
+    dataset: variability
+  # Extreme-scale datasets (1M×1M and 10M×10M)
+  - name: ultra_1m_sparse
+    df_path_1: df1-ultra_1m_sparse.parquet
+    df_path_2: df2-ultra_1m_sparse.parquet
+    dataset: variability
+  - name: ultra_1m_dense
+    df_path_1: df1-ultra_1m_dense.parquet
+    df_path_2: df2-ultra_1m_dense.parquet
+    dataset: variability
+  - name: extreme_10m_sparse
+    df_path_1: df1-extreme_10m_sparse.parquet
+    df_path_2: df2-extreme_10m_sparse.parquet
+    dataset: variability
+  - name: extreme_10m_dense
+    df_path_1: df1-extreme_10m_dense.parquet
+    df_path_2: df2-extreme_10m_dense.parquet
+    dataset: variability
 benchmark:
   export:
     format: csv

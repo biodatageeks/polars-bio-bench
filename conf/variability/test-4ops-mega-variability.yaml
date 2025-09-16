@@ -1,0 +1,150 @@
+common:
+  baseline: polars_bio
+
+benchmarks:
+  # Mega-scale datasets - all 4 operations (100x larger than small)
+  # These datasets contain ~100K intervals each for extreme scalability testing
+
+  - name: overlap-mega-sparse
+    operation: overlap
+    dataset: variability
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 3  # Reduced repeats for large datasets
+    num_executions: 1
+    test-cases:
+      - "mega_sparse"
+
+  - name: count-overlaps-mega-sparse
+    operation: count_overlaps
+    dataset: variability
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 3
+    num_executions: 1
+    test-cases:
+      - "mega_sparse"
+
+  - name: nearest-mega-sparse
+    operation: nearest
+    dataset: variability
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 3
+    num_executions: 1
+    test-cases:
+      - "mega_sparse"
+
+  - name: coverage-mega-sparse
+    operation: coverage
+    dataset: variability
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 3
+    num_executions: 1
+    test-cases:
+      - "mega_sparse"
+
+  - name: overlap-mega-medium
+    operation: overlap
+    dataset: variability
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 3
+    num_executions: 1
+    test-cases:
+      - "mega_medium"
+
+  - name: count-overlaps-mega-medium
+    operation: count_overlaps
+    dataset: variability
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 3
+    num_executions: 1
+    test-cases:
+      - "mega_medium"
+
+  - name: nearest-mega-medium
+    operation: nearest
+    dataset: variability
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 3
+    num_executions: 1
+    test-cases:
+      - "mega_medium"
+
+  - name: coverage-mega-medium
+    operation: coverage
+    dataset: variability
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 3
+    num_executions: 1
+    test-cases:
+      - "mega_medium"
+
+  - name: overlap-mega-dense
+    operation: overlap
+    dataset: variability
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 3
+    num_executions: 1
+    test-cases:
+      - "mega_dense"
+
+  - name: count-overlaps-mega-dense
+    operation: count_overlaps
+    dataset: variability
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 3
+    num_executions: 1
+    test-cases:
+      - "mega_dense"
+
+  - name: nearest-mega-dense
+    operation: nearest
+    dataset: variability
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 3
+    num_executions: 1
+    test-cases:
+      - "mega_dense"
+
+  - name: coverage-mega-dense
+    operation: coverage
+    dataset: variability
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 3
+    num_executions: 1
+    test-cases:
+      - "mega_dense"

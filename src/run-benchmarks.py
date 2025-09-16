@@ -117,7 +117,7 @@ def run_benchmark(
         )
         logger.info(emoji.emojize(f"Running benchmark {b["name"]} :racing_car: "))
         # share settings across benchmarks
-        pb.set_option("datafusion.execution.batch_size", str(1 * 65536))
+        # pb.set_option("datafusion.execution.batch_size", str(1 * 65536))
         for t in tqdm(b["test-cases"]):
             results = []
             for th in threads:

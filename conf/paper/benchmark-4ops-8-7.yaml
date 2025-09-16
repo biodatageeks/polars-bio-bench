@@ -26,7 +26,7 @@ benchmarks:
       - pyranges0
       - pyranges1
       - pybedtools
-#      - genomicranges Extremely slow
+      - genomicranges Extremely slow
     num_repeats: 3
     parallel: false
     input_dataframes: false

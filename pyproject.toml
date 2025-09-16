@@ -8,6 +8,7 @@ authors = [
 readme = "README.md"
 requires-python = ">=3.12,<3.13.0"
 dependencies = [
+    "seaborn (>=0.13.2,<0.14.0)"
 ]
 
 
@@ -23,7 +24,7 @@ gdown = "^5.2.0"
 pyyaml = "^6.0.2"
 jinja2 = "^3.1.5"
 poetry-plugin-shell = "^1.0.0"
-polars-bio = { git ="https://github.com/biodatageeks/polars-bio.git", rev="1c35a1107a3c9ce238bb6b448cc7efc1bcea9bba"}
+polars-bio = { git ="https://github.com/biodatageeks/polars-bio.git", rev="00cbca568f32e2feb556945958b2d752225a888a"}
 #polars-bio = "0.10.3"
 setuptools = "^75.8.0"
 rich = "^13.9.4"

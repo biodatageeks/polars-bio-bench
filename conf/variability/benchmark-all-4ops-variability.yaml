@@ -1,0 +1,150 @@
+common:
+  baseline: polars_bio
+
+benchmarks:
+  # Small datasets - all 4 operations
+  - name: overlap-small-sparse
+    operation: overlap
+    dataset: variability
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 10
+    num_executions: 1
+    test-cases:
+      - "small_sparse"
+
+  - name: count-overlaps-small-sparse
+    operation: count_overlaps
+    dataset: variability
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 10
+    num_executions: 1
+    test-cases:
+      - "small_sparse"
+
+  - name: nearest-small-sparse
+    operation: nearest
+    dataset: variability
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 10
+    num_executions: 1
+    test-cases:
+      - "small_sparse"
+
+  - name: coverage-small-sparse
+    operation: coverage
+    dataset: variability
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 10
+    num_executions: 1
+    test-cases:
+      - "small_sparse"
+
+  # Small dense dataset
+  - name: overlap-small-dense
+    operation: overlap
+    dataset: variability
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 10
+    num_executions: 1
+    test-cases:
+      - "small_dense"
+
+  - name: count-overlaps-small-dense
+    operation: count_overlaps
+    dataset: variability
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 10
+    num_executions: 1
+    test-cases:
+      - "small_dense"
+
+  - name: nearest-small-dense
+    operation: nearest
+    dataset: variability
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 10
+    num_executions: 1
+    test-cases:
+      - "small_dense"
+
+  - name: coverage-small-dense
+    operation: coverage
+    dataset: variability
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 10
+    num_executions: 1
+    test-cases:
+      - "small_dense"
+
+  # Medium sparse dataset
+  - name: overlap-medium-sparse
+    operation: overlap
+    dataset: variability
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 10
+    num_executions: 1
+    test-cases:
+      - "medium_sparse"
+
+  - name: count-overlaps-medium-sparse
+    operation: count_overlaps
+    dataset: variability
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 10
+    num_executions: 1
+    test-cases:
+      - "medium_sparse"
+
+  - name: nearest-medium-sparse
+    operation: nearest
+    dataset: variability
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 10
+    num_executions: 1
+    test-cases:
+      - "medium_sparse"
+
+  - name: coverage-medium-sparse
+    operation: coverage
+    dataset: variability
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 10
+    num_executions: 1
+    test-cases:
+      - "medium_sparse"

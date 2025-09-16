@@ -61,8 +61,27 @@ def prepare_datatests(datasets, BECH_DATA_ROOT):
     global dataset, file
     Path.mkdir(Path(BECH_DATA_ROOT), parents=True, exist_ok=True)
     for d in tqdm(datasets, desc="Downloading benchmark datasets"):
-        url = d["url"]
         dataset = d["name"]
+        source = d["source"].lower()
+
+        # Handle local datasets
+        if source == "local":
+            local_path = d.get("local_path", f"{dataset}")
+            # Handle case where BECH_DATA_ROOT already ends with /
+            bech_data_root_clean = BECH_DATA_ROOT.rstrip("/")
+            full_path = f"{bech_data_root_clean}/{local_path}"
+            if os.path.exists(full_path):
+                logger.info(
+                    emoji.emojize(
+                        f"Local dataset {dataset} already exists :file_folder:"
+                    )
+                )
+            else:
+                logger.warning(f"Local dataset {dataset} not found at {full_path}")
+            continue
+
+        # Handle remote datasets
+        url = d["url"]
         unzip = d["unzip"]
         format = d["format"] if "format" in d else None
         file = f"{dataset}.{format}" if format else dataset
@@ -74,7 +93,6 @@ def prepare_datatests(datasets, BECH_DATA_ROOT):
                 )
             )
             continue
-        source = d["source"].lower()
         if source == "gdrive":
             gdown.download(url, f"{BECH_DATA_ROOT}/{file}", quiet=True, verify=True)
         elif source == "gcs":

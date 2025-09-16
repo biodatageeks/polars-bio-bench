@@ -1,0 +1,15 @@
+common:
+  baseline: polars_bio
+
+benchmarks:
+  - name: overlap-small-sparse
+    operation: overlap
+    dataset: variability
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 3
+    num_executions: 1
+    test-cases:
+      - "small_sparse"

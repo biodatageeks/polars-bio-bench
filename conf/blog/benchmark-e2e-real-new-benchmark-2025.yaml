@@ -5,9 +5,11 @@ benchmarks:
     operation: e2e_overlap
     dataset: databio
     tools:
-#      - polars_bio
-#      - polars_bio_streaming
-#      - pyranges1
+      - polars_bio
+      - polars_bio_streaming
+      - pyranges1
+      - pyranges0
+      - bioframe
       - genomicranges
     parallel: false
     input_dataframes: false

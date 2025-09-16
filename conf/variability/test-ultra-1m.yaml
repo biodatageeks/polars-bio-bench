@@ -1,0 +1,102 @@
+common:
+  baseline: polars_bio
+
+benchmarks:
+  # Ultra-scale 1M×1M datasets - all 4 operations
+  # Each dataset contains 1 million genomic intervals
+
+  - name: overlap-ultra-1m-sparse
+    operation: overlap
+    dataset: variability
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 2  # Reduced repeats for large datasets
+    num_executions: 1
+    test-cases:
+      - "ultra_1m_sparse"
+
+  - name: count-overlaps-ultra-1m-sparse
+    operation: count_overlaps
+    dataset: variability
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 2
+    num_executions: 1
+    test-cases:
+      - "ultra_1m_sparse"
+
+  - name: nearest-ultra-1m-sparse
+    operation: nearest
+    dataset: variability
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 2
+    num_executions: 1
+    test-cases:
+      - "ultra_1m_sparse"
+
+  - name: coverage-ultra-1m-sparse
+    operation: coverage
+    dataset: variability
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 2
+    num_executions: 1
+    test-cases:
+      - "ultra_1m_sparse"
+
+  - name: overlap-ultra-1m-dense
+    operation: overlap
+    dataset: variability
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 2
+    num_executions: 1
+    test-cases:
+      - "ultra_1m_dense"
+
+  - name: count-overlaps-ultra-1m-dense
+    operation: count_overlaps
+    dataset: variability
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 2
+    num_executions: 1
+    test-cases:
+      - "ultra_1m_dense"
+
+  - name: nearest-ultra-1m-dense
+    operation: nearest
+    dataset: variability
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 2
+    num_executions: 1
+    test-cases:
+      - "ultra_1m_dense"
+
+  - name: coverage-ultra-1m-dense
+    operation: coverage
+    dataset: variability
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 2
+    num_executions: 1
+    test-cases:
+      - "ultra_1m_dense"

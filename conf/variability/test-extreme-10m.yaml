@@ -1,0 +1,103 @@
+common:
+  baseline: polars_bio
+
+benchmarks:
+  # Extreme-scale 10M×10M datasets - all 4 operations
+  # Each dataset contains 10 million genomic intervals
+  # WARNING: These benchmarks may take several minutes each
+
+  - name: overlap-extreme-10m-sparse
+    operation: overlap
+    dataset: variability
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 1  # Single run due to extreme size
+    num_executions: 1
+    test-cases:
+      - "extreme_10m_sparse"
+
+  - name: count-overlaps-extreme-10m-sparse
+    operation: count_overlaps
+    dataset: variability
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 1
+    num_executions: 1
+    test-cases:
+      - "extreme_10m_sparse"
+
+  - name: nearest-extreme-10m-sparse
+    operation: nearest
+    dataset: variability
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 1
+    num_executions: 1
+    test-cases:
+      - "extreme_10m_sparse"
+
+  - name: coverage-extreme-10m-sparse
+    operation: coverage
+    dataset: variability
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 1
+    num_executions: 1
+    test-cases:
+      - "extreme_10m_sparse"
+
+  - name: overlap-extreme-10m-dense
+    operation: overlap
+    dataset: variability
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 1
+    num_executions: 1
+    test-cases:
+      - "extreme_10m_dense"
+
+  - name: count-overlaps-extreme-10m-dense
+    operation: count_overlaps
+    dataset: variability
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 1
+    num_executions: 1
+    test-cases:
+      - "extreme_10m_dense"
+
+  - name: nearest-extreme-10m-dense
+    operation: nearest
+    dataset: variability
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 1
+    num_executions: 1
+    test-cases:
+      - "extreme_10m_dense"
+
+  - name: coverage-extreme-10m-dense
+    operation: coverage
+    dataset: variability
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 1
+    num_executions: 1
+    test-cases:
+      - "extreme_10m_dense"

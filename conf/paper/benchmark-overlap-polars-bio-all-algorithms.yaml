@@ -23,8 +23,8 @@ benchmarks:
     num_executions: 1
     all_algorithms: true
     test-cases:
-      - "1-2"
-      - "7-3"
+#      - "1-2"
+#      - "7-3"
       - "8-7"
 
 #  - name: overlap-synth
