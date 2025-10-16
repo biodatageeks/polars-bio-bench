@@ -1,0 +1,5 @@
+Operation,bioframe,polars_bio,polars_bio_streaming,pyranges0,pyranges1
+count_overlaps,416.02,326.11,291.44,440.28,410.44
+coverage,472.50,316.86,284.47,439.52,494.19
+nearest,387.41,391.64,366.59,434.78,443.73
+overlap,369.92,379.11,332.34,450.95,463.73

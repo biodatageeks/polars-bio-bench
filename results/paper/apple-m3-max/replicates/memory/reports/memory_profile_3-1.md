@@ -1,0 +1,10 @@
+# Memory Profiling Results - Test Case: 3-1
+
+Peak memory usage in MiB
+
+| Operation | bioframe | polars_bio | polars_bio_streaming | pyranges0 | pyranges1 |
+|-----------|---|---|---|---|---|
+| count_overlaps | 824.28 | 339.41 | 288.52 | 708.34 | 717.69 |
+| coverage | 1362.95 | 335.73 | 286.09 | 662.98 | 848.73 |
+| nearest | 755.66 | 419.52 | 329.33 | 833.45 | 993.42 |
+| overlap | 510.52 | 323.77 | 306.30 | 577.23 | 713.20 |
