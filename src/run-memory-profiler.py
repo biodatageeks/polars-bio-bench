@@ -47,11 +47,23 @@ from operations import (  # ## overlap; ## nearest; ## coverage; ## count_overla
     "--test-case",
     help="Test case to profile",
 )
-def run(bench_config: str, tool: str, test_case: str, operation: str):
+@click.option(
+    "--low-memory",
+    is_flag=True,
+    help="Use low memory mode for polars_bio_streaming overlap operation",
+)
+def run(bench_config: str, tool: str, test_case: str, operation: str, low_memory: bool):
     BECH_DATA_ROOT = os.getenv("BENCH_DATA_ROOT")
     if not BECH_DATA_ROOT:
         logger.error(
             emoji.emojize("Env variable BENCH_DATA_ROOT is not set :pile_of_poo:")
+        )
+        exit(1)
+
+    # Validate required parameters
+    if not tool or not operation or not test_case:
+        logger.error(
+            "Missing required parameters: --tool, --operation, and --test-case are all required"
         )
         exit(1)
 
@@ -119,7 +131,13 @@ def run(bench_config: str, tool: str, test_case: str, operation: str):
     logger.info(f"Running tool: {tool}")
     logger.info(f"Operation: {operation}")
     logger.info(f"Running dataset: {dataset}")
-    test_func(df_path_1, df_path_2)
+
+    # Pass low_memory parameter if applicable
+    if tool == "polars_bio_streaming" and operation == "overlap" and low_memory:
+        logger.info(f"Using low_memory mode: {low_memory}")
+        test_func(df_path_1, df_path_2, low_memory=low_memory)
+    else:
+        test_func(df_path_1, df_path_2)
 
 
 if __name__ == "__main__":
