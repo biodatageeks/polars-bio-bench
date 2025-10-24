@@ -1,7 +1,7 @@
 common:
   baseline: polars_bio
 benchmarks:
-  - name: overlap-single-3tools
+  - name: overlap-single-4tools
     operation: overlap
     dataset: databio
     tools:
@@ -21,7 +21,7 @@ benchmarks:
       - "7-8"
       - "8-7"
 
-  - name: nearest-single-3tools
+  - name: nearest-single-4tools
     operation: nearest
     dataset: databio
     tools:
@@ -41,7 +41,7 @@ benchmarks:
       - "7-8"
       - "8-7"
 
-  - name: count_overlaps-single-3tools
+  - name: count_overlaps-single-4tools
     operation: count_overlaps
     dataset: databio
     tools:
