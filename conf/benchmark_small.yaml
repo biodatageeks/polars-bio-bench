@@ -3,11 +3,10 @@ common:
 benchmarks:
   - name: overlap-single
     operation: overlap
-    dataset: random_intervals_20250530_233650
+    dataset: random_intervals_20250622_221714-1p
     tools:
       - polars_bio
       - bioframe
-      - pyranges0
       - pyranges1
       - pybedtools
       - genomicranges
@@ -17,16 +16,15 @@ benchmarks:
     num_repeats: 3
     num_executions: 1
     test-cases:
-      - "100"
-      - "1000"
-      - "10000"
+      - "100-1p"
+      - "1000-1p"
+      - "10000-1p"
   - name: nearest-single
     operation: nearest
-    dataset: random_intervals_20250530_233650
+    dataset: random_intervals_20250622_221714-1p
     tools:
       - polars_bio
       - bioframe
-      - pyranges0
       - pyranges1
       - pybedtools
     #      - genomicranges # Extremely slow
@@ -35,16 +33,15 @@ benchmarks:
     input_dataframes: false
     num_executions: 1
     test-cases:
-      - "100"
-      - "1000"
-      - "10000"
+      - "100-1p"
+      - "1000-1p"
+      - "10000-1p"
   - name: overlap-parallel
     operation: overlap
-    dataset: random_intervals_20250530_233650
+    dataset: databio-8p
     tools:
       - polars_bio
       - bioframe
-      - pyranges0
       - pyranges1
       - pybedtools
       - genomicranges
@@ -67,7 +64,6 @@ benchmarks:
     tools:
       - polars_bio
       - bioframe
-      - pyranges0
       - pyranges1
       - pybedtools
     #      - genomicranges # Extremely slow

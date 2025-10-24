@@ -7,7 +7,7 @@ import polars_bio as pb
 from genomicranges import GenomicRanges
 from memory_profiler import profile
 
-from utils import df2pr0, df2pr1, overlaps_to_df
+from utils import df2pr1, overlaps_to_df
 
 columns = ("contig", "pos_start", "pos_end")
 
@@ -37,10 +37,6 @@ def nearest_polars_bio(df_path_1, df_path_2, output_type):
                 output_type=output_type,
             )
         )
-
-
-def nearest_pyranges0(df_1_pr0, df_2_pr0, n=1):
-    len(df_1_pr0.nearest(df_2_pr0, nb_cpu=n))
 
 
 def nearest_pyranges1(df_1_pr1, df_2_pr1):
@@ -123,10 +119,6 @@ def overlap_polars_bio_superintervals(df_path_1, df_path_2, output_type):
     )
 
 
-def overlap_pyranges0(df_1_pr0, df_2_pr0, n=1):
-    len(df_1_pr0.join(df_2_pr0, nb_cpu=n))
-
-
 def overlap_pyranges1(df_1_pr1, df_2_pr1):
     len(df_1_pr1.join_overlaps(df_2_pr1))
 
@@ -199,10 +191,6 @@ def count_overlaps_bioframe(df_1, df_2):
     print(len(bf.count_overlaps(df_1, df_2, cols1=columns, cols2=columns)))
 
 
-def count_overlaps_pyranges0(df_1_pr0, df_2_pr0, n=1):
-    print(len(df_1_pr0.count_overlaps(df_2_pr0)))
-
-
 def count_overlaps_pyranges1(df_1_pr1, df_2_pr1):
     print(len(df_1_pr1.count_overlaps(df_2_pr1)))
 
@@ -232,10 +220,6 @@ def merge_bioframe(df_1, df_2):
     len(bf.merge(df_1, cols=columns, min_dist=None))
 
 
-def merge_pyranges0(df_1_pr0, df_2_pr0, n=1):
-    len(df_1_pr0.merge())
-
-
 def merge_pyranges1(df_1_pr1, df_2_pr1):
     len(df_1_pr1.merge_overlaps())
 
@@ -257,10 +241,6 @@ def coverage_polars_bio(df_path_1, df_path_2, output_type):
 
 def coverage_bioframe(df_1, df_2):
     len(bf.coverage(df_1, df_2, cols1=columns, cols2=columns))
-
-
-def coverage_pyranges0(df_1_pr0, df_2_pr0, n=1):
-    len(df_1_pr0.coverage(df_2_pr0))
 
 
 def coverage_pyranges1(df_1_pr1, df_2_pr1):
@@ -375,50 +355,7 @@ def e2e_count_overlaps_bioframe(df_path_1, df_path_2):
     df.to_csv("output.csv")
 
 
-fp = open("memory_profiler_pyranges0.log", "w+")
-
-
-@profile(stream=fp)
-def e2e_overlap_pyranges0(df_path_1, df_path_2):
-    df_1 = pd.read_parquet(df_path_1.replace("*.parquet", ""))
-    df_2 = pd.read_parquet(df_path_2.replace("*.parquet", ""))
-    df_1_pr0 = df2pr0(df_1)
-    df_2_pr0 = df2pr0(df_2)
-    df = df_1_pr0.join(df_2_pr0)
-    df.to_csv("output.csv")
-
-
-@profile(stream=fp)
-def e2e_nearest_pyranges0(df_path_1, df_path_2):
-    df_1 = pd.read_parquet(df_path_1.replace("*.parquet", ""))
-    df_2 = pd.read_parquet(df_path_2.replace("*.parquet", ""))
-    df_1_pr0 = df2pr0(df_1)
-    df_2_pr0 = df2pr0(df_2)
-    df = df_1_pr0.nearest(df_2_pr0)
-    df.to_csv("output.csv")
-
-
-@profile(stream=fp)
-def e2e_coverage_pyranges0(df_path_1, df_path_2):
-    df_1 = pd.read_parquet(df_path_1.replace("*.parquet", ""))
-    df_2 = pd.read_parquet(df_path_2.replace("*.parquet", ""))
-    df_1_pr0 = df2pr0(df_1)
-    df_2_pr0 = df2pr0(df_2)
-    df = df_1_pr0.coverage(df_2_pr0)
-    df.to_csv("output.csv")
-
-
-@profile(stream=fp)
-def e2e_count_overlaps_pyranges0(df_path_1, df_path_2):
-    df_1 = pd.read_parquet(df_path_1.replace("*.parquet", ""))
-    df_2 = pd.read_parquet(df_path_2.replace("*.parquet", ""))
-    df_1_pr0 = df2pr0(df_1)
-    df_2_pr0 = df2pr0(df_2)
-    df = df_1_pr0.count_overlaps(df_2_pr0)
-    df.to_csv("output.csv")
-
-
-fp = open("memory_profiler_pyranges0.log", "w+")
+fp = open("memory_profiler_pyranges1.log", "w+")
 
 
 @profile(stream=fp)

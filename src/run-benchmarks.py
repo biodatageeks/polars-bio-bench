@@ -25,45 +25,37 @@ from operations import (
     count_overlaps_genomicranges,
     count_overlaps_polars_bio,
     count_overlaps_pybedtools,
-    count_overlaps_pyranges0,
     count_overlaps_pyranges1,
     coverage_bioframe,
     coverage_polars_bio,
     coverage_pybedtools,
-    coverage_pyranges0,
     coverage_pyranges1,
     e2e_count_overlaps_bioframe,
     e2e_count_overlaps_genomicranges,
     e2e_count_overlaps_polars_bio,
     e2e_count_overlaps_polars_bio_streaming,
-    e2e_count_overlaps_pyranges0,
     e2e_count_overlaps_pyranges1,
     e2e_coverage_bioframe,
     e2e_coverage_polars_bio,
     e2e_coverage_polars_bio_streaming,
-    e2e_coverage_pyranges0,
     e2e_coverage_pyranges1,
     e2e_nearest_bioframe,
     e2e_nearest_genomicranges,
     e2e_nearest_polars_bio,
     e2e_nearest_polars_bio_streaming,
-    e2e_nearest_pyranges0,
     e2e_nearest_pyranges1,
     e2e_overlap_bioframe,
     e2e_overlap_genomicranges,
     e2e_overlap_polars_bio,
     e2e_overlap_polars_bio_streaming,
-    e2e_overlap_pyranges0,
     e2e_overlap_pyranges1,
     merge_bioframe,
     merge_polars_bio,
-    merge_pyranges0,
     merge_pyranges1,
     nearest_bioframe,
     nearest_genomicranges,
     nearest_polars_bio,
     nearest_pybedtools,
-    nearest_pyranges0,
     nearest_pyranges1,
     overlap_bioframe,
     overlap_genomicranges,
@@ -74,11 +66,10 @@ from operations import (
     overlap_polars_bio_superintervals,
     overlap_pybedtools,
     overlap_pygenomics,
-    overlap_pyranges0,
     overlap_pyranges1,
     read_vcf_polars_bio,
 )
-from utils import df2pr0, df2pr1, prepare_datatests
+from utils import df2pr1, prepare_datatests
 
 
 def run_benchmark(
@@ -301,35 +292,6 @@ def run_benchmark(
                                 )
                                 times = timeit.repeat(
                                     lambda: func(df_1, df_2),
-                                    repeat=num_repeats,
-                                    number=num_executions,
-                                )
-                        elif (
-                            tool == "pyranges0" and th == 1
-                        ):  # disable parallel for pyranges0
-                            if operation.startswith("e2e_"):
-                                times = timeit.repeat(
-                                    lambda: func(df_path_1, df_path_2),
-                                    repeat=num_repeats,
-                                    number=num_executions,
-                                )
-                            else:
-                                df_1 = pd.read_parquet(
-                                    df_path_1.replace("*.parquet", ""), engine="pyarrow"
-                                )
-                                df_2 = (
-                                    pd.read_parquet(
-                                        df_path_2.replace("*.parquet", ""),
-                                        engine="pyarrow",
-                                    )
-                                    if df_path_2
-                                    else None
-                                )
-                                df_1_pr0 = df2pr0(df_1)
-                                df_2_pr0 = df2pr0(df_2) if df_2 is not None else None
-
-                                times = timeit.repeat(
-                                    lambda: func(df_1_pr0, df_2_pr0, th),
                                     repeat=num_repeats,
                                     number=num_executions,
                                 )
@@ -573,7 +535,6 @@ def run(bench_config: str):
         overlap_polars_bio_lapper,
         overlap_polars_bio_superintervals,
         overlap_bioframe,
-        overlap_pyranges0,
         overlap_pyranges1,
         overlap_pybedtools,
         overlap_pygenomics,
@@ -583,7 +544,6 @@ def run(bench_config: str):
     functions_nearest = [
         nearest_polars_bio,
         nearest_bioframe,
-        nearest_pyranges0,
         nearest_pyranges1,
         nearest_pybedtools,
         nearest_genomicranges,
@@ -592,7 +552,6 @@ def run(bench_config: str):
         # count_overlaps_polars_bio_mz,
         count_overlaps_polars_bio,
         count_overlaps_bioframe,
-        count_overlaps_pyranges0,
         count_overlaps_pyranges1,
         count_overlaps_pybedtools,
         count_overlaps_genomicranges,
@@ -601,14 +560,12 @@ def run(bench_config: str):
     functions_merge = [
         merge_polars_bio,
         merge_bioframe,
-        merge_pyranges0,
         merge_pyranges1,
     ]
 
     functions_coverage = [
         coverage_polars_bio,
         coverage_bioframe,
-        coverage_pyranges0,
         coverage_pyranges1,
         coverage_pybedtools,
     ]
@@ -620,24 +577,20 @@ def run(bench_config: str):
     functions_e2 = [
         e2e_overlap_polars_bio,
         e2e_overlap_bioframe,
-        e2e_overlap_pyranges0,
         e2e_overlap_pyranges1,
         e2e_overlap_genomicranges,
         e2e_overlap_polars_bio_streaming,
         e2e_nearest_polars_bio,
         e2e_nearest_bioframe,
-        e2e_nearest_pyranges0,
         e2e_nearest_pyranges1,
         e2e_nearest_genomicranges,
         e2e_nearest_polars_bio_streaming,
         e2e_coverage_polars_bio,
         e2e_coverage_bioframe,
-        e2e_coverage_pyranges0,
         e2e_coverage_pyranges1,
         e2e_coverage_polars_bio_streaming,
         e2e_count_overlaps_polars_bio,
         e2e_count_overlaps_bioframe,
-        e2e_count_overlaps_pyranges0,
         e2e_count_overlaps_pyranges1,
         e2e_count_overlaps_genomicranges,
         e2e_count_overlaps_polars_bio_streaming,
