@@ -37,7 +37,7 @@ def download_from_gs(gs_url, destination_dir):
     local_filename = os.path.join(destination_dir, os.path.basename(blob_path))
 
     # Initialize the client and get the blob
-    storage_client = storage.Client()
+    storage_client = storage.Client.create_anonymous_client()
     bucket = storage_client.bucket(bucket_name)
     blob = bucket.blob(blob_path)
 
