@@ -1,4 +1,3 @@
-# pyranges0
 import os
 import shutil
 import zipfile
@@ -9,22 +8,12 @@ import emoji
 import gdown
 import numpy as np
 import pyranges as pr1
-import pyranges0 as pr0
 from google.cloud import storage
 from tqdm import tqdm
 
 from logger import logger
 
 
-def df2pr0(df):
-    return pr0.PyRanges(
-        chromosomes=df.contig,
-        starts=df.pos_start,
-        ends=df.pos_end,
-    )
-
-
-### pyranges1
 def df2pr1(df):
     return pr1.PyRanges(
         {

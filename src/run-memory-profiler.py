@@ -9,23 +9,19 @@ from operations import (  # ## overlap; ## nearest; ## coverage; ## count_overla
     e2e_count_overlaps_bioframe,
     e2e_count_overlaps_polars_bio,
     e2e_count_overlaps_polars_bio_streaming,
-    e2e_count_overlaps_pyranges0,
     e2e_count_overlaps_pyranges1,
     e2e_coverage_bioframe,
     e2e_coverage_polars_bio,
     e2e_coverage_polars_bio_streaming,
-    e2e_coverage_pyranges0,
     e2e_coverage_pyranges1,
     e2e_nearest_bioframe,
     e2e_nearest_polars_bio,
     e2e_nearest_polars_bio_streaming,
-    e2e_nearest_pyranges0,
     e2e_nearest_pyranges1,
     e2e_overlap_bioframe,
     e2e_overlap_genomicranges,
     e2e_overlap_polars_bio,
     e2e_overlap_polars_bio_streaming,
-    e2e_overlap_pyranges0,
     e2e_overlap_pyranges1,
 )
 
@@ -99,27 +95,23 @@ def run(bench_config: str, tool: str, test_case: str, operation: str, low_memory
         ### overlap
         e2e_overlap_polars_bio,
         e2e_overlap_bioframe,
-        e2e_overlap_pyranges0,
         e2e_overlap_pyranges1,
         e2e_overlap_polars_bio_streaming,
         e2e_overlap_genomicranges,
         ### nearest
         e2e_nearest_polars_bio,
         e2e_nearest_bioframe,
-        e2e_nearest_pyranges0,
         e2e_nearest_pyranges1,
         e2e_nearest_polars_bio_streaming,
         ### coverage
         e2e_coverage_polars_bio,
         e2e_coverage_polars_bio_streaming,
         e2e_coverage_bioframe,
-        e2e_coverage_pyranges0,
         e2e_coverage_pyranges1,
         ### count_overlaps
         e2e_count_overlaps_polars_bio,
         e2e_count_overlaps_polars_bio_streaming,
         e2e_count_overlaps_bioframe,
-        e2e_count_overlaps_pyranges0,
         e2e_count_overlaps_pyranges1,
     ]
     test_func = [

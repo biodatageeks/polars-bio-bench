@@ -35,6 +35,7 @@ ray = "^2.40.0"
 ##used for paper pyranges = {git = "https://github.com/pyranges/pyranges.git", rev = "4f0a153336e7153cdfea15b141ce4ea35a24e233" }
 ##used for paper  GenomicRanges = "0.5.0"
 ##used for paper pyranges1 = { git = "https://github.com/mwiewior/pyranges1.git", rev = "949d7c15c1c2e217f4404415f79b386f326b6f8d"}
+GenomicRanges = "0.7.3"
 pyranges1 = "1.1.5"
 pybedtools = "^0.10.0"
 pygenomics =  { git = "https://gitlab.com/gtamazian/pygenomics.git", rev = "0.1.1"}
