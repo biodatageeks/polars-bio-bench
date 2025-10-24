@@ -310,11 +310,13 @@ fp = open("memory_profiler_polars_bio.log", "w+")
 
 
 @profile(stream=fp)
-def e2e_overlap_polars_bio_streaming(df_path_1, df_path_2, output_type=None):
-    if pb.__version__ > "0.12.0":
-        pb.overlap(df_path_1, df_path_2, cols1=columns, cols2=columns).sink_csv(
-            OUTPUT_CSV
-        )
+def e2e_overlap_polars_bio_streaming(
+    df_path_1, df_path_2, output_type=None, low_memory=False
+):
+    if low_memory:
+        pb.overlap(
+            df_path_1, df_path_2, cols1=columns, cols2=columns, low_memory=True
+        ).sink_csv(OUTPUT_CSV)
     else:
         pb.overlap(
             df_path_1, df_path_2, cols1=columns, cols2=columns, streaming=True
