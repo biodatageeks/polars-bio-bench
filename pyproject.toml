@@ -24,16 +24,18 @@ pyyaml = "^6.0.2"
 jinja2 = "^3.1.5"
 poetry-plugin-shell = "^1.0.0"
 #polars-bio = { git ="https://github.com/biodatageeks/polars-bio.git", rev="c6a6500b582cf284b65558d02f2b513e5373770e"}
-polars-bio = "0.10.3"
+polars-bio = "0.18.0"
 setuptools = "^75.8.0"
 rich = "^13.9.4"
 rich-tools = "^0.5.1"
-bioframe = "^0.7.2"
+bioframe = "0.8.0"
 click = "^8.1.8"
 ray = "^2.40.0"
-pyranges = {git = "https://github.com/pyranges/pyranges.git", rev = "4f0a153336e7153cdfea15b141ce4ea35a24e233" }
-GenomicRanges = "^0.5.0"
-pyranges1 = { git = "https://github.com/mwiewior/pyranges1.git", rev = "949d7c15c1c2e217f4404415f79b386f326b6f8d"}
+##used for paper bioframe = "^0.7.2"
+##used for paper pyranges = {git = "https://github.com/pyranges/pyranges.git", rev = "4f0a153336e7153cdfea15b141ce4ea35a24e233" }
+##used for paper  GenomicRanges = "0.5.0"
+##used for paper pyranges1 = { git = "https://github.com/mwiewior/pyranges1.git", rev = "949d7c15c1c2e217f4404415f79b386f326b6f8d"}
+pyranges1 = "1.1.5"
 pybedtools = "^0.10.0"
 pygenomics =  { git = "https://gitlab.com/gtamazian/pygenomics.git", rev = "0.1.1"}
 google-cloud-storage = "^3.1.0"
