@@ -1,0 +1,76 @@
+common:
+  baseline: polars_bio
+benchmarks:
+  - name: overlap-single-4tools
+    operation: overlap
+    dataset: databio
+    tools:
+      - polars_bio
+      - pyranges1
+      - genomicranges
+      - bioframe
+    parallel: false
+    input_dataframes: false
+    num_repeats: 3
+    num_executions: 1
+    test-cases:
+      - "1-2"
+      - "2-1"
+      - "3-7"
+      - "7-3"
+      - "7-8"
+
+  - name: nearest-single-4tools
+    operation: nearest
+    dataset: databio
+    tools:
+      - polars_bio
+      - pyranges1
+      - genomicranges
+      - bioframe
+    parallel: false
+    input_dataframes: false
+    num_repeats: 3
+    num_executions: 1
+    test-cases:
+      - "1-2"
+      - "2-1"
+      - "3-7"
+      - "7-3"
+      - "7-8"
+
+  - name: count_overlaps-single-4tools
+    operation: count_overlaps
+    dataset: databio
+    tools:
+      - polars_bio
+      - pyranges1
+      - genomicranges
+      - bioframe
+    parallel: false
+    input_dataframes: false
+    num_repeats: 3
+    num_executions: 1
+    test-cases:
+      - "1-2"
+      - "2-1"
+      - "3-7"
+      - "7-3"
+      - "7-8"
+
+  - name: coverage-single-4tools
+    operation: coverage
+    dataset: databio
+    tools:
+      - polars_bio
+      - bioframe
+    parallel: false
+    input_dataframes: false
+    num_repeats: 3
+    num_executions: 1
+    test-cases:
+      - "1-2"
+      - "2-1"
+      - "3-7"
+      - "7-3"
+      - "7-8"
