@@ -19,7 +19,9 @@ benchmarks:
       - "3-7"
       - "7-3"
       - "7-8"
+      - "8-7"
       - "0-8"
+      - "8-0"
 
 
   - name: nearest-single-4tools
@@ -40,7 +42,9 @@ benchmarks:
       - "3-7"
       - "7-3"
       - "7-8"
+      - "8-7"
       - "0-8"
+      - "8-0"
 
 
   - name: count_overlaps-single-4tools
@@ -61,7 +65,9 @@ benchmarks:
       - "3-7"
       - "7-3"
       - "7-8"
+      - "8-7"
       - "0-8"
+      - "8-0"
 
   - name: coverage-single-4tools
     operation: coverage
@@ -79,4 +85,6 @@ benchmarks:
       - "3-7"
       - "7-3"
       - "7-8"
+      - "8-7"
       - "0-8"
+      - "8-0"
