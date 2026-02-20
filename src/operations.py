@@ -12,20 +12,24 @@ from utils import df2pr1, overlaps_to_df
 columns = ("contig", "pos_start", "pos_end")
 
 
+def _collect_lazyframe_count(df: pl.LazyFrame):
+    df.count().collect()
+
+
 def nearest_bioframe(df_1, df_2):
     len(bf.closest(df_1, df_2, cols1=columns, cols2=columns))
 
 
 def nearest_polars_bio(df_path_1, df_path_2, output_type):
     if output_type == "polars.LazyFrame":
-        len(
+        _collect_lazyframe_count(
             pb.nearest(
                 df_path_1,
                 df_path_2,
                 cols1=columns,
                 cols2=columns,
                 output_type=output_type,
-            ).collect()
+            )
         )
     else:
         len(
@@ -57,7 +61,9 @@ def overlap_bioframe(df_1, df_2):
 
 def overlap_polars_bio(df_path_1, df_path_2, output_type):
     if output_type == "polars.LazyFrame":
-        len(pb.overlap(df_path_1, df_path_2, cols1=columns, cols2=columns).collect())
+        _collect_lazyframe_count(
+            pb.overlap(df_path_1, df_path_2, cols1=columns, cols2=columns)
+        )
     elif output_type == "datafusion.DataFrame":
         pb.overlap(
             df_path_1,
@@ -80,42 +86,42 @@ def overlap_polars_bio(df_path_1, df_path_2, output_type):
 
 # Coitrees, IntervalTree, ArrayIntervalTree, Lapper, SuperIntervals
 def overlap_polars_bio_intervaltree(df_path_1, df_path_2, output_type):
-    len(
+    _collect_lazyframe_count(
         pb.overlap(
             df_path_1, df_path_2, cols1=columns, cols2=columns, algorithm="IntervalTree"
-        ).collect()
+        )
     )
 
 
 def overlap_polars_bio_arrayintervaltree(df_path_1, df_path_2, output_type):
-    len(
+    _collect_lazyframe_count(
         pb.overlap(
             df_path_1,
             df_path_2,
             cols1=columns,
             cols2=columns,
             algorithm="ArrayIntervalTree",
-        ).collect()
+        )
     )
 
 
 def overlap_polars_bio_lapper(df_path_1, df_path_2, output_type):
-    len(
+    _collect_lazyframe_count(
         pb.overlap(
             df_path_1, df_path_2, cols1=columns, cols2=columns, algorithm="Lapper"
-        ).collect()
+        )
     )
 
 
 def overlap_polars_bio_superintervals(df_path_1, df_path_2, output_type):
-    len(
+    _collect_lazyframe_count(
         pb.overlap(
             df_path_1,
             df_path_2,
             cols1=columns,
             cols2=columns,
             algorithm="SuperIntervals",
-        ).collect()
+        )
     )
 
 
@@ -144,14 +150,17 @@ def overlap_genomicranges(df_1, df_2, n: int = 1):
 def count_overlaps_polars_bio_mz(df_path_1, df_path_2, output_type):
     if output_type == "polars.LazyFrame":
         print(
-            len(
+            int(
                 pb.count_overlaps(
                     df_path_1,
                     df_path_2,
                     cols1=columns,
                     cols2=columns,
                     naive_query=False,
-                ).collect()
+                )
+                .count()
+                .collect()
+                .rows()[0][0]
             )
         )
     else:
@@ -169,10 +178,17 @@ def count_overlaps_polars_bio_mz(df_path_1, df_path_2, output_type):
 def count_overlaps_polars_bio(df_path_1, df_path_2, output_type):
     if output_type == "polars.LazyFrame":
         print(
-            len(
+            int(
                 pb.count_overlaps(
-                    df_path_1, df_path_2, cols1=columns, cols2=columns, naive_query=True
-                ).collect()
+                    df_path_1,
+                    df_path_2,
+                    cols1=columns,
+                    cols2=columns,
+                    naive_query=True,
+                )
+                .count()
+                .collect()
+                .rows()[0][0]
             )
         )
     else:
@@ -211,7 +227,9 @@ def count_overlaps_genomicranges(df_1, df_2, n: int = 1):
 
 def merge_polars_bio(df_path_1, df_path_2, output_type):
     if output_type == "polars.LazyFrame":
-        len(pb.merge(df_path_1, cols=columns, output_type=output_type).collect())
+        _collect_lazyframe_count(
+            pb.merge(df_path_1, cols=columns, output_type=output_type)
+        )
     else:
         len(pb.merge(df_path_1, cols=columns, output_type=output_type))
 
@@ -224,9 +242,88 @@ def merge_pyranges1(df_1_pr1, df_2_pr1):
     len(df_1_pr1.merge_overlaps())
 
 
+def merge_genomicranges(df_1, df_2, n: int = 1):
+    len(df_1.reduce(ignore_strand=True))
+
+
+def cluster_polars_bio(df_path_1, df_path_2, output_type):
+    if output_type == "polars.LazyFrame":
+        _collect_lazyframe_count(
+            pb.cluster(df_path_1, cols=columns, output_type=output_type)
+        )
+    else:
+        len(pb.cluster(df_path_1, cols=columns, output_type=output_type))
+
+
+def cluster_bioframe(df_1, df_2):
+    len(bf.cluster(df_1, cols=columns, min_dist=None))
+
+
+def cluster_pyranges1(df_1_pr1, df_2_pr1):
+    len(df_1_pr1.cluster_overlaps())
+
+
+def complement_polars_bio(df_path_1, df_path_2, output_type):
+    if output_type == "polars.LazyFrame":
+        _collect_lazyframe_count(
+            pb.complement(df_path_1, cols=columns, output_type=output_type)
+        )
+    else:
+        len(pb.complement(df_path_1, cols=columns, output_type=output_type))
+
+
+def complement_bioframe(df_1, df_2):
+    len(bf.complement(df_1, cols=columns))
+
+
+def complement_pyranges1(df_1_pr1, df_2_pr1):
+    len(df_1_pr1.complement_ranges())
+
+
+def complement_genomicranges(df_1, df_2, n: int = 1):
+    len(df_1.gaps(ignore_strand=True))
+
+
+def subtract_polars_bio(df_path_1, df_path_2, output_type):
+    if output_type == "polars.LazyFrame":
+        _collect_lazyframe_count(
+            pb.subtract(
+                df_path_1,
+                df_path_2,
+                cols1=columns,
+                cols2=columns,
+                output_type=output_type,
+            )
+        )
+    else:
+        len(
+            pb.subtract(
+                df_path_1,
+                df_path_2,
+                cols1=columns,
+                cols2=columns,
+                output_type=output_type,
+            )
+        )
+
+
+def subtract_bioframe(df_1, df_2):
+    len(bf.subtract(df_1, df_2, cols1=columns, cols2=columns))
+
+
+def subtract_pyranges1(df_1_pr1, df_2_pr1):
+    len(df_1_pr1.subtract_overlaps(df_2_pr1))
+
+
+def subtract_genomicranges(df_1, df_2, n: int = 1):
+    len(df_1.subtract(df_2, ignore_strand=True))
+
+
 def coverage_polars_bio(df_path_1, df_path_2, output_type):
     if output_type == "polars.LazyFrame":
-        len(pb.coverage(df_path_1, df_path_2, cols1=columns, cols2=columns).collect())
+        _collect_lazyframe_count(
+            pb.coverage(df_path_1, df_path_2, cols1=columns, cols2=columns)
+        )
     else:
         len(
             pb.coverage(
@@ -247,13 +344,17 @@ def coverage_pyranges1(df_1_pr1, df_2_pr1):
     len(df_1_pr1.count_overlaps(df_2_pr1, calculate_coverage=True))
 
 
+def coverage_genomicranges(df_1, df_2, n: int = 1):
+    len(df_2.coverage())
+
+
 def coverage_pybedtools(df_1_bed, df_2_bed):
     len(df_1_bed.coverage(df_2_bed, counts=True))
 
 
 ## Input file formats benchmarking
 def read_vcf_polars_bio(df_path_1, th=1):
-    len(pb.read_vcf(df_path_1, thread_num=th).collect())
+    _collect_lazyframe_count(pb.read_vcf(df_path_1, thread_num=th))
 
 
 ## E2E overlap and export to csv
