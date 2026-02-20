@@ -21,12 +21,20 @@ from tqdm import tqdm
 
 from logger import logger
 from operations import (
+    cluster_bioframe,
+    cluster_polars_bio,
+    cluster_pyranges1,
+    complement_bioframe,
+    complement_genomicranges,
+    complement_polars_bio,
+    complement_pyranges1,
     count_overlaps_bioframe,
     count_overlaps_genomicranges,
     count_overlaps_polars_bio,
     count_overlaps_pybedtools,
     count_overlaps_pyranges1,
     coverage_bioframe,
+    coverage_genomicranges,
     coverage_polars_bio,
     coverage_pybedtools,
     coverage_pyranges1,
@@ -50,6 +58,7 @@ from operations import (
     e2e_overlap_polars_bio_streaming,
     e2e_overlap_pyranges1,
     merge_bioframe,
+    merge_genomicranges,
     merge_polars_bio,
     merge_pyranges1,
     nearest_bioframe,
@@ -68,6 +77,10 @@ from operations import (
     overlap_pygenomics,
     overlap_pyranges1,
     read_vcf_polars_bio,
+    subtract_bioframe,
+    subtract_genomicranges,
+    subtract_polars_bio,
+    subtract_pyranges1,
 )
 from utils import df2pr1, prepare_datatests
 
@@ -79,6 +92,9 @@ def run_benchmark(
     functions_nearest,
     functions_count_overlaps,
     functions_merge,
+    functions_cluster,
+    functions_complement,
+    functions_subtract,
     functions_coverage,
     functions_read_vcf,
     functions_e2,
@@ -114,7 +130,7 @@ def run_benchmark(
             for th in threads:
                 if operation not in ["read_vcf"]:
                     pb.set_option("datafusion.execution.target_partitions", str(th))
-                if th != 1:
+                if th == 1:
                     pb.set_option("datafusion.optimizer.repartition_joins", "false")
                     pb.set_option(
                         "datafusion.optimizer.repartition_file_scans", "false"
@@ -195,6 +211,24 @@ def run_benchmark(
                         table = [
                             func
                             for func in functions_merge
+                            if func.__name__.startswith(f"{operation}_{tool}")
+                        ]
+                    elif operation == "cluster":
+                        table = [
+                            func
+                            for func in functions_cluster
+                            if func.__name__.startswith(f"{operation}_{tool}")
+                        ]
+                    elif operation == "complement":
+                        table = [
+                            func
+                            for func in functions_complement
+                            if func.__name__.startswith(f"{operation}_{tool}")
+                        ]
+                    elif operation == "subtract":
+                        table = [
+                            func
+                            for func in functions_subtract
                             if func.__name__.startswith(f"{operation}_{tool}")
                         ]
                     elif operation == "coverage":
@@ -561,6 +595,27 @@ def run(bench_config: str):
         merge_polars_bio,
         merge_bioframe,
         merge_pyranges1,
+        merge_genomicranges,
+    ]
+
+    functions_cluster = [
+        cluster_polars_bio,
+        cluster_bioframe,
+        cluster_pyranges1,
+    ]
+
+    functions_complement = [
+        complement_polars_bio,
+        complement_bioframe,
+        complement_pyranges1,
+        complement_genomicranges,
+    ]
+
+    functions_subtract = [
+        subtract_polars_bio,
+        subtract_bioframe,
+        subtract_pyranges1,
+        subtract_genomicranges,
     ]
 
     functions_coverage = [
@@ -568,6 +623,7 @@ def run(bench_config: str):
         coverage_bioframe,
         coverage_pyranges1,
         coverage_pybedtools,
+        coverage_genomicranges,
     ]
 
     functions_read_vcf = [
@@ -605,6 +661,9 @@ def run(bench_config: str):
         functions_nearest,
         functions_count_overlaps,
         functions_merge,
+        functions_cluster,
+        functions_complement,
+        functions_subtract,
         functions_coverage,
         functions_read_vcf,
         functions_e2,
