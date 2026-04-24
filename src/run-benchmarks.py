@@ -1,3 +1,4 @@
+import inspect
 import os
 import time
 import timeit
@@ -66,6 +67,9 @@ class TestCaseInputs:
         self.df_path_2 = df_path_2
         self.coordinate_system_zero_based = coordinate_system_zero_based
         self._pandas_frames: tuple[pd.DataFrame, pd.DataFrame | None] | None = None
+        self._pandas_pyarrow_frames: tuple[pd.DataFrame, pd.DataFrame | None] | None = (
+            None
+        )
         self._polars_frames: tuple[pl.DataFrame, pl.DataFrame | None] | None = None
         self._polars_lazy_frames: tuple[pl.LazyFrame, pl.LazyFrame | None] | None = None
         self._pyranges_frames = None
@@ -89,6 +93,26 @@ class TestCaseInputs:
                 ),
             )
         return self._pandas_frames
+
+    def pandas_pyarrow_frames(self) -> tuple[pd.DataFrame, pd.DataFrame | None]:
+        if self._pandas_pyarrow_frames is None:
+            self._pandas_pyarrow_frames = (
+                _set_polars_bio_coordinate_system(
+                    _read_pandas_parquet(
+                        self.df_path_1,
+                        dtype_backend="pyarrow",
+                    ),
+                    self.coordinate_system_zero_based,
+                ),
+                _set_polars_bio_coordinate_system(
+                    _read_pandas_parquet(
+                        self.df_path_2,
+                        dtype_backend="pyarrow",
+                    ),
+                    self.coordinate_system_zero_based,
+                ),
+            )
+        return self._pandas_pyarrow_frames
 
     def polars_frames(self) -> tuple[pl.DataFrame, pl.DataFrame | None]:
         if self._polars_frames is None:
@@ -126,6 +150,8 @@ class TestCaseInputs:
             return self.parquet_paths()
         if normalized_input_type == "pandas.DataFrame":
             return self.pandas_frames()
+        if normalized_input_type == "pandas.pyarrow.DataFrame":
+            return self.pandas_pyarrow_frames()
         if normalized_input_type == "polars.DataFrame":
             return self.polars_frames()
         if normalized_input_type == "polars.LazyFrame":
@@ -191,6 +217,10 @@ POLARS_BIO_INPUT_ALIASES = {
     "parquet": "parquet",
     "pandas": "pandas.DataFrame",
     "pandas.DataFrame": "pandas.DataFrame",
+    "pandas.pyarrow": "pandas.pyarrow.DataFrame",
+    "pandas.pyarrow.DataFrame": "pandas.pyarrow.DataFrame",
+    "pandas.PyArrowDataFrame": "pandas.pyarrow.DataFrame",
+    "pandas_arrow": "pandas.pyarrow.DataFrame",
     "polars": "polars.DataFrame",
     "polars.DataFrame": "polars.DataFrame",
     "polars.LazyFrame": "polars.LazyFrame",
@@ -344,11 +374,21 @@ def _pandas_parquet_path(path: str | None) -> str | None:
     return path.replace("*.parquet", "")
 
 
-def _read_pandas_parquet(path: str | None) -> pd.DataFrame | None:
+def _read_pandas_parquet(
+    path: str | None,
+    dtype_backend: str | None = None,
+) -> pd.DataFrame | None:
     parquet_path = _pandas_parquet_path(path)
     if parquet_path is None:
         return None
-    return pd.read_parquet(parquet_path, engine="pyarrow")
+    read_parquet_kwargs: dict[str, Any] = {"engine": "pyarrow"}
+    if dtype_backend is not None:
+        if "dtype_backend" not in inspect.signature(pd.read_parquet).parameters:
+            raise RuntimeError(
+                "pandas parquet Arrow dtype backend requires pandas read_parquet(dtype_backend=...) support"
+            )
+        read_parquet_kwargs["dtype_backend"] = dtype_backend
+    return pd.read_parquet(parquet_path, **read_parquet_kwargs)
 
 
 def _read_polars_parquet(path: str | None) -> pl.DataFrame | None:
@@ -392,6 +432,7 @@ def normalize_polars_bio_input_type(input_type: str | None) -> str:
     supported_input_types = {
         "parquet",
         "pandas.DataFrame",
+        "pandas.pyarrow.DataFrame",
         "polars.DataFrame",
         "polars.LazyFrame",
     }

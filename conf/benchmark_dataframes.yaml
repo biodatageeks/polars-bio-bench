@@ -12,6 +12,7 @@ benchmarks:
     dataframes_io:
       - "polars.DataFrame:polars.DataFrame"
       - "pandas.DataFrame:pandas.DataFrame"
+      - "pandas.pyarrow.DataFrame:pandas.DataFrame"
       - "polars.LazyFrame:polars.LazyFrame"
     num_repeats: 3
     num_executions: 1
@@ -32,6 +33,7 @@ benchmarks:
     dataframes_io:
       - "polars.DataFrame:polars.DataFrame"
       - "pandas.DataFrame:pandas.DataFrame"
+      - "pandas.pyarrow.DataFrame:pandas.DataFrame"
       - "polars.LazyFrame:polars.LazyFrame"
     num_repeats: 3
     num_executions: 1
