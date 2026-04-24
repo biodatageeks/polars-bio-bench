@@ -2,7 +2,7 @@ common:
   baseline: polars_bio
   polars_bio_output_type: polars.LazyFrame
   polars_bio_coordinate_system: 0-based
-  polars_bio_consume_mode: len
+  polars_bio_consume_mode: count
 benchmarks:
   - name: overlap-single-3tools
     operation: overlap
@@ -63,6 +63,7 @@ benchmarks:
       - "7-3"
       - "7-8"
       - "8-7"
+
   - name: coverage-single-2tools
     operation: coverage
     dataset: databio
@@ -81,6 +82,7 @@ benchmarks:
       - "7-3"
       - "7-8"
       - "8-7"
+
   - name: merge-single-3tools
     operation: merge
     dataset: databio
@@ -142,6 +144,7 @@ benchmarks:
       - "7-3"
       - "7-8"
       - "8-7"
+
   - name: subtract-single-3tools
     operation: subtract
     dataset: databio

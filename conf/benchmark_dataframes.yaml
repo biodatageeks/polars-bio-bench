@@ -6,12 +6,14 @@ benchmarks:
     dataset: databio
     tools:
       - polars_bio
-      - pyranges0
+      - pyranges1
     parallel: false
     input_dataframes: true
     dataframes_io:
       - "polars.DataFrame:polars.DataFrame"
       - "pandas.DataFrame:pandas.DataFrame"
+      - "pandas.pyarrow.DataFrame:pandas.DataFrame"
+      - "polars.LazyFrame:polars.LazyFrame"
     num_repeats: 3
     num_executions: 1
     test-cases:
@@ -25,12 +27,14 @@ benchmarks:
     dataset: databio
     tools:
       - polars_bio
-      - pyranges0
+      - pyranges1
     parallel: false
     input_dataframes: true
     dataframes_io:
       - "polars.DataFrame:polars.DataFrame"
       - "pandas.DataFrame:pandas.DataFrame"
+      - "pandas.pyarrow.DataFrame:pandas.DataFrame"
+      - "polars.LazyFrame:polars.LazyFrame"
     num_repeats: 3
     num_executions: 1
     test-cases:

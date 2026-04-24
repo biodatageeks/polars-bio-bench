@@ -46,6 +46,17 @@ For e2e test suite ([benchmark-e2e-overlap](conf/paper/benchmark-e2e-overlap.yam
 export POLARS_MAX_THREADS=1
 ```
 
+For `input_dataframes: true` benchmarks, `dataframes_io` also supports
+`pandas.pyarrow.DataFrame`. That reads parquet through pandas with
+`engine="pyarrow"` and `dtype_backend="pyarrow"` so the loaded columns stay
+Arrow-backed:
+
+```yaml
+dataframes_io:
+  - "pandas.DataFrame:pandas.DataFrame"
+  - "pandas.pyarrow.DataFrame:pandas.DataFrame"
+```
+
 
 ### Datasets
 [Datasets overview](https://biodatageeks.org/polars-bio/performance/#test-datasets)
@@ -238,4 +249,3 @@ To fix this, you can set the following environment variable when installing or u
 ```shell
  RUSTFLAGS="-Clink-arg=-undefined -Clink-arg=dynamic_lookup -Ctarget-cpu=native" poetry update
 ```
-

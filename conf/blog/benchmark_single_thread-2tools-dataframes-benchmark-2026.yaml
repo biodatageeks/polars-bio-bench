@@ -4,16 +4,18 @@ common:
   polars_bio_coordinate_system: 0-based
   polars_bio_consume_mode: len
 benchmarks:
-  - name: overlap-single-3tools
+  - name: overlap-single-2tools-dataframes
     operation: overlap
     dataset: databio
     tools:
       - polars_bio
       - pyranges1
-#      - genomicranges
-      - bioframe
     parallel: false
-    input_dataframes: false
+    input_dataframes: true
+    dataframes_io:
+      - "pandas.DataFrame:pandas.DataFrame"
+      - "polars.DataFrame:polars.DataFrame"
+      - "polars.LazyFrame:polars.LazyFrame"
     num_repeats: 3
     num_executions: 1
     test-cases:
@@ -24,16 +26,18 @@ benchmarks:
       - "7-8"
       - "8-7"
 
-  - name: nearest-single-3tools
+  - name: nearest-single-2tools-dataframes
     operation: nearest
     dataset: databio
     tools:
       - polars_bio
       - pyranges1
-#      - genomicranges
-      - bioframe
     parallel: false
-    input_dataframes: false
+    input_dataframes: true
+    dataframes_io:
+      - "pandas.DataFrame:pandas.DataFrame"
+      - "polars.DataFrame:polars.DataFrame"
+      - "polars.LazyFrame:polars.LazyFrame"
     num_repeats: 3
     num_executions: 1
     test-cases:
@@ -44,16 +48,18 @@ benchmarks:
       - "7-8"
       - "8-7"
 
-  - name: count_overlaps-single-3tools
+  - name: count_overlaps-single-2tools-dataframes
     operation: count_overlaps
     dataset: databio
     tools:
       - polars_bio
       - pyranges1
-#      - genomicranges
-      - bioframe
     parallel: false
-    input_dataframes: false
+    input_dataframes: true
+    dataframes_io:
+      - "pandas.DataFrame:pandas.DataFrame"
+      - "polars.DataFrame:polars.DataFrame"
+      - "polars.LazyFrame:polars.LazyFrame"
     num_repeats: 3
     num_executions: 1
     test-cases:
@@ -63,15 +69,19 @@ benchmarks:
       - "7-3"
       - "7-8"
       - "8-7"
-  - name: coverage-single-2tools
+
+  - name: coverage-single-2tools-dataframes
     operation: coverage
     dataset: databio
     tools:
       - polars_bio
-#      - genomicranges
-      - bioframe
+      - pyranges1
     parallel: false
-    input_dataframes: false
+    input_dataframes: true
+    dataframes_io:
+      - "pandas.DataFrame:pandas.DataFrame"
+      - "polars.DataFrame:polars.DataFrame"
+      - "polars.LazyFrame:polars.LazyFrame"
     num_repeats: 3
     num_executions: 1
     test-cases:
@@ -81,16 +91,19 @@ benchmarks:
       - "7-3"
       - "7-8"
       - "8-7"
-  - name: merge-single-3tools
+
+  - name: merge-single-2tools-dataframes
     operation: merge
     dataset: databio
     tools:
       - polars_bio
-      - bioframe
       - pyranges1
-#      - genomicranges
     parallel: false
-    input_dataframes: false
+    input_dataframes: true
+    dataframes_io:
+      - "pandas.DataFrame:pandas.DataFrame"
+      - "polars.DataFrame:polars.DataFrame"
+      - "polars.LazyFrame:polars.LazyFrame"
     num_repeats: 3
     num_executions: 1
     test-cases:
@@ -102,15 +115,18 @@ benchmarks:
       - "7-8"
       - "8-7"
 
-  - name: cluster-single-3tools
+  - name: cluster-single-2tools-dataframes
     operation: cluster
     dataset: databio
     tools:
       - polars_bio
-      - bioframe
       - pyranges1
     parallel: false
-    input_dataframes: false
+    input_dataframes: true
+    dataframes_io:
+      - "pandas.DataFrame:pandas.DataFrame"
+      - "polars.DataFrame:polars.DataFrame"
+      - "polars.LazyFrame:polars.LazyFrame"
     num_repeats: 3
     num_executions: 1
     test-cases:
@@ -122,16 +138,18 @@ benchmarks:
       - "7-8"
       - "8-7"
 
-  - name: complement-single-3tools
+  - name: complement-single-2tools-dataframes
     operation: complement
     dataset: databio
     tools:
       - polars_bio
-      - bioframe
       - pyranges1
-#      - genomicranges
     parallel: false
-    input_dataframes: false
+    input_dataframes: true
+    dataframes_io:
+      - "pandas.DataFrame:pandas.DataFrame"
+      - "polars.DataFrame:polars.DataFrame"
+      - "polars.LazyFrame:polars.LazyFrame"
     num_repeats: 3
     num_executions: 1
     test-cases:
@@ -142,16 +160,19 @@ benchmarks:
       - "7-3"
       - "7-8"
       - "8-7"
-  - name: subtract-single-3tools
+
+  - name: subtract-single-2tools-dataframes
     operation: subtract
     dataset: databio
     tools:
       - polars_bio
-      - bioframe
       - pyranges1
-#      - genomicranges
     parallel: false
-    input_dataframes: false
+    input_dataframes: true
+    dataframes_io:
+      - "pandas.DataFrame:pandas.DataFrame"
+      - "polars.DataFrame:polars.DataFrame"
+      - "polars.LazyFrame:polars.LazyFrame"
     num_repeats: 3
     num_executions: 1
     test-cases:
