@@ -1,3 +1,4 @@
+import gc
 import inspect
 import os
 import time
@@ -208,6 +209,17 @@ class TestCaseInputs:
                 _to_genomicranges(df_2),
             )
         return self._genomicranges_frames
+
+    def clear_cached_frames(self) -> None:
+        self._pandas_frames = None
+        self._pandas_pyarrow_frames = None
+        self._polars_frames = None
+        self._polars_lazy_frames = None
+        self._pyranges_frames = None
+        self._pybedtools_frames = None
+        self._pygenomics_frames = None
+        self._genomicranges_frames = None
+        gc.collect()
 
 
 POLARS_BIO_INPUT_ALIASES = {
@@ -796,6 +808,10 @@ def run_benchmark(
         num_repeats = benchmark["num_repeats"]
         repartition = benchmark.get("repartition", False)
         all_algorithms = benchmark.get("all_algorithms", False)
+        clear_input_caches_between_variants = benchmark.get(
+            "clear_input_caches_between_variants",
+            False,
+        )
         coordinate_system_zero_based = normalize_polars_bio_coordinate_system(
             benchmark.get(
                 "polars_bio_coordinate_system",
@@ -927,6 +943,9 @@ def run_benchmark(
                                 "mean": float(np.mean(per_run_timings)),
                             }
                         )
+
+                    if clear_input_caches_between_variants:
+                        inputs.clear_cached_frames()
 
             if not results:
                 console.log(

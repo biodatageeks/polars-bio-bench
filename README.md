@@ -46,7 +46,30 @@ For e2e test suite ([benchmark-e2e-overlap](conf/paper/benchmark-e2e-overlap.yam
 export POLARS_MAX_THREADS=1
 ```
 
-For `input_dataframes: true` benchmarks, `dataframes_io` also supports
+To override the `polars_bio` output type for file-based benchmarks, set
+`polars_bio_output_type` in the benchmark YAML. You can define a config-wide
+default in `common` and override it per benchmark when needed:
+
+```yaml
+common:
+  baseline: polars_bio
+  polars_bio_output_type: pandas.DataFrame
+
+benchmarks:
+  - name: overlap-single
+    operation: overlap
+    dataset: databio
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    polars_bio_output_type: polars.DataFrame
+```
+
+For `input_dataframes: true` benchmarks, `dataframes_io` still controls the
+input/output DataFrame pair.
+
+For pandas-backed `polars_bio` inputs, `dataframes_io` also supports
 `pandas.pyarrow.DataFrame`. That reads parquet through pandas with
 `engine="pyarrow"` and `dtype_backend="pyarrow"` so the loaded columns stay
 Arrow-backed:

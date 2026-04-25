@@ -1,0 +1,233 @@
+common:
+  baseline: polars_bio
+  polars_bio_output_type: polars.LazyFrame
+  polars_bio_coordinate_system: 0-based
+  polars_bio_consume_mode: count
+benchmarks:
+  - name: overlap-parallel-polars-bio-all-inputs
+    operation: overlap
+    dataset: databio
+    tools:
+      - polars_bio
+    parallel: true
+    clear_input_caches_between_variants: true
+    threads:
+      - 1
+      - 2
+      - 4
+      - 8
+    input_dataframes: true
+    dataframes_io:
+      - "pandas.DataFrame:pandas.DataFrame"
+      - "polars.DataFrame:polars.DataFrame"
+      - "polars.LazyFrame:polars.LazyFrame"
+      - "pandas.pyarrow.DataFrame:pandas.DataFrame"
+    num_repeats: 3
+    num_executions: 1
+    test-cases:
+      - "1-2"
+      - "2-1"
+      - "3-7"
+      - "7-3"
+      - "7-8"
+      - "8-7"
+
+  - name: nearest-parallel-polars-bio-all-inputs
+    operation: nearest
+    dataset: databio
+    tools:
+      - polars_bio
+    parallel: true
+    clear_input_caches_between_variants: true
+    threads:
+      - 1
+      - 2
+      - 4
+      - 8
+    input_dataframes: true
+    dataframes_io:
+      - "pandas.DataFrame:pandas.DataFrame"
+      - "polars.DataFrame:polars.DataFrame"
+      - "polars.LazyFrame:polars.LazyFrame"
+      - "pandas.pyarrow.DataFrame:pandas.DataFrame"
+    num_repeats: 3
+    num_executions: 1
+    test-cases:
+      - "1-2"
+      - "2-1"
+      - "3-7"
+      - "7-3"
+      - "7-8"
+      - "8-7"
+
+  - name: count_overlaps-parallel-polars-bio-all-inputs
+    operation: count_overlaps
+    dataset: databio
+    tools:
+      - polars_bio
+    parallel: true
+    clear_input_caches_between_variants: true
+    threads:
+      - 1
+      - 2
+      - 4
+      - 8
+    input_dataframes: true
+    dataframes_io:
+      - "pandas.DataFrame:pandas.DataFrame"
+      - "polars.DataFrame:polars.DataFrame"
+      - "polars.LazyFrame:polars.LazyFrame"
+      - "pandas.pyarrow.DataFrame:pandas.DataFrame"
+    num_repeats: 3
+    num_executions: 1
+    test-cases:
+      - "1-2"
+      - "2-1"
+      - "3-7"
+      - "7-3"
+      - "7-8"
+      - "8-7"
+
+  - name: coverage-parallel-polars-bio-all-inputs
+    operation: coverage
+    dataset: databio
+    tools:
+      - polars_bio
+    parallel: true
+    clear_input_caches_between_variants: true
+    threads:
+      - 1
+      - 2
+      - 4
+      - 8
+    input_dataframes: true
+    dataframes_io:
+      - "pandas.DataFrame:pandas.DataFrame"
+      - "polars.DataFrame:polars.DataFrame"
+      - "polars.LazyFrame:polars.LazyFrame"
+      - "pandas.pyarrow.DataFrame:pandas.DataFrame"
+    num_repeats: 3
+    num_executions: 1
+    test-cases:
+      - "1-2"
+      - "2-1"
+      - "3-7"
+      - "7-3"
+      - "7-8"
+      - "8-7"
+
+  - name: merge-parallel-polars-bio-all-inputs
+    operation: merge
+    dataset: databio
+    tools:
+      - polars_bio
+    parallel: true
+    clear_input_caches_between_variants: true
+    threads:
+      - 1
+      - 2
+      - 4
+      - 8
+    input_dataframes: true
+    dataframes_io:
+      - "pandas.DataFrame:pandas.DataFrame"
+      - "polars.DataFrame:polars.DataFrame"
+      - "polars.LazyFrame:polars.LazyFrame"
+      - "pandas.pyarrow.DataFrame:pandas.DataFrame"
+    num_repeats: 3
+    num_executions: 1
+    test-cases:
+      - "5-1"
+      - "1-2"
+      - "2-1"
+      - "3-7"
+      - "7-3"
+      - "7-8"
+      - "8-7"
+
+  - name: cluster-parallel-polars-bio-all-inputs
+    operation: cluster
+    dataset: databio
+    tools:
+      - polars_bio
+    parallel: true
+    clear_input_caches_between_variants: true
+    threads:
+      - 1
+      - 2
+      - 4
+      - 8
+    input_dataframes: true
+    dataframes_io:
+      - "pandas.DataFrame:pandas.DataFrame"
+      - "polars.DataFrame:polars.DataFrame"
+      - "polars.LazyFrame:polars.LazyFrame"
+      - "pandas.pyarrow.DataFrame:pandas.DataFrame"
+    num_repeats: 3
+    num_executions: 1
+    test-cases:
+      - "5-1"
+      - "1-2"
+      - "2-1"
+      - "3-7"
+      - "7-3"
+      - "7-8"
+      - "8-7"
+
+  - name: complement-parallel-polars-bio-all-inputs
+    operation: complement
+    dataset: databio
+    tools:
+      - polars_bio
+    parallel: true
+    clear_input_caches_between_variants: true
+    threads:
+      - 1
+      - 2
+      - 4
+      - 8
+    input_dataframes: true
+    dataframes_io:
+      - "pandas.DataFrame:pandas.DataFrame"
+      - "polars.DataFrame:polars.DataFrame"
+      - "polars.LazyFrame:polars.LazyFrame"
+      - "pandas.pyarrow.DataFrame:pandas.DataFrame"
+    num_repeats: 3
+    num_executions: 1
+    test-cases:
+      - "5-1"
+      - "1-2"
+      - "2-1"
+      - "3-7"
+      - "7-3"
+      - "7-8"
+      - "8-7"
+
+  - name: subtract-parallel-polars-bio-all-inputs
+    operation: subtract
+    dataset: databio
+    tools:
+      - polars_bio
+    parallel: true
+    clear_input_caches_between_variants: true
+    threads:
+      - 1
+      - 2
+      - 4
+      - 8
+    input_dataframes: true
+    dataframes_io:
+      - "pandas.DataFrame:pandas.DataFrame"
+      - "polars.DataFrame:polars.DataFrame"
+      - "polars.LazyFrame:polars.LazyFrame"
+      - "pandas.pyarrow.DataFrame:pandas.DataFrame"
+    num_repeats: 3
+    num_executions: 1
+    test-cases:
+      - "5-1"
+      - "1-2"
+      - "2-1"
+      - "3-7"
+      - "7-3"
+      - "7-8"
+      - "8-7"
