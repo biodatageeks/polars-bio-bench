@@ -1,0 +1,207 @@
+common:
+  baseline: polars_bio
+  polars_bio_output_type: polars.LazyFrame
+  polars_bio_coordinate_system: 0-based
+  polars_bio_consume_mode: count
+benchmarks:
+  - name: overlap-single-3tools
+    operation: overlap
+    dataset: databio
+    tools:
+      - polars_bio
+      - pyranges1
+#      - genomicranges
+      - bioframe
+    parallel: false
+    clear_input_caches_between_variants: true
+    input_dataframes: true
+    dataframes_io:
+      - "pandas.DataFrame:pandas.DataFrame"
+      - "polars.DataFrame:polars.DataFrame"
+      - "polars.LazyFrame:polars.LazyFrame"
+    num_repeats: 3
+    num_executions: 1
+    test-cases:
+      - "1-2"
+      - "2-1"
+      - "3-7"
+      - "7-3"
+      - "7-8"
+      - "8-7"
+
+  - name: nearest-single-3tools
+    operation: nearest
+    dataset: databio
+    tools:
+      - polars_bio
+      - pyranges1
+#      - genomicranges
+      - bioframe
+    parallel: false
+    clear_input_caches_between_variants: true
+    input_dataframes: true
+    dataframes_io:
+      - "pandas.DataFrame:pandas.DataFrame"
+      - "polars.DataFrame:polars.DataFrame"
+      - "polars.LazyFrame:polars.LazyFrame"
+    num_repeats: 3
+    num_executions: 1
+    test-cases:
+      - "1-2"
+      - "2-1"
+      - "3-7"
+      - "7-3"
+      - "7-8"
+      - "8-7"
+
+  - name: count_overlaps-single-3tools
+    operation: count_overlaps
+    dataset: databio
+    tools:
+      - polars_bio
+      - pyranges1
+#      - genomicranges
+      - bioframe
+    parallel: false
+    clear_input_caches_between_variants: true
+    input_dataframes: true
+    dataframes_io:
+      - "pandas.DataFrame:pandas.DataFrame"
+      - "polars.DataFrame:polars.DataFrame"
+      - "polars.LazyFrame:polars.LazyFrame"
+    num_repeats: 3
+    num_executions: 1
+    test-cases:
+      - "1-2"
+      - "2-1"
+      - "3-7"
+      - "7-3"
+      - "7-8"
+      - "8-7"
+
+  - name: coverage-single-2tools
+    operation: coverage
+    dataset: databio
+    tools:
+      - polars_bio
+#      - genomicranges
+      - bioframe
+    parallel: false
+    clear_input_caches_between_variants: true
+    input_dataframes: true
+    dataframes_io:
+      - "pandas.DataFrame:pandas.DataFrame"
+      - "polars.DataFrame:polars.DataFrame"
+      - "polars.LazyFrame:polars.LazyFrame"
+    num_repeats: 3
+    num_executions: 1
+    test-cases:
+      - "1-2"
+      - "2-1"
+      - "3-7"
+      - "7-3"
+      - "7-8"
+      - "8-7"
+
+  - name: merge-single-3tools
+    operation: merge
+    dataset: databio
+    tools:
+      - polars_bio
+      - bioframe
+      - pyranges1
+#      - genomicranges
+    parallel: false
+    clear_input_caches_between_variants: true
+    input_dataframes: true
+    dataframes_io:
+      - "pandas.DataFrame:pandas.DataFrame"
+      - "polars.DataFrame:polars.DataFrame"
+      - "polars.LazyFrame:polars.LazyFrame"
+    num_repeats: 3
+    num_executions: 1
+    test-cases:
+      - "5-1"
+      - "1-2"
+      - "2-1"
+      - "3-7"
+      - "7-3"
+      - "7-8"
+      - "8-7"
+
+  - name: cluster-single-3tools
+    operation: cluster
+    dataset: databio
+    tools:
+      - polars_bio
+      - bioframe
+      - pyranges1
+    parallel: false
+    clear_input_caches_between_variants: true
+    input_dataframes: true
+    dataframes_io:
+      - "pandas.DataFrame:pandas.DataFrame"
+      - "polars.DataFrame:polars.DataFrame"
+      - "polars.LazyFrame:polars.LazyFrame"
+    num_repeats: 3
+    num_executions: 1
+    test-cases:
+      - "5-1"
+      - "1-2"
+      - "2-1"
+      - "3-7"
+      - "7-3"
+      - "7-8"
+      - "8-7"
+
+  - name: complement-single-3tools
+    operation: complement
+    dataset: databio
+    tools:
+      - polars_bio
+      - bioframe
+      - pyranges1
+#      - genomicranges
+    parallel: false
+    clear_input_caches_between_variants: true
+    input_dataframes: true
+    dataframes_io:
+      - "pandas.DataFrame:pandas.DataFrame"
+      - "polars.DataFrame:polars.DataFrame"
+      - "polars.LazyFrame:polars.LazyFrame"
+    num_repeats: 3
+    num_executions: 1
+    test-cases:
+      - "5-1"
+      - "1-2"
+      - "2-1"
+      - "3-7"
+      - "7-3"
+      - "7-8"
+      - "8-7"
+
+  - name: subtract-single-3tools
+    operation: subtract
+    dataset: databio
+    tools:
+      - polars_bio
+      - bioframe
+      - pyranges1
+#      - genomicranges
+    parallel: false
+    clear_input_caches_between_variants: true
+    input_dataframes: true
+    dataframes_io:
+      - "pandas.DataFrame:pandas.DataFrame"
+      - "polars.DataFrame:polars.DataFrame"
+      - "polars.LazyFrame:polars.LazyFrame"
+    num_repeats: 3
+    num_executions: 1
+    test-cases:
+      - "5-1"
+      - "1-2"
+      - "2-1"
+      - "3-7"
+      - "7-3"
+      - "7-8"
+      - "8-7"
