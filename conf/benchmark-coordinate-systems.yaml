@@ -1,0 +1,316 @@
+# polars-bio coordinate-system benchmark.
+#
+# Runs every range operation on BOTH coordinate paths so a change to the
+# coordinate arithmetic can be shown not to cost anything. polars_bio only: no
+# other tool in this suite has a 1-based mode, and on the shared 0-based path
+# they contribute ~99% of the wall clock of a full 4-tool run (genomicranges
+# alone is ~168 min against polars_bio's ~1 min) while telling us nothing about
+# a polars-bio-side regression.
+#
+# The 0-based benchmarks keep the operation/test-case shape of
+# results/benchmark-2026-4tools-single-all-ops so their polars_bio rows are
+# directly comparable to that published baseline.
+#
+#   poetry run python src/run-benchmarks.py \
+#       --bench-config conf/benchmark-coordinate-systems.yaml
+#
+common:
+  baseline: polars_bio
+  polars_bio_consume_mode: count
+benchmarks:
+  - name: overlap-polars-bio-0based
+    operation: overlap
+    dataset: databio
+    polars_bio_coordinate_system: 0-based
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 7
+    num_executions: 1
+    test-cases:
+      - "1-2"
+      - "2-1"
+      - "3-7"
+      - "7-3"
+      - "7-8"
+      - "8-7"
+
+  - name: overlap-polars-bio-1based
+    operation: overlap
+    dataset: databio
+    polars_bio_coordinate_system: 1-based
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 7
+    num_executions: 1
+    test-cases:
+      - "1-2"
+      - "2-1"
+      - "3-7"
+      - "7-3"
+      - "7-8"
+      - "8-7"
+
+  - name: nearest-polars-bio-0based
+    operation: nearest
+    dataset: databio
+    polars_bio_coordinate_system: 0-based
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 7
+    num_executions: 1
+    test-cases:
+      - "1-2"
+      - "2-1"
+      - "3-7"
+      - "7-3"
+      - "7-8"
+      - "8-7"
+
+  - name: nearest-polars-bio-1based
+    operation: nearest
+    dataset: databio
+    polars_bio_coordinate_system: 1-based
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 7
+    num_executions: 1
+    test-cases:
+      - "1-2"
+      - "2-1"
+      - "3-7"
+      - "7-3"
+      - "7-8"
+      - "8-7"
+
+  - name: count_overlaps-polars-bio-0based
+    operation: count_overlaps
+    dataset: databio
+    polars_bio_coordinate_system: 0-based
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 7
+    num_executions: 1
+    test-cases:
+      - "1-2"
+      - "2-1"
+      - "3-7"
+      - "7-3"
+      - "7-8"
+      - "8-7"
+
+  - name: count_overlaps-polars-bio-1based
+    operation: count_overlaps
+    dataset: databio
+    polars_bio_coordinate_system: 1-based
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 7
+    num_executions: 1
+    test-cases:
+      - "1-2"
+      - "2-1"
+      - "3-7"
+      - "7-3"
+      - "7-8"
+      - "8-7"
+
+  - name: coverage-polars-bio-0based
+    operation: coverage
+    dataset: databio
+    polars_bio_coordinate_system: 0-based
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 7
+    num_executions: 1
+    test-cases:
+      - "1-2"
+      - "2-1"
+      - "3-7"
+      - "7-3"
+      - "7-8"
+      - "8-7"
+
+  - name: coverage-polars-bio-1based
+    operation: coverage
+    dataset: databio
+    polars_bio_coordinate_system: 1-based
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 7
+    num_executions: 1
+    test-cases:
+      - "1-2"
+      - "2-1"
+      - "3-7"
+      - "7-3"
+      - "7-8"
+      - "8-7"
+
+  - name: merge-polars-bio-0based
+    operation: merge
+    dataset: databio
+    polars_bio_coordinate_system: 0-based
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 7
+    num_executions: 1
+    test-cases:
+      - "5-1"
+      - "1-2"
+      - "2-1"
+      - "3-7"
+      - "7-3"
+      - "7-8"
+      - "8-7"
+
+  - name: merge-polars-bio-1based
+    operation: merge
+    dataset: databio
+    polars_bio_coordinate_system: 1-based
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 7
+    num_executions: 1
+    test-cases:
+      - "5-1"
+      - "1-2"
+      - "2-1"
+      - "3-7"
+      - "7-3"
+      - "7-8"
+      - "8-7"
+
+  - name: cluster-polars-bio-0based
+    operation: cluster
+    dataset: databio
+    polars_bio_coordinate_system: 0-based
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 7
+    num_executions: 1
+    test-cases:
+      - "5-1"
+      - "1-2"
+      - "2-1"
+      - "3-7"
+      - "7-3"
+      - "7-8"
+      - "8-7"
+
+  - name: cluster-polars-bio-1based
+    operation: cluster
+    dataset: databio
+    polars_bio_coordinate_system: 1-based
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 7
+    num_executions: 1
+    test-cases:
+      - "5-1"
+      - "1-2"
+      - "2-1"
+      - "3-7"
+      - "7-3"
+      - "7-8"
+      - "8-7"
+
+  - name: complement-polars-bio-0based
+    operation: complement
+    dataset: databio
+    polars_bio_coordinate_system: 0-based
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 7
+    num_executions: 1
+    test-cases:
+      - "5-1"
+      - "1-2"
+      - "2-1"
+      - "3-7"
+      - "7-3"
+      - "7-8"
+      - "8-7"
+
+  - name: complement-polars-bio-1based
+    operation: complement
+    dataset: databio
+    polars_bio_coordinate_system: 1-based
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 7
+    num_executions: 1
+    test-cases:
+      - "5-1"
+      - "1-2"
+      - "2-1"
+      - "3-7"
+      - "7-3"
+      - "7-8"
+      - "8-7"
+
+  - name: subtract-polars-bio-0based
+    operation: subtract
+    dataset: databio
+    polars_bio_coordinate_system: 0-based
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 7
+    num_executions: 1
+    test-cases:
+      - "5-1"
+      - "1-2"
+      - "2-1"
+      - "3-7"
+      - "7-3"
+      - "7-8"
+      - "8-7"
+
+  - name: subtract-polars-bio-1based
+    operation: subtract
+    dataset: databio
+    polars_bio_coordinate_system: 1-based
+    tools:
+      - polars_bio
+    parallel: false
+    input_dataframes: false
+    num_repeats: 7
+    num_executions: 1
+    test-cases:
+      - "5-1"
+      - "1-2"
+      - "2-1"
+      - "3-7"
+      - "7-3"
+      - "7-8"
+      - "8-7"
+
