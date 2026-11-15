@@ -26,6 +26,8 @@ for entry in "${DATASETS[@]}"; do
   IFS=';' read -ra P <<<"$paths"
   IFS=';' read -ra M <<<"$md5s"
   parts=()
+  # A combined file exists already: nothing to download.
+  [ -s "$name.fastq.gz" ] && [ "${#P[@]}" -gt 1 ] && P=()
   for i in "${!P[@]}"; do
     f=$(basename "${P[$i]}")
     if [ ! -s "$f" ] || [ "$(md5 "$f")" != "${M[$i]}" ]; then
@@ -37,7 +39,11 @@ for entry in "${DATASETS[@]}"; do
   # Plain gzip variant: a single member, as ENA serves it (concatenated for
   # paired runs, which gives a multi-member gzip that every tool reads).
   if [ ! -s "$name.fastq.gz" ]; then
-    if [ "${#parts[@]}" -eq 1 ]; then ln -sf "${parts[0]}" "$name.fastq.gz"; else cat "${parts[@]}" > "$name.fastq.gz"; fi
+    if [ "${#parts[@]}" -eq 1 ]; then
+      ln -sf "${parts[0]}" "$name.fastq.gz"
+    else
+      cat "${parts[@]}" > "$name.fastq.gz" && rm -f "${parts[@]}"  # keep one copy
+    fi
   fi
   # BGZF variant with a .gzi index.
   if [ ! -s "$name.fastq.bgz.gzi" ]; then
