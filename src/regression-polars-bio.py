@@ -90,6 +90,8 @@ def compare(args):
             continue
         for case in bench["test-cases"]:
             for t in [int(x) for x in args.threads.split(",")]:
+                if args.only and f"{op}:{case}:{t}" not in args.only:
+                    continue
                 jobs.append((op, case, t))
     out = Path(args.out or f"results/regression-{dt.datetime.now():%Y%m%d-%H%M}")
     out.mkdir(parents=True, exist_ok=True)
@@ -150,6 +152,7 @@ if __name__ == "__main__":
     p.add_argument("--rounds", type=int, default=2)
     p.add_argument("--repeats", type=int, default=5)
     p.add_argument("--out")
+    p.add_argument("--only", nargs="+", metavar="OP:CASE:THREADS", help="run only these cases")
     a = p.parse_args()
     if a.one:
         one(a.one[0], a.one[1], int(a.one[2]), a.data_root, a.common, a.repeats)

@@ -131,7 +131,14 @@ def main():
                         out = ref_out if (is_ref and rep == 0) else work / f"out{tools.output_suffix(op)}"
                         argv, stdout_path = tools.command(tool, op, str(inp), str(out), n)
                         stdout_path = str(out) if stdout_path else None
-                        m = run_measured(argv, stdout_path, timeout_s=args.timeout)
+                        timing = work / "timing.json"
+                        timing.unlink(missing_ok=True)
+                        m = run_measured(argv, stdout_path, env={"SEQOPS_TIMING_FILE": str(timing)},
+                                         timeout_s=args.timeout)
+                        # Python tools report their own time after imports.
+                        inner = json.loads(timing.read_text()) if timing.exists() else None
+                        wall = inner["wall_s"] if inner else m.wall_s
+                        cpu = inner["cpu_s"] if inner else m.cpu_s
                         if m.returncode != 0:
                             st, detail = "error", m.stderr_tail.strip().splitlines()[-1:] or [""]
                             detail = detail[0][:300]
@@ -149,7 +156,8 @@ def main():
                         row = {
                             "benchmark": bench["name"], "operation": op, "dataset": ds_name,
                             "input": variant, "tool": tool, "threads": n, "repeat": rep,
-                            "wall_s": round(m.wall_s, 3), "cpu_s": round(m.cpu_s, 3),
+                            "wall_s": round(wall, 3), "cpu_s": round(cpu, 3),
+                            "process_wall_s": round(m.wall_s, 3), "process_cpu_s": round(m.cpu_s, 3),
                             "peak_rss_mb": round(m.peak_rss_mb, 1),
                             "status": status[(tool, n)][0], "detail": status[(tool, n)][1],
                             "command": " ".join(argv) + (f" > {stdout_path}" if stdout_path else ""),
@@ -157,7 +165,7 @@ def main():
                         runs.append(row)
                         print(
                             f"{row['benchmark']:10} {ds_name:14} {variant:4} {tool:10} t={n} r={rep} "
-                            f"{m.wall_s:8.2f}s cpu={m.cpu_s:8.1f}s rss={m.peak_rss_mb:7.0f}MB {row['status']}",
+                            f"{wall:8.2f}s cpu={cpu:8.1f}s (process {m.wall_s:.2f}s) rss={m.peak_rss_mb:7.0f}MB {row['status']}",
                             flush=True,
                         )
                         if out != ref_out and out.exists():
@@ -179,6 +187,7 @@ def summarise(runs):
         summary.append({
             "benchmark": b, "dataset": d, "input": i, "tool": t, "threads": n,
             "best_wall_s": best["wall_s"], "cpu_s": best["cpu_s"],
+            "process_wall_s": best["process_wall_s"],
             "peak_rss_mb": max(r["peak_rss_mb"] for r in rs),
             "runs": len(rs), "status": rs[0]["status"], "detail": rs[0]["detail"],
         })
@@ -209,7 +218,11 @@ def markdown(summary):
                 vals.append(f"{r['best_wall_s']:.2f} s / {r['cpu_s']:.1f} CPU-s / {r['peak_rss_mb']:.0f} MB{single}{mark}")
             lines.append(f"| {n} | " + " | ".join(vals) + " |")
         lines.append("")
-    lines.append("Wall = best of N runs; CPU-s and peak RSS from that run. † single-threaded tool, run once.")
+    lines.append(
+        "Wall = best of N runs; CPU-s and peak RSS from that run. Python tools (polars_bio, "
+        "biopython) are timed after imports; summary.csv also has the full process time. "
+        "† single-threaded tool, run once."
+    )
     return "\n".join(lines)
 
 
