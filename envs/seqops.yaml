@@ -1,0 +1,25 @@
+# Command-line tools and Python libraries compared against polars-bio's sequence
+# operations. Versions are exact so results can be reproduced; they are the same
+# versions polars-bio's add-sequence-operations change used as parity oracles.
+#
+#   conda env create -f envs/seqops.yaml
+#   conda activate seqops
+#   pip install polars-bio==<version under test>   # or a local wheel
+name: seqops
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.12
+  - seqkit=2.14.0
+  - seqfu=1.30.3
+  - seqtk=1.5
+  - samtools=1.25
+  - htslib=1.25 # bgzip for the BGZF inputs
+  - bedtools=2.31.1
+  - biopython=1.88
+  - pyfaidx=0.9.2.2
+  - pyfastx=2.3.1
+  - psutil
+  - pyyaml
+  - pip
