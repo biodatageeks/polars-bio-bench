@@ -1,0 +1,9 @@
+benchmark,dataset,input,tool,threads,best_wall_s,cpu_s,process_wall_s,peak_rss_mb,runs,status,detail
+revcomp,DRR013000_1,bgzf,seqkit,1,22.215,22.099,22.215,161.5,3,reference,
+revcomp,DRR013000_1,bgzf,biopython,1,48.284,47.963,48.405,53.0,3,ok,24778423 records
+revcomp,DRR013000_1,gzip,seqkit,1,20.879,20.784,20.879,74.8,3,reference,
+revcomp,DRR013000_1,gzip,biopython,1,46.004,45.736,46.149,47.7,3,ok,24778423 records
+gc_qual,DRR013000_1,bgzf,seqkit,1,25.94,25.926,25.94,54.6,3,reference,
+gc_qual,DRR013000_1,bgzf,biopython,1,114.291,114.062,114.495,54.1,3,ok,ok
+gc_qual,DRR013000_1,gzip,seqkit,1,24.956,24.885,24.956,57.6,3,reference,
+gc_qual,DRR013000_1,gzip,biopython,1,114.276,114.076,114.405,46.8,3,ok,ok
