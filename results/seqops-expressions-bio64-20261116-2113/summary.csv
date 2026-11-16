@@ -1,0 +1,5 @@
+benchmark,dataset,input,tool,threads,best_wall_s,cpu_s,process_wall_s,peak_rss_mb,runs,status,detail
+revcomp,SRR39421268,bgzf,seqkit,1,68.562,59.179,68.562,165.3,3,reference,
+revcomp,SRR39421268,bgzf,biopython,1,144.07,133.361,144.316,56.6,3,ok,64335964 records
+revcomp,SRR39421268,gzip,seqkit,1,56.673,54.237,56.673,74.9,3,reference,
+revcomp,SRR39421268,gzip,biopython,1,135.382,126.957,135.601,47.9,3,ok,64335964 records
