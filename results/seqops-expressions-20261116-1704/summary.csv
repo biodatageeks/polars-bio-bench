@@ -1,0 +1,11 @@
+benchmark,dataset,input,tool,threads,best_wall_s,cpu_s,process_wall_s,peak_rss_mb,runs,status,detail
+revcomp,DRR013000_1,bgzf,seqkit,1,22.096,21.813,22.096,161.2,3,reference,
+revcomp,DRR013000_1,bgzf,polars_bio,1,7.873,11.051,8.078,255.4,3,ok,24778423 records
+revcomp,DRR013000_1,bgzf,polars_bio,2,3.842,11.426,4.052,541.5,3,ok,24778423 records
+revcomp,DRR013000_1,bgzf,polars_bio,4,2.343,11.617,2.562,904.2,3,ok,24778423 records
+revcomp,DRR013000_1,bgzf,polars_bio,8,1.92,12.311,2.148,1419.1,3,ok,24778423 records
+revcomp,SRR39421268,bgzf,seqkit,1,58.267,57.173,58.267,162.5,3,reference,
+revcomp,SRR39421268,bgzf,polars_bio,1,19.523,30.186,19.87,313.8,3,ok,64335964 records
+revcomp,SRR39421268,bgzf,polars_bio,2,12.043,31.277,12.361,668.2,3,ok,64335964 records
+revcomp,SRR39421268,bgzf,polars_bio,4,6.004,31.698,6.314,935.0,3,ok,64335964 records
+revcomp,SRR39421268,bgzf,polars_bio,8,5.478,32.811,5.806,1752.4,3,ok,64335964 records
