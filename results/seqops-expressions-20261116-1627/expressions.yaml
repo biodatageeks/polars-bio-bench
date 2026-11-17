@@ -1,0 +1,38 @@
+# Sequence-expression suite (polars-bio add-sequence-operations, task 6.3).
+# Run: python src/run-seqops.py conf/seqops/expressions.yaml --data-dir DATA
+# where DATA was filled by scripts/seqops/prepare_datasets.sh.
+num_repeats: 3
+threads: [1, 2, 4, 8]
+# The reference output every other tool is checked against.
+reference: seqkit
+
+datasets:
+  # The four short-read libraries of the polars-bio FastQC benchmark.
+  DRR609229_1: {kind: fastq}
+  ERR5897746_1: {kind: fastq}
+  DRR013000_1: {kind: fastq}
+  SRR39421268: {kind: fastq} # both mates
+  ensembl_cds: {kind: fasta, file: Homo_sapiens.GRCh38.cds.all}
+
+benchmarks:
+  - name: revcomp
+    operation: revcomp
+    datasets: [DRR609229_1, ERR5897746_1, DRR013000_1, SRR39421268]
+    inputs: [bgzf, gzip]
+    tools: [polars_bio, seqkit, seqtk, seqfu, biopython]
+    tool_datasets:
+      biopython: [DRR609229_1, ERR5897746_1]
+
+  - name: gc_qual
+    operation: gc_qual
+    datasets: [DRR609229_1, ERR5897746_1, DRR013000_1, SRR39421268]
+    inputs: [bgzf, gzip]
+    tools: [polars_bio, seqkit, seqtk, biopython]
+    tool_datasets:
+      biopython: [DRR609229_1, ERR5897746_1]
+
+  - name: translate
+    operation: translate
+    datasets: [ensembl_cds]
+    inputs: [bgzf, gzip]
+    tools: [polars_bio, seqkit, biopython]

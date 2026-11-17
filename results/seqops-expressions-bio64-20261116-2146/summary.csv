@@ -1,0 +1,5 @@
+benchmark,dataset,input,tool,threads,best_wall_s,cpu_s,process_wall_s,peak_rss_mb,runs,status,detail
+gc_qual,SRR39421268,bgzf,seqkit,1,65.269,64.836,65.269,54.6,3,reference,
+gc_qual,SRR39421268,bgzf,biopython,1,380.41,378.683,380.653,56.6,3,ok,ok
+gc_qual,SRR39421268,gzip,seqkit,1,63.506,63.075,63.506,58.0,3,reference,
+gc_qual,SRR39421268,gzip,biopython,1,357.75,355.607,357.989,49.0,3,ok,ok

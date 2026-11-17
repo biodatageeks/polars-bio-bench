@@ -272,3 +272,37 @@ To fix this, you can set the following environment variable when installing or u
 ```shell
  RUSTFLAGS="-Clink-arg=-undefined -Clink-arg=dynamic_lookup -Ctarget-cpu=native" poetry update
 ```
+
+## Sequence operations (seqops)
+
+Benchmarks for polars-bio's sequence operations (the `.seq` expression
+namespace, `pb.seq_stats`, `pb.subseq`) against seqkit, seqfu, seqtk and
+Biopython. Every tool runs file to file as its own subprocess, so wall time,
+CPU time and peak RSS are measured the same way for all of them, and every
+configuration's output must pass a correctness check before its time is
+reported.
+
+```bash
+conda env create -f envs/seqops.yaml && conda activate seqops
+pip install polars-bio            # or the wheel under test
+scripts/seqops/prepare_datasets.sh ~/data/seqops   # ENA FASTQ + Ensembl CDS, gzip and BGZF
+python src/run-seqops.py conf/seqops/expressions.yaml --data-dir ~/data/seqops
+```
+
+Options: `--datasets`, `--tools`, `--benchmarks`, `--threads 1,8`,
+`--inputs bgzf`, `--repeats N`, `--work-dir` (scratch space for outputs,
+which can be large: reverse-complementing the 64M-read dataset writes ~15 GB).
+
+Each run writes `results/seqops-<suite>-<date>/` with `runs.csv` (every run),
+`summary.csv` (best wall time per configuration), `benchmark_results.md` and
+`provenance.json` (machine, exact tool versions, dataset SHA-256s, command).
+
+- **Inputs.** Each dataset is read as BGZF with a `.gzi` (which polars-bio
+  can split across threads) and as the original single-stream gzip.
+- **Threads.** polars-bio (`target_partitions` and `POLARS_MAX_THREADS`) and
+  seqkit (`-j`) run at every thread count; single-threaded tools run once.
+- **Correctness.** Outputs are compared with the reference tool (seqkit):
+  FASTQ/FASTA as an order-independent multiset of (ID, sequence, quality)
+  records, per-read tables numerically to seqkit's printed precision.
+  Definitional differences recorded in polars-bio's
+  `openspec/changes/add-sequence-operations/oracles.md` are normalised first.
